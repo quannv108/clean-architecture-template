@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.NpgSql"/>
+        <PackageReference Include="AspNetCore.HealthChecks.Redis"/>
+        <PackageReference Include="DistributedLock.Postgres"/>
+        <PackageReference Include="DistributedLock.Redis"/>
+        <PackageReference Include="EFCore.NamingConventions"/>
+        <PackageReference Include="FirebaseAdmin"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis"/>
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+        <PackageReference Include="Hangfire.Core"/>
+        <PackageReference Include="Hangfire.PostgreSql"/>
+        <PackageReference Include="Hangfire.AspNetCore"/>
+        <PackageReference Include="AWSSDK.S3"/>
+        <PackageReference Include="AWSSDK.SimpleEmailV2"/>
+        <PackageReference Include="Npgsql.OpenTelemetry"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Hangfire"/>
+        <PackageReference Include="StackExchange.Redis"/>
+        <PackageReference Include="Twilio"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Application\Application.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="ArchitectureTests"/>
+        <InternalsVisibleTo Include="Api.IntegrationTests"/>
+        <InternalsVisibleTo Include="Application.UnitTests"/>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,81 @@
+# IDE and Editor files
+**/.classpath
+**/.project
+**/.settings
+**/.toolstarget
+**/.vs
+**/.vscode
+**/.idea
+**/.fleet
+**/*.user
+**/*.suo
+**/*.userprefs
+
+# Build outputs
+**/bin
+**/obj
+**/out
+**/dist
+**/publish
+
+# Docker files
+**/.dockerignore
+**/docker-compose*
+**/Dockerfile*
+
+# Git
+**/.git
+**/.gitignore
+**/.gitattributes
+
+# Environment and secrets
+**/.env
+**/.env.*
+**/appsettings.*.json
+!**/appsettings.json
+!**/appsettings.Development.json
+**/secrets.dev.yaml
+**/values.dev.yaml
+**/*.pfx
+**/*.key
+
+# Test results and coverage
+**/TestResults
+**/coverage
+**/*.trx
+**/*.coverage
+
+# Database files
+**/*.dbmdl
+**/*.jfm
+**/.containers
+
+# Azure and Cloud
+**/azds.yaml
+**/charts
+
+# Node modules (if any)
+**/node_modules
+**/npm-debug.log
+**/yarn-error.log
+
+# Documentation (not needed in image)
+**/README.md
+**/LICENSE
+**/CHANGELOG.md
+**/docs
+**/*.md
+!**/CLAUDE.md
+
+# CI/CD
+**/.github
+**/.gitlab
+**/.circleci
+
+# Temporary files
+**/tmp
+**/temp
+**/*.tmp
+**/*.log
+**/*.bak
+**/*.swp

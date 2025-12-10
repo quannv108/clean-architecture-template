@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # NuGet package updates
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "nuget"
+    # Group updates to reduce PR noise
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      development-dependencies:
+        dependency-type: "development"
+
+  # GitHub Actions updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "github-actions"

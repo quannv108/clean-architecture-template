@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Hybrid"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions"/>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions"/>
+        <PackageReference Include="Scrutor"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Domain\Domain.csproj"/>
+        <ProjectReference Include="..\SharedKernel\SharedKernel.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Application.UnitTests"/>
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
+    </ItemGroup>
+
+</Project>

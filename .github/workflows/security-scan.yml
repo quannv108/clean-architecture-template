@@ -1,0 +1,104 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run weekly on Mondays at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  trivy-scan:
+    name: Trivy Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Run Trivy vulnerability scanner (Table format)
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'table'
+        severity: 'CRITICAL,HIGH,MEDIUM'
+        exit-code: '0'
+
+    - name: Run Trivy vulnerability scanner (JSON for artifact)
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'json'
+        output: 'trivy-results.json'
+        severity: 'CRITICAL,HIGH,MEDIUM'
+        exit-code: '0'
+
+    - name: Upload Trivy results as artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: trivy-security-results
+        path: trivy-results.json
+
+    - name: Check for critical vulnerabilities
+      run: |
+        if grep -q '"Severity":"CRITICAL"' trivy-results.json; then
+          echo "⚠️ CRITICAL vulnerabilities found!"
+          echo "## ⚠️ Critical Vulnerabilities Detected" >> $GITHUB_STEP_SUMMARY
+          echo "Review the Trivy scan results in the workflow logs above." >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ No critical vulnerabilities found"
+          echo "## ✅ No Critical Vulnerabilities" >> $GITHUB_STEP_SUMMARY
+        fi
+
+  dotnet-vulnerability-audit:
+    name: .NET Vulnerability Audit
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Setup .NET 9.0
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore CleanArchitecture.slnx
+
+    - name: Audit for vulnerabilities
+      run: |
+        echo "## 🔒 Vulnerability Scan Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        # Run vulnerability check
+        dotnet list package --vulnerable --include-transitive > scan-results.txt 2>&1 || true
+
+        # Check for vulnerabilities
+        if grep -q "Critical\|High\|Moderate\|Low" scan-results.txt; then
+          echo "### ⚠️  Vulnerabilities Detected" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat scan-results.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # Fail if critical vulnerabilities found
+          if grep -q "Critical" scan-results.txt; then
+            echo "❌ Critical vulnerabilities found!"
+            exit 1
+          fi
+        else
+          echo "### ✅ No vulnerabilities detected" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Upload scan results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: vulnerability-scan-results
+        path: scan-results.txt
