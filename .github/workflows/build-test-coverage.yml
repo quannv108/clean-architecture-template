@@ -1,0 +1,106 @@
+name: CI Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Setup .NET 9.0
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '9.0.x'
+    
+    - name: Cache .NET packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/Directory.Packages.props', '**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+    
+    - name: Restore dependencies
+      run: dotnet restore CleanArchitecture.slnx
+
+    - name: Check for vulnerable packages
+      run: dotnet list package --vulnerable --include-transitive 2>&1 | tee vulnerable-packages.log
+      continue-on-error: true
+
+    - name: Fail on critical vulnerabilities
+      run: |
+        if grep -q "Critical" vulnerable-packages.log; then
+          echo "❌ Critical vulnerabilities found!"
+          cat vulnerable-packages.log
+          exit 1
+        elif grep -q "High" vulnerable-packages.log; then
+          echo "⚠️  High severity vulnerabilities found"
+          cat vulnerable-packages.log
+        else
+          echo "✅ No critical vulnerabilities detected"
+        fi
+
+    - name: Build solution
+      run: dotnet build CleanArchitecture.slnx --configuration Release --no-restore
+    
+    - name: Run tests with coverage
+      run: |
+        dotnet test CleanArchitecture.slnx \
+          --configuration Release \
+          --no-build \
+          --verbosity normal \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./coverage
+    
+    - name: Install ReportGenerator
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+    
+    - name: Generate coverage report
+      run: |
+        reportgenerator \
+          -reports:"coverage/**/coverage.cobertura.xml" \
+          -targetdir:"coverage/report" \
+          -reporttypes:"Html;Cobertura;MarkdownSummary" \
+          -verbosity:Info
+    
+    - name: Validate coverage generation
+      run: |
+        if [ ! -f "coverage/report/index.html" ]; then
+          echo "❌ Coverage HTML report not generated"
+          exit 1
+        fi
+        if [ ! -f "coverage/report/Cobertura.xml" ]; then
+          echo "❌ Coverage Cobertura report not generated"
+          exit 1
+        fi
+        echo "✅ Coverage reports generated successfully"
+    
+    - name: Upload coverage reports to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage/report/
+    
+    - name: Add coverage summary to PR
+      if: github.event_name == 'pull_request'
+      run: |
+        if [ -f coverage/report/Summary.md ]; then
+          echo "## Code Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          cat coverage/report/Summary.md >> $GITHUB_STEP_SUMMARY
+        fi
+    
+#    - name: Upload coverage to GitHub Pages (on main branch)
+#      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#      uses: peaceiris/actions-gh-pages@v3
+#      with:
+#        github_token: ${{ secrets.GITHUB_TOKEN }}
+#        publish_dir: ./coverage/report
+#        destination_dir: coverage

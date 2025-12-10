@@ -1,0 +1,7 @@
+# Force all text files to use LF in the repository
+* text=auto eol=lf
+
+# Explicitly force Windows scripts to CRLF (optional but safe)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf

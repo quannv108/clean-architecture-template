@@ -1,0 +1,80 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <!-- Static code analysis -->
+        <PackageVersion Include="Aspire.Hosting.Seq" Version="9.4.2"/>
+        <PackageVersion Include="Scrutor" Version="6.1.0"/>
+        <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0"/>
+        <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.15.0.120848"/>
+        <!-- SharedKernel -->
+        <!-- Application -->
+        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.9"/>
+        <PackageVersion Include="Microsoft.Extensions.Caching.Hybrid" Version="9.9.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9"/>
+        <PackageVersion Include="Serilog" Version="4.3.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9"/>
+        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.9"/>
+        <!-- Infrastructure -->
+        <PackageVersion Include="FirebaseAdmin" Version="3.0.1"/>
+        <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0"/>
+        <PackageVersion Include="EFCore.NamingConventions" Version="9.0.0"/>
+        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9"/>
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9"/>
+        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.9"/>
+        <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+        <PackageVersion Include="Hangfire.Core" Version="1.8.21"/>
+        <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.21"/>
+        <PackageVersion Include="Hangfire.PostgreSql" Version="1.20.12"/>
+        <PackageVersion Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2"/>
+        <PackageVersion Include="AWSSDK.S3" Version="4.0.6"/>
+        <PackageVersion Include="AWSSDK.SimpleEmailV2" Version="4.0.5.2"/>
+        <PackageVersion Include="AspNetCore.HealthChecks.Redis" Version="9.0.0"/>
+        <PackageVersion Include="DistributedLock.Postgres" Version="1.3.0"/>
+        <PackageVersion Include="DistributedLock.Redis" Version="1.1.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.10"/>
+        <PackageVersion Include="StackExchange.Redis" Version="2.9.32"/>
+        <PackageVersion Include="Twilio" Version="7.13.1"/>
+        <PackageVersion Include="Npgsql.OpenTelemetry" Version="9.0.4"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Hangfire" Version="1.12.0-beta.1"/>
+        <!-- Web.Api -->
+        <PackageVersion Include="Asp.Versioning.Http" Version="8.1.0"/>
+        <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0"/>
+        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9"/>
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9"/>
+        <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1"/>
+        <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0"/>
+        <PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0"/>
+        <PackageVersion Include="OpenTelemetry" Version="1.12.0"/>
+        <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.12.0-beta.2"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0"/>
+        <!-- ArchitectureTests -->
+        <PackageVersion Include="Shouldly" Version="4.3.0"/>
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1"/>
+        <PackageVersion Include="NetArchTest.Rules" Version="1.3.2"/>
+        <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.4"/>
+        <PackageVersion Include="xunit" Version="2.9.3"/>
+        <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5"/>
+        <PackageVersion Include="coverlet.collector" Version="6.0.4"/>
+        <!-- Unit Testing -->
+        <PackageVersion Include="NSubstitute" Version="5.3.0"/>
+        <PackageVersion Include="MockQueryable.NSubstitute" Version="8.0.0"/>
+        <!-- Api.AutomationTests -->
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.9"/>
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9"/>
+        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.9"/>
+        <PackageVersion Include="System.Text.Json" Version="9.0.9"/>
+        <PackageVersion Include="Testcontainers.PostgreSql" Version="4.7.0"/>
+        <!-- Aspire -->
+        <PackageVersion Include="Aspire.AppHost.Sdk" Version="9.4.2"/>
+        <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.4.2"/>
+        <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.4.2"/>
+        <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.9.0"/>
+        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.2"/>
+        <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0"/>
+    </ItemGroup>
+</Project>
