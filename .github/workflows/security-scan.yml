@@ -17,7 +17,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Run Trivy vulnerability scanner (Table format)
       uses: aquasecurity/trivy-action@master
@@ -39,7 +39,7 @@ jobs:
         exit-code: '0'
 
     - name: Upload Trivy results as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: always()
       with:
         name: trivy-security-results
@@ -62,12 +62,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
-    - name: Setup .NET 9.0
+    - name: Setup .NET 10.0
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: '9.0.x'
+        dotnet-version: '10.0.x'
 
     - name: Restore dependencies
       run: dotnet restore CleanArchitecture.slnx
@@ -98,7 +98,7 @@ jobs:
 
     - name: Upload scan results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: vulnerability-scan-results
         path: scan-results.txt

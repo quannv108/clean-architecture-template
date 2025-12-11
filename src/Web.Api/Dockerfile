@@ -2,7 +2,7 @@
 # ReadyToRun (R2R) compilation for faster startup while maintaining full EF Core/Scrutor compatibility
 
 ARG BUILD_CONFIGURATION=Release
-ARG DOTNET_VERSION=9.0
+ARG DOTNET_VERSION=10.0
 
 # =============================================================================
 # Base stage - Runtime image with security hardening
@@ -97,7 +97,7 @@ FROM base AS final
 
 LABEL maintainer="QuanNv108" \
       org.opencontainers.image.title="Clean Architecture Web API" \
-      org.opencontainers.image.description=".NET 9 Clean Architecture API with CQRS, DDD, and Vertical Slice Architecture" \
+      org.opencontainers.image.description=".NET Clean Architecture API with CQRS, DDD, and Vertical Slice Architecture" \
       org.opencontainers.image.version="1.0.0" \
       org.opencontainers.image.vendor="QuanNv108"
 

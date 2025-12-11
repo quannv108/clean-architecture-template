@@ -17,7 +17,7 @@ internal sealed class GetAuditLogs : IEndpoint
                 string? actionName,
                 DateTime? fromDateTime,
                 DateTime? toDateTime,
-                int take,
+                int? take,
                 IQueryHandler<GetAuditLogsQuery, GetAuditLogsResponse> queryHandler,
                 CancellationToken cancellationToken) =>
             {
@@ -28,7 +28,7 @@ internal sealed class GetAuditLogs : IEndpoint
                     ActionName = actionName,
                     FromDateTime = fromDateTime,
                     ToDateTime = toDateTime,
-                    Take = take <= 0 ? 50 : Math.Min(take, 100) // Default 50, max 100
+                    Take = take <= 0 ? 50 : Math.Min(take ?? 50, 100) // Default 50, max 100
                 };
 
                 Result<GetAuditLogsResponse> result = await queryHandler.Handle(query, cancellationToken);
@@ -37,10 +37,14 @@ internal sealed class GetAuditLogs : IEndpoint
             })
             .WithName(nameof(GetAuditLogs))
             .WithDescription("Get audit logs")
-            .Produces<GetAuditLogsResponse>(StatusCodes.Status200OK)
+            .Produces<GetAuditLogsResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .RequirePermission(AuditLogPermissionsConstants.AuditLogsRead)
-            .RequireAuthorization()
-            .WithTags(Tags.AuditLogs);
+            .WithTags(Tags.AuditLogs)
+            .AddOpenApiOperationTransformer((opperation, context, ct) =>
+            {
+                opperation.Summary = "Get Audit Logs";
+                opperation.Description = "Get Audit Logs";
+                return Task.CompletedTask;
+            });
     }
 }

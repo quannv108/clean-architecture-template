@@ -11,7 +11,8 @@ namespace Api.IntegrationTests.Locking;
 /// Integration tests for distributed locking using real PostgreSQL (Testcontainers).
 /// Tests verify that locks work correctly across concurrent operations.
 /// </summary>
-[Collection("Sequential Tests")]
+[Collection(nameof(DistributedLockingIntegrationTests))]
+[CollectionDefinition(nameof(DistributedLockingIntegrationTests), DisableParallelization = true)]
 public class DistributedLockingIntegrationTests : IClassFixture<ApiTestFactory>
 {
     private readonly ApiTestFactory _factory;

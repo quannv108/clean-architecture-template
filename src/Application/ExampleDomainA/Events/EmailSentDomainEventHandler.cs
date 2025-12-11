@@ -2,9 +2,10 @@
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
-namespace Application.ExampleDomainA;
+namespace Application.ExampleDomainA.Events;
 
-internal class EmailSentDomainEventHandler(ILogger<EmailSentDomainEventHandler> logger) : IDomainEventHandler<EmailSentDomainEvent>
+internal class EmailSentDomainEventHandler(ILogger<EmailSentDomainEventHandler> logger)
+    : IDomainEventHandler<EmailSentDomainEvent>
 {
     public Task Handle(EmailSentDomainEvent domainEvent, CancellationToken cancellationToken)
     {

@@ -210,7 +210,6 @@ public class ApplicationTests : BaseTest
             // Build forbidden namespaces: all Domain namespaces except the corresponding one and Domain.Users
             var forbiddenNamespaces = allDomainNamespaces
                 .Where(ns => ns != expectedDomainNamespace
-                             && ns != "Domain.Users" && ns != "Domain.Roles" && ns != "Domain.Profiles"
                              && ns != "Domain")
                 .ToArray();
 
@@ -220,6 +219,8 @@ public class ApplicationTests : BaseTest
                 var result = Types.InAssembly(ApplicationAssembly)
                     .That()
                     .ResideInNamespace(applicationFeatureNamespace)
+                    .And()
+                    .DoNotImplementInterface(typeof(IDomainEventHandler<>))
                     .Should()
                     .NotHaveDependencyOn(forbiddenNamespace)
                     .GetResult();
@@ -238,7 +239,6 @@ public class ApplicationTests : BaseTest
                         violations.Add(
                             $"Application type {failingType} in namespace {applicationFeatureNamespace} " +
                             $"should only reference Domain types from {expectedDomainNamespace} namespace " +
-                            $"or Domain.Users or Domain.Roles or Domain.Profiles namespace. " +
                             $"Found reference to {forbiddenNamespace} namespace.");
                     }
                 }

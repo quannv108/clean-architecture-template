@@ -17,7 +17,12 @@ internal sealed class GetVersion : IEndpoint
             .WithDescription("Get the current build version of the application")
             .Produces(StatusCodes.Status200OK)
             .WithTags(Tags.Information)
-            .WithOpenApi();
+            .AddOpenApiOperationTransformer((opperation, context, ct) =>
+            {
+                opperation.Summary = "Get version";
+                opperation.Description = "Get version";
+                return Task.CompletedTask;
+            });
     }
 
     private static string GetBuildDate()

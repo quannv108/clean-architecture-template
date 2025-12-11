@@ -26,7 +26,12 @@ public static class EndpointExtensions
 
         RouteGroupBuilder v1Group = app.MapGroup("api/v1")
             .WithApiVersionSet(versionSet)
-            .WithOpenApi();
+            .AddOpenApiOperationTransformer((opperation, context, ct) =>
+            {
+                opperation.Summary = "Api v1";
+                opperation.Description = "Api version 1";
+                return Task.CompletedTask;
+            });
 
         IEndpointRouteBuilder builder = routeGroupBuilder ?? v1Group;
 

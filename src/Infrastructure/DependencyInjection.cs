@@ -288,10 +288,10 @@ public static class DependencyInjection
 
         return services;
     }
-    
+
     private static IServiceCollection AddAuthenticationInternal(
         this IServiceCollection services
-        )
+    )
     {
         services.AddHttpContextAccessor();
         services.AddScoped<IUserContext, UserContext>();

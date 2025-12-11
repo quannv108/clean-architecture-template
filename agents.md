@@ -2,15 +2,20 @@
 
 ## Overview
 
-This document provides configuration and instructions for AI agents (Gemini, Qwen, Claude, and Kilocode) to work effectively with the Clean Architecture Template. The template implements Domain-Driven Design (DDD) patterns with CQRS and Vertical Slice Architecture in .NET 9.
+This document provides configuration and instructions for AI agents (Gemini, Qwen, Claude, and Kilocode) to work
+effectively with the Clean Architecture Template. The template implements Domain-Driven Design (DDD) patterns with CQRS
+and Vertical Slice Architecture in .NET 10.
 
 ## Project Overview
 
-.NET 9 Clean Architecture template implementing Domain-Driven Design (DDD) with CQRS and Vertical Slice Architecture. Built with EF Core, PostgreSQL, JWT authentication, permission-based authorization, and comprehensive architecture testing.
+.NET 10 Clean Architecture template implementing Domain-Driven Design (DDD) with CQRS and Vertical Slice Architecture.
+Built with EF Core, PostgreSQL, JWT authentication, permission-based authorization, and comprehensive architecture
+testing.
 
 ## Essential Commands
 
 ### Build and Test
+
 ```bash
 # Build solution
 dotnet build CleanArchitecture.slnx
@@ -22,12 +27,14 @@ dotnet test CleanArchitecture.slnx
 ## Core Project Information
 
 ### Repository Purpose
+
 - **Clean Architecture Template** implementing DDD principles with CQRS and Vertical Slice Architecture
-- **Technology Stack**: .NET 9.0.9, EF Core 9.0.9, PostgreSQL, JWT Authentication, Serilog, OpenTelemetry
+- **Technology Stack**: .NET, EF Core, PostgreSQL, JWT Authentication, Serilog, OpenTelemetry
 - **Architecture**: SharedKernel, Domain, Application, Infrastructure, Web.Api layers
 - **Testing**: Unit tests (70%+ coverage), Integration tests, Architecture compliance tests
 
 ### Key Architectural Patterns
+
 1. **Clean Architecture**: Strict layer separation with dependency inversion
 2. **Domain-Driven Design**: Rich domain models, domain events, value objects
 3. **CQRS**: Commands (ICommand/ICommand<T>), Queries (IQuery<T>), Handlers (ICommandHandler/IQueryHandler)
@@ -35,6 +42,7 @@ dotnet test CleanArchitecture.slnx
 5. **Result Pattern**: Error handling via `Result<T>` and `Result.Failure()`
 
 ### Feature Set
+
 - User management with JWT authentication and role-based permissions
 - Multi-tenancy support with tenant isolation
 - Communication systems (email, SMS, push notifications)
@@ -49,30 +57,33 @@ dotnet test CleanArchitecture.slnx
 ### General Guidelines for All Agents
 
 1. **Understand the Architecture**: Always consider the layered architecture and dependency rules
-   - Domain layer: No dependencies on other layers
-   - Application layer: Only Domain and SharedKernel dependencies allowed
-   - Infrastructure layer: Can depend on Application, Domain, SharedKernel
-   - Web.Api layer: Can depend on all layers
+    - Domain layer: No dependencies on other layers
+    - Application layer: Only Domain and SharedKernel dependencies allowed
+    - Infrastructure layer: Can depend on Application, Domain, SharedKernel
+    - Web.Api layer: Can depend on all layers
 
 2. **Respect CQRS Patterns**:
-   - Commands implement `ICommand`/`ICommand<T>`
-   - Queries implement `IQuery<T>`
-   - Handlers implement `ICommandHandler<T>`/`IQueryHandler<T,R>`
-   - Return `Task<Result>` or `Task<Result<T>>`
+    - Commands implement `ICommand`/`ICommand<T>`
+    - Queries implement `IQuery<T>`
+    - Handlers implement `ICommandHandler<T>`/`IQueryHandler<T,R>`
+    - Return `Task<Result>` or `Task<Result<T>>`
 
 3. **Follow Naming Conventions**:
-   - Feature-specific folder structure: `<feature>/<subfeature>/<verb>/file.cs`
-   - Example: `Users/Authentication/Commands/LoginUserCommand.cs`
-   - Never name folders as generic "Commands" or "Queries", use functional names
+    - Feature-specific folder structure: `<feature>/<subfeature>/<verb>/file.cs`
+    - Example: `Users/Authentication/Commands/LoginUserCommand.cs`
+    - Never name folders as generic "Commands" or "Queries", use functional names
 
 4. **Respect Testing Standards**:
-   - Unit tests: 70%+ coverage for Application layer
-   - Integration tests: Use API endpoints only to set up data, never direct DB access
-   - Use Shouldly/NSubstitute (not FluentAssertions/Moq)
+    - Unit tests: 70%+ coverage for Application layer
+    - Integration tests: Use API endpoints only to set up data, never direct DB access
+    - Use Shouldly/NSubstitute (not FluentAssertions/Moq)
 
 5. **Record Syntax Guidelines**:
-   - **Web.Api Layer**: Use Positional Syntax for records (e.g., `public record MyRecord(string Property1, int Property2);`)
-   - **Application Layer (Queries and Commands)**: Use Standard Syntax with Validation Attributes to able to do command/query validation (e.g., `public record MyQuery { [Required] public string Property1 { get; init; } [Range(1, 100)] public int Property2 { get; init; } }`)
+    - **Web.Api Layer**: Use Positional Syntax for records (e.g.,
+      `public record MyRecord(string Property1, int Property2);`)
+    - **Application Layer (Queries and Commands)**: Use Standard Syntax with Validation Attributes to able to do
+      command/query validation (e.g.,
+      `public record MyQuery { [Required] public string Property1 { get; init; } [Range(1, 100)] public int Property2 { get; init; } }`)
 
 ### Architecture Constraints
 
@@ -85,7 +96,8 @@ dotnet test CleanArchitecture.slnx
 ### Key Technologies to Consider
 
 When providing suggestions or generating code:
-- Use .NET 9 latest features and patterns
+
+- Use .NET latest features and patterns
 - Implement proper async/await patterns (methods with 'Async' suffix except Handle/MapEndpoint)
 - Use file-scoped namespaces
 - Leverage Aspire for cloud-native development
@@ -143,6 +155,7 @@ When providing suggestions or generating code:
 AI agents should reference these files for detailed project information:
 
 ### Core Documentation
+
 - **[agents.md](agents.md)**: Centralized instructions for all AI agents (primary reference)
 - [docs/Architecture.md](docs/Architecture.md) - Detailed architecture overview
 - [docs/FeatureTemplates.md](docs/FeatureTemplates.md) - Feature implementation templates

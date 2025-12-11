@@ -20,6 +20,7 @@ internal sealed class ReadOnlyApplicationDbContext(DbContextOptions<ReadOnlyAppl
         optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         base.OnConfiguring(optionsBuilder);
     }
+
     public DbSet<AuditLog> AuditLogs { get; }
     public DbSet<OutboxMessage> OutboxMessages { get; }
 }

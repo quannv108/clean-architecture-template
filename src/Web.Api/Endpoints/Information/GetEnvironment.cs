@@ -17,7 +17,12 @@ internal sealed class GetEnvironment : IEndpoint
             .WithDescription("Get the current environment information")
             .Produces(StatusCodes.Status200OK)
             .WithTags(Tags.Information)
-            .WithOpenApi();
+            .AddOpenApiOperationTransformer((opperation, context, ct) =>
+            {
+                opperation.Summary = "Get the current environment information";
+                opperation.Description = "Get the current environment information";
+                return Task.CompletedTask;
+            });
     }
 
     private static object GetRuntimeInfo()

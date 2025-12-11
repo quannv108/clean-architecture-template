@@ -6,27 +6,32 @@ namespace Infrastructure.Authentication;
 
 internal sealed class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContext
 {
-    private Guid? _overriddenUserId;
-    private Guid? _overriddenTenantId;
-
     /// <summary>
     /// Get the user ID from the current HTTP context.
     /// Will return null if the user is not authenticated.
     /// Will return the overridden user ID if set.
     /// </summary>
-    public Guid? UserId => _overriddenUserId ??
-                           httpContextAccessor
-                               .HttpContext?
-                               .User
-                               .GetUserId();
+    public Guid? UserId
+    {
+        get => field ??
+               httpContextAccessor
+                   .HttpContext?
+                   .User
+                   .GetUserId();
+        private set;
+    }
 
     /// <summary>
     /// Get the tenant ID from the current HTTP context.
     /// Will return null if the user is not authenticated or if the tenant ID is not set.
     /// Will return the overridden tenant ID if set.
     /// </summary>
-    public Guid? TenantId => _overriddenTenantId ??
-                             SystemConstants.UnknowTenantId; // TODO: update base on your approach
+    public Guid? TenantId
+    {
+        get => field ??
+               SystemConstants.UnknowTenantId;
+        private set;
+    } // TODO: update base on your approach
 
     public IDisposable OverrideUserId(Guid userId, Guid? tenantId = null)
     {
@@ -40,14 +45,14 @@ internal sealed class UserContext(IHttpContextAccessor httpContextAccessor) : IU
         public UserContextScope(UserContext userContext, Guid userId, Guid? tenantId)
         {
             _userContext = userContext;
-            _userContext._overriddenUserId = userId;
-            _userContext._overriddenTenantId = tenantId;
+            _userContext.UserId = userId;
+            _userContext.TenantId = tenantId;
         }
 
         public void Dispose()
         {
-            _userContext._overriddenUserId = null;
-            _userContext._overriddenTenantId = null;
+            _userContext.UserId = null;
+            _userContext.TenantId = null;
         }
     }
 }

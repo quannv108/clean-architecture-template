@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Web.Api.Extensions.OpenApi;
 
@@ -25,7 +25,7 @@ internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransfor
         // Set API version info
         document.Info.Version = "1.0";
         document.Info.Title = "Clean Architecture API";
-        document.Info.Description = ".NET 9 Clean Architecture API with CQRS, DDD, and Vertical Slice Architecture";
+        document.Info.Description = ".NET Clean Architecture API with CQRS, DDD, and Vertical Slice Architecture";
 
         var securityScheme = new OpenApiSecurityScheme
         {
@@ -36,24 +36,13 @@ internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransfor
         };
 
         document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
         document.Components.SecuritySchemes[JwtBearerDefaults.AuthenticationScheme] = securityScheme;
 
-        var securityRequirement = new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = JwtBearerDefaults.AuthenticationScheme
-                    }
-                },
-                Array.Empty<string>()
-            }
-        };
+        var securityRequirement = new OpenApiSecurityRequirement();
 
-        document.SecurityRequirements.Add(securityRequirement);
+        document.Security ??= [];
+        document.Security.Add(securityRequirement);
 
         return Task.CompletedTask;
     }

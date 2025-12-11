@@ -10,7 +10,6 @@ internal sealed class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options)
     : BaseApplicationDbContext(options), IApplicationDbContext
 {
-  
     public DbSet<AuditLog> AuditLogs { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 

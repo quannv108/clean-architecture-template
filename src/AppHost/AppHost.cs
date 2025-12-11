@@ -1,3 +1,5 @@
+using AppHost;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgresUsername = builder.AddParameter("postgres-username", "postgres");
@@ -18,7 +20,7 @@ var seq = builder.AddSeq("seq")
     .ExcludeFromManifest()
     .WithLifetime(ContainerLifetime.Persistent);
 
-builder.AddProject<Projects.WebApi>("web-api")
+builder.AddProject<WebApi>("web-api")
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
     // .WithEnvironment("ConnectionStrings__clean-architecture", "Host=postgres;Database=clean-architecture;Username=postgres;Password=postgres;")
     .WithReference(db)
@@ -31,7 +33,7 @@ builder.Build().Run();
 
 
 #pragma warning disable IDE0130
-namespace Projects
+namespace AppHost
 #pragma warning restore IDE0130
 {
     public class WebApi : IProjectMetadata
