@@ -30,8 +30,7 @@ namespace Api.IntegrationTests.Infrastructure;
 /// </summary>
 public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
-        .WithImage("postgres:18-alpine")
+    private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder("postgres:18-alpine")
         .WithDatabase("cleanarchitecture_test")
         .WithUsername("postgres")
         .WithPassword("postgres")
