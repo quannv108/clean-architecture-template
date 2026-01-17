@@ -47,7 +47,12 @@ What's included in the template?
 dotnet ef migrations add InitialCreate --project src/Infrastructure --startup-project src/Web.Api -o Database/Migrations  --context ApplicationDbContext
 ```
 
-* To apply migrations, run project Web.Api
+* To apply migrations (in dev environment), run project Web.Api
+* To remove the last migration (if not applied to database), run the following command from root of the solution:
+
+```bash
+dotnet ef migrations remove --project src/Infrastructure/Infrastructure.csproj --startup-project src/Web.Api/Web.Api.csproj --context ApplicationDbContext
+```
 
 # Continuous Integration
 
