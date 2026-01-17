@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using NetArchTest.Rules;
+using SharedKernel;
 using Shouldly;
 
 namespace ArchitectureTests.Infrastructure;
@@ -175,5 +177,40 @@ public class InfrastructureTests : BaseTest
         static bool IsValidClassName(Type t) => !t.Name.EndsWith("Command", StringComparison.InvariantCulture) &&
                                                 !t.Name.EndsWith("Query", StringComparison.InvariantCulture) &&
                                                 !t.Name.EndsWith("Handler", StringComparison.InvariantCulture);
+    }
+
+    [Fact]
+    public void Every_Domain_Entity_Should_Have_Configuration()
+    {
+        // Get all domain entities (classes inheriting from Entity)
+        var domainEntities = Types.InAssembly(DomainAssembly)
+            .That()
+            .Inherit(typeof(Entity))
+            .GetTypes()
+            .ToList();
+
+        // Get all configuration types implementing IEntityTypeConfiguration<T>
+        var configurationTypes = Types.InAssembly(InfrastructureAssembly)
+            .That()
+            .ImplementInterface(typeof(IEntityTypeConfiguration<>))
+            .GetTypes()
+            .ToList();
+
+        // Extract the entity types that have configurations
+        var configuredEntityTypes = configurationTypes
+            .SelectMany(configType => configType.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>))
+                .Select(i => i.GetGenericArguments()[0]))
+            .ToHashSet();
+
+        // Find entities without configurations
+        var entitiesWithoutConfiguration = domainEntities
+            .Where(entity => !configuredEntityTypes.Contains(entity))
+            .Select(entity => entity.FullName)
+            .ToList();
+
+        entitiesWithoutConfiguration.ShouldBeEmpty(
+            $"Every domain entity must have a corresponding IEntityTypeConfiguration<T> in Infrastructure. " +
+            $"Missing configurations for: {string.Join(", ", entitiesWithoutConfiguration)}");
     }
 }

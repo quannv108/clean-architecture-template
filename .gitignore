@@ -413,6 +413,7 @@ aspire/
 
 # ASP.NET specific
 appsettings.*.json
+packages.lock.json
 
 # IIS Express
 *.vspscc
