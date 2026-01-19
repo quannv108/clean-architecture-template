@@ -1,5 +1,3 @@
-using AppHost;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgresUsername = builder.AddParameter("postgres-username", "postgres");
@@ -20,9 +18,8 @@ var seq = builder.AddSeq("seq")
     .ExcludeFromManifest()
     .WithLifetime(ContainerLifetime.Persistent);
 
-builder.AddProject<WebApi>("web-api")
+builder.AddProject<Projects.Web_Api>("web-api")
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
-    // .WithEnvironment("ConnectionStrings__clean-architecture", "Host=postgres;Database=clean-architecture;Username=postgres;Password=postgres;")
     .WithReference(db)
     .WaitFor(db)
     .WaitFor(seq);
@@ -30,14 +27,3 @@ builder.AddProject<WebApi>("web-api")
 #pragma warning disable S6966
 builder.Build().Run();
 #pragma warning restore S6966
-
-
-#pragma warning disable IDE0130
-namespace AppHost
-#pragma warning restore IDE0130
-{
-    public class WebApi : IProjectMetadata
-    {
-        public string ProjectPath => Path.GetFullPath("..\\Web.Api\\Web.Api.csproj");
-    }
-}
