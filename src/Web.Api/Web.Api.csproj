@@ -32,6 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
         <_ContentIncludedByDefault Remove="Pages\Consents\Unsubscribe.cshtml"/>
         <_ContentIncludedByDefault Remove="Pages\Consents\UnsubscribeSuccess.cshtml"/>
     </ItemGroup>
