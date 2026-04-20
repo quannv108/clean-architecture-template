@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Authentication;
+﻿#pragma warning disable CA1873
+using Application.Abstractions.Authentication;
 using Application.Abstractions.BackgroundJobs;
 using Application.Abstractions.Communication.Email;
 using Application.Abstractions.Communication.Sms;

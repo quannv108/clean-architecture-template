@@ -9,64 +9,86 @@ namespace Infrastructure.Outbox;
 internal sealed class OutboxMessageHostedService(
     IServiceScopeFactory scopeFactory,
     IOptions<OutboxOptions> options,
+    IHostApplicationLifetime applicationLifetime,
     ILogger<OutboxMessageHostedService> logger)
     : IHostedService, IDisposable
 {
     private readonly OutboxOptions _options = options.Value;
-    private Timer? _timer;
-    private bool _isProcessing;
+    private CancellationTokenSource? _cts;
+    private Task? _executingTask;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Starting Outbox Message Processor");
 
-        _timer = new Timer(
-            ProcessAsync,
-            null,
-            TimeSpan.Zero,
-            TimeSpan.FromMilliseconds(_options.PollingIntervalMs));
+        _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+        // Stop immediately when the application is stopping to avoid querying disposed DbContext
+        applicationLifetime.ApplicationStopping.Register(() =>
+        {
+            logger.LogInformation("Stopping Outbox Message Processor");
+            _cts?.Cancel();
+        });
+
+        _executingTask = ExecuteAsync(_cts.Token);
 
         return Task.CompletedTask;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Stopping Outbox Message Processor");
+        if (_cts is not null && !_cts.IsCancellationRequested)
+        {
+            await _cts.CancelAsync();
+        }
 
-        _timer?.Change(Timeout.Infinite, 0);
+        if (_executingTask is not null)
+        {
+            try
+            {
+                await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected when cancellation is requested
+            }
+        }
 
-        return Task.CompletedTask;
+        logger.LogInformation("Outbox Message Processor stopped");
     }
 
     public void Dispose()
     {
-        _timer?.Dispose();
+        _cts?.Dispose();
     }
 
-    private void ProcessAsync(object? state)
+    private async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (_isProcessing)
-        {
-            logger.LogDebug("Outbox message processing is already in progress, skipping this execution");
-            return;
-        }
-
-        _isProcessing = true;
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(_options.PollingIntervalMs));
 
         try
         {
-            using var scope = scopeFactory.CreateScope();
-            var processor = scope.ServiceProvider.GetRequiredService<IOutboxMessageProcessor>();
-            processor.ProcessAsync(_options.BatchSize, CancellationToken.None)
-                .ConfigureAwait(false).GetAwaiter().GetResult();
+            while (await timer.WaitForNextTickAsync(stoppingToken))
+            {
+                try
+                {
+                    using var scope = scopeFactory.CreateScope();
+                    var processor = scope.ServiceProvider.GetRequiredService<IOutboxMessageProcessor>();
+                    await processor.ProcessAsync(_options.BatchSize, stoppingToken);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error processing outbox messages");
+                }
+            }
         }
-        catch (Exception ex)
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         {
-            logger.LogError(ex, "Error processing outbox messages");
-        }
-        finally
-        {
-            _isProcessing = false;
+            // Expected during shutdown
         }
     }
 }

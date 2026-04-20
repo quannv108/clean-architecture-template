@@ -1,5 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿#pragma warning disable CA1873
+using System.Collections.Concurrent;
+using Application.Abstractions.Authentication;
 using Application.Abstractions.DomainEvents;
+using Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
@@ -22,14 +25,24 @@ internal sealed class DomainEventsDispatcher(
         {
             using IServiceScope scope = serviceScopeFactory.CreateScope();
 
+            // All domain event handlers run as system — set audit context for AuditableEntityInterceptor
+            var userContext = scope.ServiceProvider.GetRequiredService<IUserContext>();
+            using var _ = userContext.OverrideUserId(SystemConstants.SystemUserId);
+
             Type domainEventType = domainEvent.GetType();
             Type handlerType = HandlerTypeDictionary.GetOrAdd(
                 domainEventType,
                 et => typeof(IDomainEventHandler<>).MakeGenericType(et));
 
-            IEnumerable<object?> handlers = scope.ServiceProvider.GetServices(handlerType);
+            var handlerList = scope.ServiceProvider.GetServices(handlerType).ToList();
 
-            foreach (object? handler in handlers)
+            if (handlerList.Count == 0)
+            {
+                logger.LogInformation("No handler registered for domain event {DomainEventType}", domainEventType.Name);
+                continue;
+            }
+
+            foreach (object? handler in handlerList)
             {
                 if (handler is null)
                 {

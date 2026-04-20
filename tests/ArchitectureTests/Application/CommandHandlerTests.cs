@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Messaging;
+﻿using Application.Abstractions.Authentication;
+using Application.Abstractions.Messaging;
 using NetArchTest.Rules;
 using Shouldly;
 
@@ -6,6 +7,24 @@ namespace ArchitectureTests.Application;
 
 public class CommandHandlerTests : BaseTest
 {
+    [Fact]
+    public void CommandHandlers_ShouldNot_Depend_On_IUserContext()
+    {
+        TestResult result = Types.InAssembly(ApplicationAssembly)
+            .That()
+            .HaveNameEndingWith("CommandHandler")
+            .ShouldNot()
+            .HaveDependencyOn(typeof(IUserContext).FullName!)
+            .GetResult();
+
+        if (!result.IsSuccessful)
+        {
+            var failing = result.FailingTypeNames ?? new List<string>();
+            result.IsSuccessful.ShouldBeTrue(
+                $"CommandHandlers must not inject IUserContext. Pass context via the Command record instead. Failing: {string.Join(", ", failing)}");
+        }
+    }
+
     [Fact]
     public void CommandHandlers_Should_Implement_ICommandHandler_Interface()
     {

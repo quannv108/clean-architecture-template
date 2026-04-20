@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Messaging;
+#pragma warning disable CA1873
+using Application.Abstractions.Messaging;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
