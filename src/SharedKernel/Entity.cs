@@ -1,11 +1,15 @@
-﻿namespace SharedKernel;
+﻿using System.Text.Json.Serialization;
+
+namespace SharedKernel;
 
 public abstract class Entity
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    public Guid Id { get; protected internal set; }
-    public bool IsDeleted { get; protected internal set; }
+    [JsonInclude] public Guid Id { get; protected internal set; }
+
+    [JsonInclude] public bool IsDeleted { get; protected internal set; }
+
     public uint Version { get; protected set; }
 
     public List<IDomainEvent> DomainEvents => [.. _domainEvents];

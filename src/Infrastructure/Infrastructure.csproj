@@ -7,6 +7,7 @@
         <PackageReference Include="DistributedLock.Redis"/>
         <PackageReference Include="EFCore.NamingConventions"/>
         <PackageReference Include="FirebaseAdmin"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <PrivateAssets>all</PrivateAssets>

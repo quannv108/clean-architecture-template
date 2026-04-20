@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Communication.Sms;
+﻿#pragma warning disable CA1873
+using Application.Abstractions.Communication.Sms;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SharedKernel.Common;

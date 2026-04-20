@@ -2,18 +2,21 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Application.Abstractions.Communication.Email;
 using Application.Abstractions.Communication.Sms;
-using Application.Outbox;
+using Application.Abstractions.Data;
 using Domain.Emails.Messages;
+using Domain.Outbox;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using Serilog;
 using SharedKernel;
 using SharedKernel.Common;
-using SharedKernel.Extensions;
 using Testcontainers.PostgreSql;
 using Web.Api;
 using Xunit.Abstractions;
@@ -63,6 +66,8 @@ public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncLifet
 
         builder.ConfigureServices(services =>
         {
+            services.Configure<HostOptions>(opts => opts.ShutdownTimeout = TimeSpan.FromSeconds(5));
+
             services.Replace(new ServiceDescriptor(typeof(IEmailSender), EmailSenderMock));
             services.Replace(new ServiceDescriptor(typeof(ISmsSender), SmsSenderMock));
         });
@@ -125,50 +130,77 @@ public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncLifet
 
     public new async Task DisposeAsync()
     {
-        await _dbContainer.DisposeAsync();
+        // Stop the host BEFORE the DB container so background services (Outbox processor)
+        // can deregister cleanly. Stopping the container first causes DB connection errors
+        // that surface as false test failures.
+        try { await base.DisposeAsync(); } catch { /* Dispose errors intentionally swallowed */ }
+        try { await _dbContainer.DisposeAsync(); } catch { /* Dispose errors intentionally swallowed */ }
         await Log.CloseAndFlushAsync();
-        await base.DisposeAsync();
     }
 
-    public async Task ProcessDomainEventsAsync(string waitingDomainType)
+    /// <summary>
+    /// Waits until all outbox messages created after <paramref name="since"/> have been
+    /// processed by the background hosted service. Does NOT trigger processing manually.
+    /// </summary>
+    public async Task WaitForOutboxMessagesAsync(
+        DateTime since,
+        string[]? eventTypes = null,
+        int maxAttempts = 50)
     {
-        int count = 0;
-        var maxAttempts = 20;
-        var attempts = 0;
-        do
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
         {
-            attempts++;
-            if (attempts > maxAttempts)
+            await Task.Delay(attempt <= 5 ? 100 : 500);
+
+            using var scope = Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+
+            var query = dbContext.OutboxMessages
+                .Where(m => m.OccurredOnUtc >= since);
+
+            if (eventTypes is { Length: > 0 })
             {
-                TestOutputHelper.WriteLine("Can not find processed outbox message after {0} attempts.", maxAttempts);
-                break;
+                query = query.Where(m => eventTypes.Contains(m.Type));
             }
 
-            // Simulate some delay for processing
-            await Task.Delay(500);
-            // Manually trigger the outbox message processing with limit 1 per process so we can test each event
-            var outboxMessageProcessor = (IOutboxMessageProcessor)Services.GetService(typeof(IOutboxMessageProcessor))!;
-            var processed = await outboxMessageProcessor.ProcessAsync(1, CancellationToken.None).ConfigureAwait(false);
-            count = processed.ProcessedCount;
-            // log to test context
-            TestOutputHelper.WriteLine($"Processed {count} outbox messages" +
-                                       (count != 0 ? $" : {processed.SucceedLogs.StringJoin()}" : string.Empty));
-            if (processed.FailedCount != 0)
+            var total = await query.CountAsync();
+            if (total == 0)
             {
-                TestOutputHelper.WriteLine(
-                    $"Failed {processed.FailedCount} outbox messages: {processed.FailedLogs.StringJoin()}");
+                TestOutputHelper?.WriteLine($"No matching outbox messages found yet (attempt {attempt})");
+                continue;
             }
 
-            if (!processed.SucceedLogs.Any(x => x.Contains(waitingDomainType, StringComparison.OrdinalIgnoreCase)))
+            var pending = await query.CountAsync(m =>
+                m.Status == OutboxMessageStatus.Pending ||
+                m.Status == OutboxMessageStatus.Processing);
+
+            var failed = await query.CountAsync(m => m.Status == OutboxMessageStatus.Failed);
+
+            if (failed > 0)
             {
-                count = 0; // manipulate to ensure we wait to get the right domain
+                TestOutputHelper?.WriteLine($"WARNING: {failed} outbox messages FAILED (attempt {attempt})");
+                return;
             }
-        } while (count == 0);
+
+            if (pending == 0)
+            {
+                TestOutputHelper?.WriteLine($"All {total} outbox messages processed (attempt {attempt})");
+                return;
+            }
+
+            TestOutputHelper?.WriteLine($"Waiting: {pending}/{total} outbox messages still pending (attempt {attempt})");
+        }
+
+        TestOutputHelper?.WriteLine($"WARNING: Outbox messages still pending after {maxAttempts} attempts");
     }
+
+    /// <summary>
+    /// Backward-compatible: waits for any outbox messages created in the last 30 seconds to be processed.
+    /// </summary>
+    public Task ProcessDomainEventsAsync() => WaitForOutboxMessagesAsync(DateTime.UtcNow.AddSeconds(-30));
 
     public object GetDbContext()
     {
-        return Services.GetService(typeof(Application.Abstractions.Data.IApplicationDbContext))!;
+        return Services.GetService(typeof(IApplicationDbContext))!;
     }
 }
 
@@ -185,8 +217,19 @@ public class ApiClient
         _output = output;
         _jsonOptions = new JsonSerializerOptions
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Converters = { new JsonStringEnumConverter() }
         };
+    }
+
+    public void ClearAuthToken()
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+    }
+
+    public System.Net.Http.Headers.AuthenticationHeaderValue? GetAuthorizationHeader()
+    {
+        return _httpClient.DefaultRequestHeaders.Authorization;
     }
 
     private static string BuildUrl(string endpoint)

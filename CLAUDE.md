@@ -2,6 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Branching
+
+- **`main` is the default branch.** Always create PRs that target `main`.
+- Feature branches branch off `main` and merge back to `main`.
+- Always run architecture tests before completing any work: `dotnet test tests/ArchitectureTests/`
+
 ## Build and Test Commands
 
 ```bash
@@ -11,11 +17,13 @@ dotnet build CleanArchitecture.slnx
 # Run all tests
 dotnet test CleanArchitecture.slnx
 
+# Run specific test projects
+dotnet test tests/ArchitectureTests/       # Architecture tests (always run before completing work)
+dotnet test tests/Application.UnitTests/  # Unit tests
+dotnet test tests/Api.IntegrationTests/   # Integration tests
+
 # Run with Aspire (full stack with containers)
 dotnet run --project src/AppHost
-
-# Create database migration
-dotnet ef migrations add <MigrationName> --project src/Infrastructure --startup-project src/Web.Api -o Database/Migrations --context ApplicationDbContext
 
 # Local CI pipeline
 ./scripts/ci-local.sh        # Linux/macOS
@@ -25,6 +33,21 @@ scripts\ci-local.bat         # Windows
 dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage
 reportgenerator -reports:"coverage/**/coverage.cobertura.xml" -targetdir:"coverage/report" -reporttypes:"Html"
 ```
+
+## Code Formatting
+
+```bash
+# Check for style violations (read-only)
+dotnet format CleanArchitecture.slnx style --verify-no-changes --severity error
+
+# Auto-fix style violations
+dotnet format CleanArchitecture.slnx style
+
+# Filter to only files you changed (example)
+dotnet format CleanArchitecture.slnx style --verify-no-changes --severity error 2>&1 | grep "src/Application/MyFeature"
+```
+
+> **Note:** Only fix formatting violations in files you created or modified — the solution may have pre-existing violations in unrelated files.
 
 ## Architecture Overview
 
@@ -113,6 +136,44 @@ Web.Api/Endpoints/<Feature>/<Operation>.cs
 - **Architecture tests**: Enforce layer dependencies via NetArchTest.Rules
 - **Assertions**: Use Shouldly (not FluentAssertions)
 
+## EF Core Migrations
+
+Migrations live in `src/Infrastructure/Database/Migrations`.
+
+### Add a migration
+```bash
+dotnet ef migrations add <MigrationName> \
+  --project src/Infrastructure \
+  --startup-project src/Web.Api \
+  --output-dir Database/Migrations \
+  --context ApplicationDbContext \
+  -- --environment Migration
+```
+
+**Common pitfalls:**
+- **`--output-dir Database/Migrations` is REQUIRED.** Without it, EF generates into `src/Infrastructure/Migrations/` — wrong path, wrong namespace. EF will not discover them at runtime.
+- **`-- --environment Migration` is REQUIRED.** Without it, the startup project boots with the default environment and may fail due to missing config/services.
+- **Change `public partial` → `internal partial`** on both the migration class and the `.Designer.cs` class. Architecture tests enforce all Infrastructure types are `internal`.
+
+### Remove a migration
+```bash
+dotnet ef migrations remove \
+  --project src/Infrastructure \
+  --startup-project src/Web.Api \
+  --context ApplicationDbContext \
+  -- --environment Migration
+```
+
+**NEVER manually delete migration files.** `migrations remove` also reverts `ApplicationDbContextModelSnapshot.cs`. Manual deletion leaves the snapshot out of sync, causing subsequent migrations to generate incorrect diffs.
+
+### Verify after adding/removing
+1. Build: `dotnet build CleanArchitecture.slnx`
+2. Run architecture tests: `dotnet test tests/ArchitectureTests/`
+
+## Error Codes
+
+Domain error codes use the `"{Entity}.{ErrorName}"` pattern (e.g. `"User.NotFound"`, `"Order.InvalidStatusTransition"`). These go in the `Error.Code` field, defined as `public static` factory methods in `<Feature>Errors.cs`.
+
 ## Key Documentation
 
 - `agents.md` - Comprehensive AI agent instructions
@@ -120,6 +181,25 @@ Web.Api/Endpoints/<Feature>/<Operation>.cs
 - `docs/VerticalSliceStructure.md` - Feature organization patterns
 - `docs/DomainEvent.md` - Domain event implementation
 - `docs/Caching.md` - HybridCache patterns
+
+## Known Temporary Suppressions
+
+### CA1873 — `#pragma warning disable CA1873` (temporary)
+
+`Microsoft.Extensions.Logging.Abstractions 10.0.3` introduced a stricter CA1873 analyzer that fires on logger calls passing `DateTime`, property accesses, and other value types — even when captured in local variables. This is a known regression in the .NET 10 analyzer.
+
+**Suppressed in these files** (both Application and Infrastructure layers):
+- `Application/Abstractions/Behaviors/LoggingDecorator.cs`
+- `Application/AuditLogs/DeleteOldAuditLogsCommand.cs`
+- `Application/Outbox/CleanupProcessedOutboxMessagesCommand.cs`
+- `Application/Outbox/IOutboxMessageProcessor.cs`
+- `Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs`
+- `Infrastructure/DependencyInjection.cs`
+- `Infrastructure/DomainEvents/DomainEventsDispatcher.cs`
+- `Infrastructure/Communication/Sms/DummySmsSender.cs`
+- `Infrastructure/Communication/Sms/TwilioSmsSender.cs`
+
+**Action**: Remove the `#pragma warning disable CA1873` lines once Microsoft fixes the analyzer in a future `Microsoft.Extensions.Logging.Abstractions` patch. Do NOT convert these to `[LoggerMessage]` source generators just to satisfy the analyzer — that would over-engineer simple log calls.
 
 ## Common Pitfalls to Avoid
 

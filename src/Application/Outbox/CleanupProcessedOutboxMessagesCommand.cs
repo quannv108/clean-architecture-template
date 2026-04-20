@@ -1,3 +1,4 @@
+#pragma warning disable CA1873
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Domain.Outbox;
