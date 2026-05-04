@@ -32,7 +32,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <_ContentIncludedByDefault Remove="Pages\Consents\Unsubscribe.cshtml"/>
         <_ContentIncludedByDefault Remove="Pages\Consents\UnsubscribeSuccess.cshtml"/>
     </ItemGroup>

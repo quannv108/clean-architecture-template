@@ -22,6 +22,7 @@
         <PackageReference Include="AWSSDK.S3"/>
         <PackageReference Include="AWSSDK.SimpleEmailV2"/>
         <PackageReference Include="Npgsql.OpenTelemetry"/>
+        <PackageReference Include="OpenTelemetry.Api" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Hangfire"/>
         <PackageReference Include="StackExchange.Redis"/>
         <PackageReference Include="Twilio"/>
