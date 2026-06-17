@@ -22,6 +22,9 @@ dotnet test tests/ArchitectureTests/       # Architecture tests (always run befo
 dotnet test tests/Application.UnitTests/  # Unit tests
 dotnet test tests/Api.IntegrationTests/   # Integration tests
 
+# Run a single test by name
+dotnet test tests/Application.UnitTests/ --filter "FullyQualifiedName~MyTestClass.MyTestMethod"
+
 # Run with Aspire (full stack with containers)
 dotnet run --project src/AppHost
 
@@ -69,22 +72,67 @@ Web.Api (all layers)
 
 ### Project Structure
 
-- **SharedKernel** - Common DDD abstractions and base classes
+- **SharedKernel** - Common DDD abstractions: `Entity`, `AuditedEntity`, `ValueObject`, `Result<T>`, `Error`, `IDomainEvent`, `EncryptedString`
 - **Domain** - Pure business logic, entities, domain events, value objects
-- **Application** - Use cases, CQRS handlers, CachedRepositories
-- **Infrastructure** - EF Core, PostgreSQL, authentication, external services
-- **Web.Api** - Minimal API endpoints
+- **Application** - Use cases, CQRS handlers, CachedRepositories, decorator pipeline
+- **Infrastructure** - EF Core, PostgreSQL, authentication, external services, Outbox processing
+- **Web.Api** - Minimal API endpoints using `IEndpoint` pattern
 - **AppHost** - .NET Aspire orchestration
+- **ServiceDefaults** - Aspire service defaults (health checks, telemetry)
 
-### Key Patterns
+### CQRS: Scrutor Decorators, NOT MediatR
 
-**CQRS**: Commands (`ICommand`/`ICommand<T>`) for writes, Queries (`IQuery<T>`) for reads. All handlers return `Task<Result>` or `Task<Result<T>>`.
+This codebase does **not** use MediatR. Handlers are registered via Scrutor assembly scanning and injected directly into endpoints. There is no `IMediator.Send()`.
 
-**Data Access**:
+**Handler interfaces** (in `Application/Abstractions/Messaging/`):
+- `ICommandHandler<TCommand>` → returns `Task<Result>`
+- `ICommandHandler<TCommand, TResponse>` → returns `Task<Result<TResponse>>`
+- `IQueryHandler<TQuery, TResponse>` → returns `Task<Result<TResponse>>`
+- `IDomainEventHandler<TEvent>` → returns `Task`
+
+**Decorator pipeline** (outermost → innermost, configured in `Application/DependencyInjection.cs`):
+```
+LoggingDecorator → ConcurrencyExceptionDecorator → ValidationDecorator → OpenTelemetryInstrumentDecorator → Handler
+```
+- **LoggingDecorator**: Logs start/completion/failure of all handlers
+- **ConcurrencyExceptionDecorator**: Catches `DbUpdateConcurrencyException`, returns `ConcurrencyErrors.UpdateConflict()`
+- **ValidationDecorator**: Runs `DataAnnotations.Validator` on commands before handler executes
+- **OpenTelemetryInstrumentDecorator**: Creates Activity spans with operation metadata
+
+**Endpoint handler injection** — endpoints inject handlers directly:
+```csharp
+app.MapPost("/users", async (
+    CreateUserCommand command,
+    ICommandHandler<CreateUserCommand, Guid> handler,
+    CancellationToken ct) =>
+{
+    Result<Guid> result = await handler.Handle(command, ct);
+    return result.Match(Results.Ok, CustomResults.Problem);
+});
+```
+
+### Data Access
+
 - **Reads**: CachedRepository classes in `Application/<Feature>/Data/` using HybridCache, returning DTOs (never entities)
 - **Writes**: Direct `IApplicationDbContext` injection in command handlers
+- **Soft delete**: Global query filter on all `Entity` subclasses (`IsDeleted == false`) — applied automatically by EF Core
+- **Optimistic concurrency**: PostgreSQL `xmin` column mapped to `Entity.Version` as row version
+- **Enums**: Stored as strings (convention in `BaseApplicationDbContext`)
+- **Encrypted fields**: Use `EncryptedString` value object with `{KeyVersion}:{EncryptedValue}` format
 
-**Vertical Slice**: Features organized by business capability across all layers:
+### Domain Events & Outbox Pattern
+
+Domain events are dispatched **asynchronously via the Outbox pattern**, not in-memory:
+
+1. Entity raises event: `this.Raise(new SomeDomainEvent(...))`
+2. `SaveChangesAsync()` persists entity changes + creates `OutboxMessage` records
+3. `OutboxMessageHostedService` polls the `OutboxMessages` table on a timer
+4. For each pending message: acquires distributed lock → deserializes event → dispatches to all `IDomainEventHandler<T>` implementations → marks as Processed/Failed
+5. Handlers execute under system user context (`SystemConstants.SystemUserId`)
+
+### Vertical Slice Organization
+
+Features organized by business capability across all layers:
 ```
 Domain/<Feature>/<Feature>.cs, <Feature>Errors.cs
 Application/<Feature>/<Operation>CommandHandler.cs, Data/
@@ -108,7 +156,7 @@ Web.Api/Endpoints/<Feature>/<Operation>.cs
 ## Code Conventions
 
 ### Record Syntax
-- **Web.Api**: Positional syntax - `public record MyRecord(string Prop1, int Prop2);`
+- **Web.Api**: Positional syntax — `public record MyRecord(string Prop1, int Prop2);`
 - **Application (Commands/Queries)**: Standard syntax with DataAnnotations for validation:
   ```csharp
   public sealed record CreateUserCommand : ICommand<Guid>
@@ -128,11 +176,19 @@ Web.Api/Endpoints/<Feature>/<Operation>.cs
 ### Entity Creation
 - Private constructors with public static `Create()` factory methods returning `Result<T>`
 - Validation in factory methods
+- IDs generated via `Guid.CreateVersion7()` (by `EntityIdGenerationInterceptor`)
+
+### Result → HTTP Mapping
+Endpoints use `Result.Match()` to convert to HTTP responses:
+```csharp
+result.Match(Results.Ok, CustomResults.Problem);
+```
+`CustomResults.Problem` maps `ErrorType` → HTTP status: Validation→400, NotFound→404, Conflict→409, Problem→412.
 
 ## Testing Requirements
 
 - **Unit tests**: 70%+ coverage for Application layer, use NSubstitute (not Moq), use `BuildMock()` from MockQueryable.NSubstitute for DbSet mocking
-- **Integration tests**: MUST use API endpoints only - NEVER write directly to database
+- **Integration tests**: MUST use API endpoints only — NEVER write directly to database. Use `ApiTestFactory` (WebApplicationFactory + Testcontainers PostgreSQL). Use `ApiClient` helper for HTTP calls with auth. Call `WaitForOutboxMessagesAsync()` when testing domain event side effects.
 - **Architecture tests**: Enforce layer dependencies via NetArchTest.Rules
 - **Assertions**: Use Shouldly (not FluentAssertions)
 
@@ -181,25 +237,20 @@ Domain error codes use the `"{Entity}.{ErrorName}"` pattern (e.g. `"User.NotFoun
 - `docs/VerticalSliceStructure.md` - Feature organization patterns
 - `docs/DomainEvent.md` - Domain event implementation
 - `docs/Caching.md` - HybridCache patterns
+- `docs/OutboxPattern.md` - Outbox pattern details
+- `docs/Encryption.md` - Encrypted data storage
+- `docs/DistributedLock.md` - Distributed locking (PostgreSQL/Redis)
+- `docs/AuditLogging.md` - Audit logging (4W: Who, What, When, Where)
 
 ## Known Temporary Suppressions
 
 ### CA1873 — `#pragma warning disable CA1873` (temporary)
 
-`Microsoft.Extensions.Logging.Abstractions 10.0.3` introduced a stricter CA1873 analyzer that fires on logger calls passing `DateTime`, property accesses, and other value types — even when captured in local variables. This is a known regression in the .NET 10 analyzer.
+`Microsoft.Extensions.Logging.Abstractions 10.0.3` introduced a stricter CA1873 analyzer that fires on logger calls passing `DateTime`, property accesses, and other value types. This is a known regression in the .NET 10 analyzer.
 
-**Suppressed in these files** (both Application and Infrastructure layers):
-- `Application/Abstractions/Behaviors/LoggingDecorator.cs`
-- `Application/AuditLogs/DeleteOldAuditLogsCommand.cs`
-- `Application/Outbox/CleanupProcessedOutboxMessagesCommand.cs`
-- `Application/Outbox/IOutboxMessageProcessor.cs`
-- `Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs`
-- `Infrastructure/DependencyInjection.cs`
-- `Infrastructure/DomainEvents/DomainEventsDispatcher.cs`
-- `Infrastructure/Communication/Sms/DummySmsSender.cs`
-- `Infrastructure/Communication/Sms/TwilioSmsSender.cs`
+**Suppressed in files across Application and Infrastructure layers** (search for `#pragma warning disable CA1873`).
 
-**Action**: Remove the `#pragma warning disable CA1873` lines once Microsoft fixes the analyzer in a future `Microsoft.Extensions.Logging.Abstractions` patch. Do NOT convert these to `[LoggerMessage]` source generators just to satisfy the analyzer — that would over-engineer simple log calls.
+**Action**: Remove the `#pragma warning disable CA1873` lines once Microsoft fixes the analyzer in a future patch. Do NOT convert these to `[LoggerMessage]` source generators just to satisfy the analyzer.
 
 ## Common Pitfalls to Avoid
 
@@ -209,3 +260,6 @@ Domain error codes use the `"{Entity}.{ErrorName}"` pattern (e.g. `"User.NotFoun
 - Missing DataAnnotations validation on commands/queries
 - Using `IConfiguration` directly (use `IOptions<T>`)
 - Making endpoints or DbContext public (must be internal)
+- Using MediatR patterns — this codebase injects `ICommandHandler<T>`/`IQueryHandler<T,R>` directly, no mediator
+- Forgetting `-- --environment Migration` or `--output-dir Database/Migrations` in EF commands
+- Forgetting to change migration visibility from `public` to `internal`
