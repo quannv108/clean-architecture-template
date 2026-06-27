@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Options;
 
-namespace Infrastructure.Communication.Email;
+namespace Application.Abstractions.Communication.Email;
 
-internal sealed class EmailOptionsValidator : IValidateOptions<EmailOptions>
+public sealed class EmailOptionsValidator : IValidateOptions<EmailOptions>
 {
     public ValidateOptionsResult Validate(string? name, EmailOptions options)
     {

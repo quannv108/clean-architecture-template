@@ -1,4 +1,4 @@
-﻿using SharedKernel.Common;
+﻿using SharedKernel.PhoneNumbers;
 
 namespace Application.Abstractions.Communication.Sms;
 

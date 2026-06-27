@@ -1,3 +1,4 @@
+using Application.Abstractions.Cryptography;
 using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Cryptography;

@@ -1,4 +1,4 @@
-﻿using SharedKernel;
+﻿using Application.Abstractions.Time;
 
 namespace Infrastructure.Time;
 

@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Infrastructure.Outbox;
+namespace Application.Outbox;
 
 /// <summary>
 /// Configuration options for outbox message processing.
 /// </summary>
-internal sealed class OutboxOptions
+public sealed class OutboxOptions
 {
     /// <summary>
     /// Polling interval in milliseconds for checking new outbox messages.

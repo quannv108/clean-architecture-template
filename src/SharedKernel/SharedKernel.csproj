@@ -1,8 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Infrastructure"/>
-        <InternalsVisibleTo Include="Application.UnitTests"/>
+        <InternalsVisibleTo Include="Infrastructure" />
+        <InternalsVisibleTo Include="Application.UnitTests" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="libphonenumber-csharp" />
     </ItemGroup>
 
 </Project>

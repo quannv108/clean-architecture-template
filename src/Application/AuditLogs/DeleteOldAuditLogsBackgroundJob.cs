@@ -1,14 +1,13 @@
 using Application.Abstractions.Messaging;
-using Application.AuditLogs;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.AuditLogs;
+namespace Application.AuditLogs;
 
 /// <summary>
 /// Background job to clean up audit logs older than 3 years.
 /// Runs monthly on the 10th at 2 AM UTC to remove old audit records.
 /// </summary>
-internal sealed class DeleteOldAuditLogsBackgroundJob(
+public sealed class DeleteOldAuditLogsBackgroundJob(
     ICommandHandler<DeleteOldAuditLogsCommand> commandHandler,
     ILogger<DeleteOldAuditLogsBackgroundJob> logger)
 {

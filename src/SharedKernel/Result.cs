@@ -4,7 +4,7 @@ namespace SharedKernel;
 
 public class Result
 {
-    public Result(bool isSuccess, Error error)
+    protected Result(bool isSuccess, Error error)
     {
         var succeedWithError = isSuccess && error != Error.None;
         var failureWithoutError = !isSuccess && error == Error.None;
@@ -50,6 +50,6 @@ public class Result<TValue> : Result
     public static implicit operator Result<TValue>(TValue? value) =>
         value is not null ? Success(value) : Failure<TValue>(Error.NullValue);
 
-    public static Result<TValue> ValidationFailure(Error error) =>
-        new(default, false, error);
+    public static implicit operator Result<TValue>(Error error) =>
+        Failure<TValue>(error);
 }

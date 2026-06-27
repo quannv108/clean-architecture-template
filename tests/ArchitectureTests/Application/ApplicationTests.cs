@@ -1,3 +1,4 @@
+using Application.Abstractions.BackgroundJobs;
 using Application.Abstractions.Messaging;
 using NetArchTest.Rules;
 using Shouldly;
@@ -250,6 +251,74 @@ public class ApplicationTests : BaseTest
             var message = $"Found {violations.Count} namespace violations:\n{string.Join("\n", violations)}";
             violations.Count.ShouldBe(0, message);
         }
+    }
+
+    [Fact]
+    public void Options_Classes_Should_Reside_In_Application_Layer()
+    {
+        // Options classes define the *shape* of configuration the application needs.
+        // Infrastructure is responsible only for binding them to a source (appsettings, env vars, etc.).
+        TestResult applicationResult = Types.InAssembly(ApplicationAssembly)
+            .That()
+            .HaveNameEndingWith("Options")
+            .And()
+            .AreNotAbstract()
+            .Should()
+            .ResideInNamespaceMatching(@"^Application\.")
+            .GetResult();
+
+        if (!applicationResult.IsSuccessful)
+        {
+            var failing = applicationResult.FailingTypeNames ?? new List<string>();
+            applicationResult.IsSuccessful.ShouldBeTrue(
+                $"Options classes should reside in the Application namespace. Failing: {string.Join(", ", failing)}");
+        }
+
+        // Ensure no Options classes accidentally live in Infrastructure
+        var infrastructureOptions = Types.InAssembly(InfrastructureAssembly)
+            .That()
+            .HaveNameEndingWith("Options")
+            .And()
+            .AreNotAbstract()
+            .GetTypes()
+            .Select(t => t.FullName ?? t.Name)
+            .ToList();
+
+        infrastructureOptions.ShouldBeEmpty(
+            $"Options classes must not live in Infrastructure — move them to Application/Abstractions. Failing: {string.Join(", ", infrastructureOptions)}");
+    }
+
+    [Fact]
+    public void BackgroundJob_Payloads_Should_Reside_In_Application_Layer()
+    {
+        // Background job payload classes (the work to execute) belong in Application.
+        // They do NOT implement IBackgroundJob — that interface is for the scheduler (Infrastructure).
+        // Rule: *BackgroundJob that does NOT implement IBackgroundJob → Application layer.
+        var jobPayloadsInInfrastructure = Types.InAssembly(InfrastructureAssembly)
+            .That()
+            .HaveNameEndingWith("BackgroundJob")
+            .And()
+            .DoNotImplementInterface(typeof(IBackgroundJob))
+            .GetTypes()
+            .Select(t => t.FullName ?? t.Name)
+            .ToList();
+
+        jobPayloadsInInfrastructure.ShouldBeEmpty(
+            $"Background job payload classes (those not implementing IBackgroundJob) must live in Application, " +
+            $"not Infrastructure. Move these to Application/<Feature>/: {string.Join(", ", jobPayloadsInInfrastructure)}");
+
+        var jobPayloadsInPresentation = Types.InAssembly(PresentationAssembly)
+            .That()
+            .HaveNameEndingWith("BackgroundJob")
+            .And()
+            .DoNotImplementInterface(typeof(IBackgroundJob))
+            .GetTypes()
+            .Select(t => t.FullName ?? t.Name)
+            .ToList();
+
+        jobPayloadsInPresentation.ShouldBeEmpty(
+            $"Background job payload classes must live in Application, not Web.Api. " +
+            $"Violations: {string.Join(", ", jobPayloadsInPresentation)}");
     }
 
     private static bool IsAllowedException(string typeName, string forbiddenNamespace)

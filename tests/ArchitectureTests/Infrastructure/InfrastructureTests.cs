@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using NetArchTest.Rules;
 using SharedKernel;
 using Shouldly;
@@ -140,6 +141,28 @@ public class InfrastructureTests : BaseTest
     }
 
     [Fact]
+    public void EntityConfigurations_Should_Reside_In_Database_Configuration_Folder()
+    {
+        // EF Core entity configurations must live in Infrastructure/Database/Configuration/<Feature>/
+        // not in Infrastructure/<Feature>/ or any other sub-path.
+        TestResult result = Types.InAssembly(InfrastructureAssembly)
+            .That()
+            .ImplementInterface(typeof(IEntityTypeConfiguration<>))
+            .Should()
+            .ResideInNamespaceMatching(@"^Infrastructure\.Database\.Configuration\.")
+            .GetResult();
+
+        if (!result.IsSuccessful)
+        {
+            var failing = result.FailingTypeNames ?? new List<string>();
+            result.IsSuccessful.ShouldBeTrue(
+                $"Entity configurations must reside in Infrastructure/Database/Configuration/<Feature>/, " +
+                $"not in Infrastructure/<Feature>/ or other paths. " +
+                $"Failing: {string.Join(", ", failing)}");
+        }
+    }
+
+    [Fact]
     public void Infrastructure_Should_Implement_Application_Interfaces()
     {
         var applicationInterfaces = Types.InAssembly(ApplicationAssembly)
@@ -177,6 +200,93 @@ public class InfrastructureTests : BaseTest
         static bool IsValidClassName(Type t) => !t.Name.EndsWith("Command", StringComparison.InvariantCulture) &&
                                                 !t.Name.EndsWith("Query", StringComparison.InvariantCulture) &&
                                                 !t.Name.EndsWith("Handler", StringComparison.InvariantCulture);
+    }
+
+    [Fact]
+    public void HostedServices_Should_Reside_Only_In_Infrastructure_Layer()
+    {
+        // IHostedService / BackgroundService are infrastructure concerns — polling, queue processing, scheduling.
+        // They must never appear in Domain, Application, or Web.Api.
+        var forbiddenAssemblies = new[]
+        {
+            (Assembly: DomainAssembly, Name: "Domain"),
+            (Assembly: ApplicationAssembly, Name: "Application"),
+            (Assembly: PresentationAssembly, Name: "Web.Api"),
+        };
+
+        var violations = new List<string>();
+
+        foreach (var (assembly, name) in forbiddenAssemblies)
+        {
+            var found = Types.InAssembly(assembly)
+                .That()
+                .ImplementInterface(typeof(IHostedService))
+                .Or()
+                .Inherit(typeof(BackgroundService))
+                .GetTypes()
+                .Select(t => $"{t.FullName ?? t.Name} (in {name})")
+                .ToList();
+
+            violations.AddRange(found);
+        }
+
+        violations.ShouldBeEmpty(
+            $"Hosted services must reside in Infrastructure, not in other layers. " +
+            $"Violations: {string.Join(", ", violations)}");
+    }
+
+    [Fact]
+    public void HostedServices_Should_Be_Registered_Via_AddHostedService_In_Infrastructure_DependencyInjection()
+    {
+        // Every IHostedService implementation in Infrastructure must be registered via
+        // AddHostedService<T>() in an Infrastructure DependencyInjection.cs file.
+        // This test prevents hosted services from being silently forgotten in DI registration.
+        var hostedServiceTypes = Types.InAssembly(InfrastructureAssembly)
+            .That()
+            .ImplementInterface(typeof(IHostedService))
+            .Or()
+            .Inherit(typeof(BackgroundService))
+            .GetTypes()
+            .ToList();
+
+        if (hostedServiceTypes.Count == 0)
+        {
+            return; // Nothing to validate
+        }
+
+        // Walk up from the test output directory to find the repo root (contains src/Infrastructure)
+        var searchDir = new DirectoryInfo(AppContext.BaseDirectory);
+        DirectoryInfo? infraSourceDir = null;
+
+        while (searchDir is not null)
+        {
+            var candidate = Path.Combine(searchDir.FullName, "src", "Infrastructure");
+            if (Directory.Exists(candidate))
+            {
+                infraSourceDir = new DirectoryInfo(candidate);
+                break;
+            }
+
+            searchDir = searchDir.Parent;
+        }
+
+        infraSourceDir.ShouldNotBeNull(
+            "Could not find src/Infrastructure directory by walking up from the test output path");
+
+        var diFiles = infraSourceDir!.GetFiles("DependencyInjection.cs", SearchOption.AllDirectories);
+        diFiles.ShouldNotBeEmpty("Expected at least one DependencyInjection.cs file in Infrastructure");
+
+        var diContent = string.Join("\n", diFiles.Select(f => File.ReadAllText(f.FullName)));
+
+        var notRegistered = hostedServiceTypes
+            .Where(t => !diContent.Contains($"AddHostedService<{t.Name}>"))
+            .Select(t => t.Name)
+            .ToList();
+
+        notRegistered.ShouldBeEmpty(
+            $"The following IHostedService implementations are not registered via " +
+            $"AddHostedService<T>() in any Infrastructure DependencyInjection.cs file. " +
+            $"Missing: {string.Join(", ", notRegistered)}");
     }
 
     [Fact]

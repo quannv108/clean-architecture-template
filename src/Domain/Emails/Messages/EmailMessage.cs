@@ -59,3 +59,13 @@ public sealed class EmailMessage : Entity
         Status = EmailMessageStatus.Failed;
     }
 }
+
+
+public enum EmailMessageStatus
+{
+    Pending = 0,
+    Sent,
+    Failed
+}
+
+public record EmailSentDomainEvent(Guid EmailMessageId) : IDomainEvent;

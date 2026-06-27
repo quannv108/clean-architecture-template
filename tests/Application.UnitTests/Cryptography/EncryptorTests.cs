@@ -1,3 +1,4 @@
+using Application.Abstractions.Cryptography;
 using Infrastructure.Cryptography;
 using Microsoft.Extensions.Options;
 using SharedKernel;

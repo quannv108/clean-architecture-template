@@ -16,7 +16,7 @@ using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using Serilog;
 using SharedKernel;
-using SharedKernel.Common;
+using SharedKernel.PhoneNumbers;
 using Testcontainers.PostgreSql;
 using Web.Api;
 using Xunit.Abstractions;

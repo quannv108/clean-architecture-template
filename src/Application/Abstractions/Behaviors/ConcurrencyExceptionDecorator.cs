@@ -1,6 +1,7 @@
 using Application.Abstractions.Messaging;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
+using SharedKernel.Concurrency;
 
 namespace Application.Abstractions.Behaviors;
 
@@ -46,9 +47,7 @@ internal static class ConcurrencyExceptionDecorator
     {
         if (ex.Entries.Count == 0)
         {
-            return Error.Conflict(
-                "Concurrency.UpdateConflict",
-                "The data was modified by another user. Please refresh and try again.");
+            return ConcurrencyErrors.UpdateConflict();
         }
 
         // Try to extract entity information from the exception

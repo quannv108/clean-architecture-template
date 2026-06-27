@@ -180,10 +180,9 @@ internal sealed class TestCommandHandler(
         if (lockHandle is null)
         {
             // Another instance is already processing this resource
-            return Result.Failure(new Error(
+            return Result.Failure(Error.Conflict(
                 "Test.AlreadyBeingProcessed",
-                $"Resource with ID '{command.ResourceId}' is already being processed by another instance.",
-                ErrorType.Conflict));
+                $"Resource with ID '{command.ResourceId}' is already being processed by another instance."));
         }
 
         // Critical section - only one instance can execute this at a time

@@ -28,22 +28,22 @@ public sealed class AuditLog : Entity, ITenantEntity
     {
         if (userId == Guid.Empty)
         {
-            return Result.Failure<AuditLog>(AuditLogErrors.UserIdRequired());
+            return AuditLogErrors.UserIdRequired();
         }
 
         if (string.IsNullOrWhiteSpace(actionName))
         {
-            return Result.Failure<AuditLog>(AuditLogErrors.ActionNameRequired());
+            return AuditLogErrors.ActionNameRequired();
         }
 
         if (actionDateTime == default)
         {
-            return Result.Failure<AuditLog>(AuditLogErrors.ActionDateTimeRequired());
+            return AuditLogErrors.ActionDateTimeRequired();
         }
 
         if (urlPath is null)
         {
-            return Result.Failure<AuditLog>(AuditLogErrors.UrlPathRequired());
+            return AuditLogErrors.UrlPathRequired();
         }
 
         var auditLog = new AuditLog

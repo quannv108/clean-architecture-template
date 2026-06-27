@@ -1,6 +1,6 @@
-﻿using Hangfire;
-using Infrastructure.Outbox;
-using Infrastructure.AuditLogs;
+﻿using Application.AuditLogs;
+using Application.Outbox;
+using Hangfire;
 
 namespace Infrastructure.BackgroundJobs.Hangfire;
 

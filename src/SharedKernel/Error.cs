@@ -9,7 +9,7 @@ public record Error
         "Null value was provided",
         ErrorType.Failure);
 
-    public Error(string code, string description, ErrorType type)
+    protected Error(string code, string description, ErrorType type)
     {
         Code = code;
         Description = description;
@@ -36,4 +36,30 @@ public record Error
 
     public static Error Conflict(string code, string description) =>
         new(code, description, ErrorType.Conflict);
+}
+
+public enum ErrorType
+{
+    Failure = 0,
+    Validation = 1,
+    Problem = 2,
+    NotFound = 3,
+    Conflict = 4
+}
+
+public sealed record ValidationError : Error
+{
+    public ValidationError(Error[] errors)
+        : base(
+            "Validation.General",
+            "One or more validation errors occurred",
+            ErrorType.Validation)
+    {
+        Errors = errors;
+    }
+
+    public Error[] Errors { get; }
+
+    public static ValidationError FromResults(IEnumerable<Result> results) =>
+        new(results.Where(r => r.IsFailure).Select(r => r.Error).ToArray());
 }

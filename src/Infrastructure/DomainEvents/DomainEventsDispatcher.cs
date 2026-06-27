@@ -1,3 +1,4 @@
+#pragma warning disable CA1873
 ﻿#pragma warning disable CA1873
 using System.Collections.Concurrent;
 using Application.Abstractions.Authentication;

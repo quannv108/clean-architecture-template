@@ -6,6 +6,7 @@
     <!-- Static code analysis -->
     <PackageVersion Include="Aspire.Hosting.Seq" Version="13.4.4" />
     <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
+    <PackageVersion Include="libphonenumber-csharp" Version="9.0.33" />
     <PackageVersion Include="OpenTelemetry.Api" Version="1.16.0" />
     <PackageVersion Include="Scrutor" Version="7.0.0" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.27.0.140913" />

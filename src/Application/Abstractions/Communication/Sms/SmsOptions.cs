@@ -1,6 +1,6 @@
-﻿namespace Infrastructure.Communication.Sms;
+namespace Application.Abstractions.Communication.Sms;
 
-internal sealed class SmsOptions
+public sealed class SmsOptions
 {
     // Set Sms:Provider to "Twilio" to enable Twilio sender; defaults to Dummy
     public string? Provider { get; set; }
@@ -8,7 +8,7 @@ internal sealed class SmsOptions
     public TwilioSmsOptions Twilio { get; set; } = new();
 }
 
-internal sealed class TwilioSmsOptions
+public sealed class TwilioSmsOptions
 {
     // Required
     public string? AccountSid { get; set; }

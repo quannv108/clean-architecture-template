@@ -63,7 +63,7 @@ internal static class ValidationDecorator
 
     private static ValidationError CreateValidationError(List<ValidationResult> validationResults) =>
         new(validationResults.Select(vr =>
-            Error.Problem(
+            Error.Validation(
                 vr.MemberNames.FirstOrDefault() ?? "General",
                 vr.ErrorMessage ?? "Validation failed"
             )).ToArray());

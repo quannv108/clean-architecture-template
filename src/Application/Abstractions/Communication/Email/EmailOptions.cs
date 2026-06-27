@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Infrastructure.Communication.Email;
+namespace Application.Abstractions.Communication.Email;
 
-internal sealed class EmailOptions
+public sealed class EmailOptions
 {
     // Set Email:Provider to "SES" to enable this sender
     public string? Provider { get; set; } // Optional, used to switch providers via config
@@ -14,7 +14,7 @@ internal sealed class EmailOptions
     public SesEmailOptions Ses { get; set; } = new();
 }
 
-internal sealed class SesEmailOptions
+public sealed class SesEmailOptions
 {
     // Required when Provider is "SES"
     public string? Region { get; set; }

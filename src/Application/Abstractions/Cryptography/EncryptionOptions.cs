@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Infrastructure.Cryptography;
+namespace Application.Abstractions.Cryptography;
 
-internal sealed class EncryptionOptions
+public sealed class EncryptionOptions
 {
     [Required(ErrorMessage = "Encryption Key is required")]
     [MinLength(32, ErrorMessage = "Encryption Key must be at least 32 characters (base64-encoded 256-bit key)")]

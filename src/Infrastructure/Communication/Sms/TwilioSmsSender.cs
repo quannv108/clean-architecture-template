@@ -2,7 +2,7 @@
 using Application.Abstractions.Communication.Sms;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SharedKernel.Common;
+using SharedKernel.PhoneNumbers;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using PhoneNumberE164 = Twilio.Types.PhoneNumber;

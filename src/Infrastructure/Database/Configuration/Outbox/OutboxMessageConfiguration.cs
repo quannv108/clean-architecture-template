@@ -1,10 +1,9 @@
 using Domain.Outbox;
-using Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SharedKernel.Extensions;
 
-namespace Infrastructure.Outbox;
+namespace Infrastructure.Database.Configuration.Outbox;
 
 internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {

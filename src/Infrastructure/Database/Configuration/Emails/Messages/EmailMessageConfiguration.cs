@@ -2,7 +2,7 @@ using Domain.Emails.Messages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Emails.Messages;
+namespace Infrastructure.Database.Configuration.Emails.Messages;
 
 internal sealed class EmailMessageConfiguration : IEntityTypeConfiguration<EmailMessage>
 {

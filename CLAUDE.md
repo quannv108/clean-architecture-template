@@ -232,15 +232,7 @@ Domain error codes use the `"{Entity}.{ErrorName}"` pattern (e.g. `"User.NotFoun
 
 ## Key Documentation
 
-- `agents.md` - Comprehensive AI agent instructions
-- `docs/FeatureTemplates.md` - Templates for Simple/Medium/Complex features
-- `docs/VerticalSliceStructure.md` - Feature organization patterns
-- `docs/DomainEvent.md` - Domain event implementation
-- `docs/Caching.md` - HybridCache patterns
-- `docs/OutboxPattern.md` - Outbox pattern details
-- `docs/Encryption.md` - Encrypted data storage
-- `docs/DistributedLock.md` - Distributed locking (PostgreSQL/Redis)
-- `docs/AuditLogging.md` - Audit logging (4W: Who, What, When, Where)
+See [`docs/index.md`](docs/index.md) for the full documentation index.
 
 ## Known Temporary Suppressions
 
