@@ -1,90 +1,67 @@
-﻿# Domain Events
+# Domain Events
 
-Domain events are a critical part of the Clean Architecture template, enabling decoupled communication between different parts of the system. They represent significant occurrences within the domain that other parts of the system may need to react to.
+Domain events represent something significant that happened within the domain, enabling decoupled reactions across the system. In this template they are **dispatched asynchronously via the Outbox pattern**, not in-memory — see [OutboxPattern.md](OutboxPattern.md) for the dispatch mechanism.
 
 ## Key Concepts
 
-### What is a Domain Event?
-A domain event is an event that signifies something important has happened within the domain. For example, a `UserRegistered` event might be raised when a new user is successfully registered.
+- **Decoupling**: parts of the system react to events without tight coupling.
+- **Cross-cutting concerns**: logging, notifications, or analytics handled in one place.
+- **Reliability**: events are persisted in the same transaction as the entity change and dispatched later (Outbox), so they are never lost.
 
-### Purpose
-- **Decoupling**: Allows different parts of the system to react to events without tight coupling.
-- **Cross-cutting concerns**: Enables handling of concerns like logging, notifications, or analytics in a centralized manner.
-- **Business logic orchestration**: Facilitates complex workflows by chaining events.
+## Defining a Domain Event
 
-## Implementation
-
-### Domain Event Interface
-All domain events must implement the `IDomainEvent` interface, which is defined in the `SharedKernel` layer.
+`IDomainEvent` (in `SharedKernel`) is a **marker interface with no members**:
 
 ```csharp
-public interface IDomainEvent
-{
-    DateTime OccurredOn { get; }
-}
+public interface IDomainEvent;
 ```
 
-### Raising Domain Events
-Domain events are typically raised by aggregate roots. For example:
+Domain events are immutable **positional records** ending with the `DomainEvent` suffix (file: `<Event>DomainEvent.cs`). Keep them lightweight — carry only the identifiers/data a handler needs, not whole entities:
 
 ```csharp
-public class User : Entity
+public record EmailSentDomainEvent(Guid EmailMessageId) : IDomainEvent;
+```
+
+## Raising a Domain Event
+
+Events are raised by entities (aggregate roots) inside their behavior methods via the protected `Raise(...)` method on the `Entity` base class. They are collected on the entity and turned into `OutboxMessage` records during `SaveChangesAsync()`:
+
+```csharp
+public void MarkAsSent()
 {
-    public void Register()
+    if (Status != EmailMessageStatus.Pending)
     {
-        // Business logic for registration
-        RaiseDomainEvent(new UserRegistered(this));
+        return;
     }
+
+    Status = EmailMessageStatus.Sent;
+    Raise(new EmailSentDomainEvent(Id));
 }
 ```
 
-### Handling Domain Events
-Domain events are handled by domain event handlers, which implement the `IDomainEventHandler<T>` interface.
+## Handling a Domain Event
+
+Handlers implement `IDomainEventHandler<T>` and live in `Application/<Feature>/Events/`. They are `internal sealed` and run asynchronously when the Outbox processor dispatches the event:
 
 ```csharp
-public class UserRegisteredHandler : IDomainEventHandler<UserRegistered>
+internal sealed class EmailSentDomainEventHandler(ILogger<EmailSentDomainEventHandler> logger)
+    : IDomainEventHandler<EmailSentDomainEvent>
 {
-    public Task Handle(UserRegistered domainEvent, CancellationToken cancellationToken)
+    public Task Handle(EmailSentDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        // Handle the event (e.g., send a welcome email)
+        logger.LogInformation("Email {Id} sent", domainEvent.EmailMessageId);
         return Task.CompletedTask;
     }
 }
 ```
 
 ## Best Practices
-- **Keep domain events lightweight**: Only include necessary data.
-- **Avoid side effects**: Domain events should not modify state.
-- **Test thoroughly**: Ensure domain events and their handlers work as expected.
 
-## Examples
+- **Keep events lightweight**: include only the data handlers need (often just IDs).
+- **Don't mutate state in handlers via the originating entity**: handlers run later, under the system user context.
+- **Test handlers in isolation** and assert side effects in integration tests using `WaitForOutboxMessagesAsync()` (see [DevelopmentGuideline.md](DevelopmentGuideline.md#testing-requirements)).
 
-### Example Domain Event
-```csharp
-public class UserRegistered : IDomainEvent
-{
-    public UserRegistered(User user)
-    {
-        User = user;
-        OccurredOn = DateTime.UtcNow;
-    }
+## Related Documentation
 
-    public User User { get; }
-    public DateTime OccurredOn { get; }
-}
-```
-
-### Example Handler
-```csharp
-public class UserRegisteredHandler : IDomainEventHandler<UserRegistered>
-{
-    public Task Handle(UserRegistered domainEvent, CancellationToken cancellationToken)
-    {
-        Console.WriteLine($"User {domainEvent.User.Id} registered at {domainEvent.OccurredOn}");
-        return Task.CompletedTask;
-    }
-}
-```
-
-## Conclusion
-Domain events are a powerful tool for building scalable and maintainable systems. By following the principles outlined here, you can ensure your domain events are effective and align with Clean Architecture best practices.
+- [OutboxPattern.md](OutboxPattern.md) — how events are persisted and dispatched asynchronously
+- [VerticalSliceStructure.md](VerticalSliceStructure.md) — where event and handler files live

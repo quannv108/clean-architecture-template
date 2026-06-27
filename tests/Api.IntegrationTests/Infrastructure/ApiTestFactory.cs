@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using Application.Abstractions.Communication.Email;
 using Application.Abstractions.Communication.Sms;
 using Application.Abstractions.Data;
-using Domain.Emails.Messages;
+using Domain.Emails;
 using Domain.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -99,7 +99,7 @@ public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncLifet
         rsaPubPem.AppendLine("-----END PUBLIC KEY-----");
 
         var encryptionKey = Convert.ToBase64String("this is a 256 bit key for AES256"u8.ToArray());
-        const string dbNameKey = "main-read-write";
+        const string dbNameKey = "MainReadWrite";
         var keyValuePairs = new List<KeyValuePair<string, string?>>
         {
             new($"ConnectionStrings:{dbNameKey}", _dbContainer.GetConnectionString()!),

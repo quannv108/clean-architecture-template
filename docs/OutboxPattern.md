@@ -23,14 +23,14 @@ The Outbox entity is defined in `src/Domain/Outbox/OutboxMessage.cs` and represe
 ### Outbox Workflow
 1. **Event Creation**: When a domain event occurs, it is captured and serialized into an OutboxMessage entity.
 2. **Atomic Persistence**: The OutboxMessage is saved to the database within the same transaction as the business data, ensuring atomicity.
-3. **Background Dispatch**: A background job (see `src/Infrastructure/Outbox/OutboxProcessor.cs`) periodically scans unprocessed OutboxMessages, deserializes them, and publishes to external systems (e.g., message bus, email, etc.).
+3. **Background Dispatch**: A hosted service (`src/Infrastructure/Outbox/OutboxMessageHostedService.cs`) periodically scans unprocessed OutboxMessages and delegates to `OutboxMessageProcessor`, which deserializes each message and dispatches it to all `IDomainEventHandler<T>` implementations.
 4. **Mark as Processed**: Successfully dispatched messages are marked with a processed timestamp. Failures are logged with error details for retry or manual intervention.
 
 ### Key Classes
-- `OutboxMessage` (Domain): Represents the persisted event.
-- `IOutboxProcessor` (Infrastructure): Interface for background processing.
-- `OutboxProcessor` (Infrastructure): Implementation that reads, publishes, and marks messages.
-- `IApplicationDbContext` (Infrastructure): Used for atomic persistence of business data and outbox messages.
+- `OutboxMessage` (`Domain/Outbox`): Represents the persisted event.
+- `IOutboxMessageProcessor` / `OutboxMessageProcessor` (`Application/Outbox`): Reads pending messages, deserializes them, dispatches to handlers, and marks them Processed/Failed.
+- `OutboxMessageHostedService` (`Infrastructure/Outbox`): Background `IHostedService` that polls on a timer and invokes the processor.
+- `IApplicationDbContext`: Used for atomic persistence of business data and outbox messages.
 
 ### Usage Example
 - In a command handler, after a business operation, raise a domain event.
@@ -51,6 +51,8 @@ The Outbox entity is defined in `src/Domain/Outbox/OutboxMessage.cs` and represe
 - Do not expose Outbox entities directly to API consumers.
 
 ## References
+- [DomainEvent.md](DomainEvent.md) — defining and handling the domain events that become outbox messages
+- [Concurrency.md](Concurrency.md) — how entity changes and outbox messages are saved in one atomic transaction
 - [Microsoft Docs: Reliable Event Publishing with the Outbox Pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/outbox)
 - [Domain-Driven Design](https://domainlanguage.com/ddd/)
 

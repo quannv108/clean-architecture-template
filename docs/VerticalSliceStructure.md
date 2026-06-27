@@ -144,39 +144,17 @@ Infrastructure/BackgroundJobs/
 
 ## Feature Complexity Patterns
 
-### Simple Features
-- **Structure**: 1-2 operations, minimal logic
-- **Examples**: Profiles, Tenants, AuditLogs
-- **Pattern**:
-  ```
-  Domain/<Feature>/<Feature>.cs, <Feature>Errors.cs
-  Application/<Feature>/<Operation1>/, <Operation2>/
-  Infrastructure/<Feature>/<Feature>Configuration.cs
-  Web.Api/Endpoints/<Feature>/<Operation1>.cs, <Operation2>.cs
-  ```
+Features scale across three complexity tiers (Simple → Medium → Complex). The per-tier file lists and copy-paste
+folder layouts live in [FeatureTemplates.md](FeatureTemplates.md); this document covers *where* each kind of class
+belongs and *why*. Representative features in this codebase:
 
-### Medium Features
-- **Structure**: 3-5 operations, standard CRUD + business logic
-- **Examples**: Roles, Notifications, PushNotifications
-- **Pattern**: Standard structure + Data folder + Events (optional)
+| Tier | Operations | Real examples |
+|------|-----------|---------------|
+| **Simple** | 1-2, minimal logic | Profiles, Tenants, AuditLogs |
+| **Medium** | 3-5, CRUD + business logic | Roles, Notifications, PushNotifications |
+| **Complex** | 6+, nested sub-areas | Users, Authentication, Emails |
 
-### Complex Features
-- **Structure**: 6+ operations, multiple sub-areas, nested organization
-- **Examples**: Users, Authentication, Emails
-- **Pattern**: Standard structure + nested subfolders for logical grouping
-  ```
-  Application/<Feature>/
-    ├── <SubArea1>/
-    │   ├── <Operation1>/
-    │   └── <Operation2>/
-    ├── <SubArea2>/
-    │   └── <Operation3>/
-    └── Data/
-  ```
-- **Real Examples**:
-  - **Users**: AddRole/, RemoveRole/, EmailConfirmation/Confirm/, EmailConfirmation/ReSend/
-  - **Authentication**: EmailCodeLogin/, EmailPassword/, PhoneCodeLogin/, Password/, RefreshTokens/
-  - **Emails**: Builders/, Delivery/, Templates/, UserEmails/
+> Adding a feature? Start from the matching template in [FeatureTemplates.md](FeatureTemplates.md).
 
 ## Class/Record/Interface Naming Conventions
 
@@ -198,27 +176,16 @@ Infrastructure/BackgroundJobs/
 
 ## Data Access Patterns
 
-### Reads (Queries)
-- **Location**: `Application/<Feature>/Data/`
-- **Pattern**: CachedRepository classes with HybridCache
-- **Returns**: Response DTOs (NEVER domain entities)
-- **Interface**: `I<Feature>CachedRepository`
-- **Implementation**: `<Feature>CachedRepository`
-
-### Writes (Commands)
-- **Location**: Command handlers use DbContext directly
-- **Pattern**: Inject `IApplicationDbContext`
-- **No caching**: Direct database writes
+Reads go through CachedRepository classes in `Application/<Feature>/Data/` (returning DTOs, never entities); writes
+inject `IApplicationDbContext` directly in command handlers. See
+[Architecture.md → Data Access](Architecture.md#data-access) for the full rules and [Caching.md](Caching.md) for the
+read-side caching strategy.
 
 ## Architecture Validation
 
 ### Layer Dependencies (Enforced by Architecture Tests)
-```
-Domain: NO dependencies (pure domain logic)
-Application: Domain + SharedKernel ONLY
-Infrastructure: Application + Domain + SharedKernel
-Web.Api: ALL layers
-```
+
+See [Architecture.md → Layer Dependencies](Architecture.md#layer-dependencies-enforced-by-architecturetests) for the canonical layer-dependency diagram.
 
 ### Feature Consistency Checklist
 

@@ -11,7 +11,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
       - DOTNET_RUNNING_IN_CONTAINER=true
-      - ConnectionStrings__main-read-write=Host=postgres;Database=clean-architecture;Username=postgres;Password=postgres;
+      - ConnectionStrings__MainReadWrite=Host=postgres;Database=clean-architecture;Username=postgres;Password=postgres;
     ports:
       - 5000:8080
     depends_on:

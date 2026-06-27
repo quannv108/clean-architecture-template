@@ -2,10 +2,12 @@
 
 ## Agent Instructions
 
-- [agents.md](../agents.md) — Comprehensive AI agent instructions for working in this codebase
+- [CLAUDE.md](../CLAUDE.md) — Concise entry point: critical rules, quick commands, documentation map
+- [Development Guideline](DevelopmentGuideline.md) — Branching, build/test/format commands, testing requirements, EF migrations, common pitfalls, temporary suppressions
 
 ## Architecture & Structure
 
+- [Architecture](Architecture.md) — Layers, CQRS/decorator pipeline, data access, domain events, code & naming conventions, error codes
 - [Vertical Slice Structure](VerticalSliceStructure.md) — Feature organization, SharedKernel placement rules, naming conventions
 - [Feature Templates](FeatureTemplates.md) — Templates for Simple/Medium/Complex features
 

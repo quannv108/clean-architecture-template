@@ -1,3 +1,4 @@
+using Infrastructure.Database.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using NetArchTest.Rules;
@@ -157,6 +158,30 @@ public class InfrastructureTests : BaseTest
             var failing = result.FailingTypeNames ?? new List<string>();
             result.IsSuccessful.ShouldBeTrue(
                 $"Entity configurations must reside in Infrastructure/Database/Configuration/<Feature>/, " +
+                $"not in Infrastructure/<Feature>/ or other paths. " +
+                $"Failing: {string.Join(", ", failing)}");
+        }
+    }
+
+    [Fact]
+    public void Seeders_Should_Reside_In_Database_Seeder_Folder()
+    {
+        // Feature-specific seeders (IEntitySeeder<T> implementations) must live in
+        // Infrastructure/Database/Seeder/<Feature>/, not in Infrastructure/<Feature>/ or other paths.
+        TestResult result = Types.InAssembly(InfrastructureAssembly)
+            .That()
+            .ImplementInterface(typeof(IEntitySeeder<>))
+            .And()
+            .AreClasses()
+            .Should()
+            .ResideInNamespaceMatching(@"^Infrastructure\.Database\.Seeder\.")
+            .GetResult();
+
+        if (!result.IsSuccessful)
+        {
+            var failing = result.FailingTypeNames ?? new List<string>();
+            result.IsSuccessful.ShouldBeTrue(
+                $"Seeder classes must reside in Infrastructure/Database/Seeder/<Feature>/, " +
                 $"not in Infrastructure/<Feature>/ or other paths. " +
                 $"Failing: {string.Join(", ", failing)}");
         }

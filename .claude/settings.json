@@ -1,5 +1,13 @@
 ﻿{
   "hooks": {
     "PostToolUse": [{"matcher": "Edit|Write", "hooks": [{"type": "command", "command": "dotnet format"}]}]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(dotnet test:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet package search:*)"
+    ]
   }
 }

@@ -2,7 +2,7 @@ using Application.Abstractions.Data;
 using Application.Abstractions.DomainEvents;
 using Application.Abstractions.Locking;
 using Application.Outbox;
-using Domain.Emails.Messages;
+using Domain.Emails;
 using Domain.Outbox;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

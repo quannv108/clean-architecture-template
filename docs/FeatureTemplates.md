@@ -259,15 +259,7 @@ internal sealed class GetFeature : IEndpoint
 
 ## Naming Checklist
 
-Verify all files follow naming conventions:
-
-- [ ] Domain: `<Feature>.cs`, `<Feature>Errors.cs`, `<Event>DomainEvent.cs`
-- [ ] Commands: `<Operation>CommandHandler.cs`
-- [ ] Queries: `<Operation>QueryHandler.cs`
-- [ ] Repository: `I<Feature>CachedRepository.cs`
-- [ ] EF Config: `<Entity>Configuration.cs`
-- [ ] Endpoints: `<Operation>.cs` (e.g., `CreateRole.cs`, NOT `CreateRoleEndpoint.cs`)
-- [ ] Tests: `<Operation>HandlerTests.cs`
+Verify all files follow the naming conventions in [VerticalSliceStructure.md → Naming Conventions](VerticalSliceStructure.md#classrecordinterface-naming-conventions). Note in particular: endpoints are named `<Operation>.cs` (e.g. `CreateRole.cs`, **not** `CreateRoleEndpoint.cs`) and tests are `<Operation>HandlerTests.cs`.
 
 ## Mandatory Requirements
 
@@ -322,19 +314,7 @@ After creating a new feature, verify:
 
 ## Common Pitfalls
 
-Avoid these mistakes:
-
-- ❌ Using CachedRepository in command handlers (use DbContext directly)
-- ❌ Returning domain entities from CachedRepository (use Response DTOs)
-- ❌ Creating public DbContext (must be internal)
-- ❌ Writing to database in integration tests (use API endpoints)
-- ❌ Missing DataAnnotations validation on commands/queries
-- ❌ Not implementing `IEndpoint` for Web.Api endpoints
-- ❌ Creating endpoints as public classes (must be `internal sealed`)
-- ❌ Putting handler logic inline in `MapEndpoint` lambda — extract to `private static HandleAsync`
-- ❌ Missing `.Accepts<T>("application/json")` on POST/PUT endpoints
-- ❌ Missing `.ProducesProblem()` declarations for error responses
-- ❌ Missing `.WithTags()` or `.AddOpenApiOperationTransformer` on any endpoint
+See [DevelopmentGuideline.md → Common Pitfalls to Avoid](DevelopmentGuideline.md#common-pitfalls-to-avoid) for the canonical list (including the endpoint-specific pitfalls: `IEndpoint`, `HandleAsync` extraction, `.Accepts`, `.ProducesProblem`, `.WithTags`, `.AddOpenApiOperationTransformer`).
 
 ## Reference
 

@@ -180,7 +180,7 @@ public class PresentationTests : BaseTest
             var nestedTypes = type.GetNestedTypes(System.Reflection.BindingFlags.Public |
                                                   System.Reflection.BindingFlags.NonPublic)
                 .Where(nt =>
-                    !nt.Name.StartsWith("<>", StringComparison.InvariantCulture)) // Exclude compiler-generated types
+                    !nt.Name.StartsWith('<')) // Exclude compiler-generated types (closures '<>c', async state machines '<Method>d__N')
                 .ToArray();
 
             foreach (var nestedType in nestedTypes)
