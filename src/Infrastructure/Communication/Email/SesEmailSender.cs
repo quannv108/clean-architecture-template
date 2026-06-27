@@ -3,7 +3,7 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
-using Domain.Emails.Messages;
+using Domain.Emails;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SharedKernel;
@@ -12,6 +12,8 @@ namespace Infrastructure.Communication.Email;
 
 internal sealed class SesEmailSender : IEmailSender
 {
+    private const string Provider = "SES";
+
     private readonly ILogger<SesEmailSender> _logger;
     private readonly EmailOptions _options;
     private readonly AmazonSimpleEmailServiceV2Client _client;
@@ -49,8 +51,7 @@ internal sealed class SesEmailSender : IEmailSender
             var from = !string.IsNullOrWhiteSpace(emailMessage.From) ? emailMessage.From : _options.FromAddress;
             if (string.IsNullOrWhiteSpace(from))
             {
-                return Result.Failure(Error.Failure("email.sender.from.is.missing",
-                    "No From address provided and Email:AmazonSES:FromAddress is not configured."));
+                return Result.Failure(EmailErrors.MissingFromAddress());
             }
 
             var destination = new Destination
@@ -99,18 +100,17 @@ internal sealed class SesEmailSender : IEmailSender
             }
 
             _logger.LogError("SES SendEmail failed with status code {StatusCode}", response.HttpStatusCode);
-            return Result.Failure(Error.Failure("email.ses.send.failed",
-                $"SES SendEmail failed with status code {response.HttpStatusCode}"));
+            return Result.Failure(EmailErrors.SendFailed(Provider, response.HttpStatusCode));
         }
         catch (MessageRejectedException ex)
         {
             _logger.LogError(ex, "SES message rejected: {Message}", ex.Message);
-            return Result.Failure(Error.Failure("email.ses.rejected", ex.Message));
+            return Result.Failure(EmailErrors.Rejected(Provider, ex.Message));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "SES SendEmail threw exception");
-            return Result.Failure(Error.Failure("email.ses.exception", ex.Message));
+            return Result.Failure(EmailErrors.UnexpectedException(Provider, ex.Message));
         }
     }
 }

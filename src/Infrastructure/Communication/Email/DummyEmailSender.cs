@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Communication.Email;
-using Domain.Emails.Messages;
+using Domain.Emails;
 using SharedKernel;
 
 namespace Infrastructure.Communication.Email;

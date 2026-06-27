@@ -32,16 +32,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SharedKernel;
 using StackExchange.Redis;
 
 namespace Infrastructure;
 
 public static class DependencyInjection
 {
-    private const string MainDatabaseConnectionKey = "main-read-write";
-    private const string ReadOnlyDatabaseConnectionKey = "main-read-only";
-    private const string HangfireDatabaseConnectionKey = "hangfire";
+    private const string MainDatabaseConnectionKey = "MainReadWrite";
+    private const string ReadOnlyDatabaseConnectionKey = "MainReadOnly";
+    private const string HangfireDatabaseConnectionKey = "Hangfire";
 
     private static readonly string[] PostgreSqlHealthCheckTags = ["db", "ready"];
     private static readonly string[] RedisHealthCheckTags = ["cache", "lock", "ready"];

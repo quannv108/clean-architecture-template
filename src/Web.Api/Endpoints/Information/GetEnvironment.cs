@@ -7,49 +7,55 @@ internal sealed class GetEnvironment : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("info/environment", (IHostEnvironment environment) => Results.Ok(new
-            {
-                environment = environment.EnvironmentName,
-                runtime = GetRuntimeInfo(),
-                memoryInfo = GetMemoryInfo(),
-            }))
+        app.MapGet("info/environment", HandleAsync)
             .WithName(nameof(GetEnvironment))
             .WithDescription("Get the current environment information")
-            .Produces(StatusCodes.Status200OK)
+            .Produces<GetEnvironmentResponse>()
             .WithTags(Tags.Information)
-            .AddOpenApiOperationTransformer((opperation, context, ct) =>
+            .AddOpenApiOperationTransformer((operation, context, ct) =>
             {
-                opperation.Summary = "Get the current environment information";
-                opperation.Description = "Get the current environment information";
+                operation.Summary = "Get environment";
+                operation.Description = "Get the current environment information";
                 return Task.CompletedTask;
             });
     }
 
-    private static object GetRuntimeInfo()
-    {
-        return new
-        {
-            platform = RuntimeInformation.OSDescription,
-            architecture = RuntimeInformation.OSArchitecture.ToString(),
-            dotNetVersion = Environment.Version.ToString(),
-            machineName = Environment.MachineName,
-            processorCount = Environment.ProcessorCount,
-            timezone = TimeZoneInfo.Local.Id
-        };
-    }
+    private static IResult HandleAsync(IHostEnvironment env) =>
+        Results.Ok(new GetEnvironmentResponse(
+            env.EnvironmentName,
+            GetRuntimeInfo(),
+            GetMemoryInfo()));
 
-    private static object GetMemoryInfo()
+    private static RuntimeInfo GetRuntimeInfo() =>
+        new(
+            RuntimeInformation.OSDescription,
+            RuntimeInformation.OSArchitecture.ToString(),
+            Environment.Version.ToString(),
+            Environment.MachineName,
+            Environment.ProcessorCount,
+            TimeZoneInfo.Local.Id);
+
+    private static MemoryInfo GetMemoryInfo()
     {
         var process = Process.GetCurrentProcess();
-
-        return new
-        {
-            // Working set (physical memory) - RAM currently used
-            workingSetMemory = $"{process.WorkingSet64 / (1024 * 1024)} MB",
-            // Private memory (process-specific allocated memory)
-            privateMemory = $"{process.PrivateMemorySize64 / (1024 * 1024)} MB",
-            // .NET managed heap size
-            managedMemory = $"{GC.GetTotalMemory(false) / (1024 * 1024)} MB",
-        };
+        return new(
+            $"{process.WorkingSet64 / (1024 * 1024)} MB",
+            $"{process.PrivateMemorySize64 / (1024 * 1024)} MB",
+            $"{GC.GetTotalMemory(false) / (1024 * 1024)} MB");
     }
 }
+
+internal sealed record GetEnvironmentResponse(string Environment, RuntimeInfo Runtime, MemoryInfo MemoryInfo);
+
+internal sealed record RuntimeInfo(
+    string Platform,
+    string Architecture,
+    string DotNetVersion,
+    string MachineName,
+    int ProcessorCount,
+    string Timezone);
+
+internal sealed record MemoryInfo(
+    string WorkingSetMemory,
+    string PrivateMemory,
+    string ManagedMemory);

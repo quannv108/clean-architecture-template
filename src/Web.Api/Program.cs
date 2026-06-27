@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 using Application;
 using HealthChecks.UI.Client;
@@ -18,9 +19,20 @@ using Web.Api.Middleware;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, loggerConfig) => loggerConfig
-    .ReadFrom.Configuration(context.Configuration)
-    .Enrich.FromLogContext());
+builder.Host.UseSerilog((context, loggerConfig) =>
+{
+    loggerConfig
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext()
+        .Enrich.With<ActivityEnricher>();
+
+    // Seq sink is only active when Aspire is running (the env var is set), and it silently does nothing when running the Web.Api standalone
+    var seqUrl = context.Configuration.GetConnectionString("seq");
+    if (!string.IsNullOrWhiteSpace(seqUrl))
+    {
+        loggerConfig.WriteTo.Seq(seqUrl, formatProvider: CultureInfo.InvariantCulture);
+    }
+});
 
 // the logger only for initialization steps
 using var loggerFactory = LoggerFactory.Create(loggingBuilder =>

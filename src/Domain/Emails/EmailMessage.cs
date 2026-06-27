@@ -1,6 +1,6 @@
 ﻿using SharedKernel;
 
-namespace Domain.Emails.Messages;
+namespace Domain.Emails;
 
 public sealed class EmailMessage : Entity
 {
@@ -30,12 +30,41 @@ public sealed class EmailMessage : Entity
         Status = EmailMessageStatus.Pending;
     }
 
-    public static EmailMessage Create(string to, string subject, string body, bool isHtml = true,
+    public static Result<EmailMessage> Create(string to, string subject, string body, bool isHtml = true,
         string? from = null, List<string>? cc = null, List<string>? bcc = null,
         Dictionary<string, string>? headers = null)
     {
-        var message = new EmailMessage(to, subject, body, isHtml, from, cc, bcc, headers);
-        return message;
+        if (string.IsNullOrWhiteSpace(to))
+        {
+            return EmailErrors.ToAddressRequired();
+        }
+
+        if (string.IsNullOrWhiteSpace(subject))
+        {
+            return EmailErrors.SubjectRequired();
+        }
+
+        if (string.IsNullOrWhiteSpace(body))
+        {
+            return EmailErrors.BodyRequired();
+        }
+
+        if (from is not null && string.IsNullOrWhiteSpace(from))
+        {
+            return EmailErrors.FromAddressEmpty();
+        }
+
+        if (cc?.Exists(string.IsNullOrWhiteSpace) is true)
+        {
+            return EmailErrors.CcAddressEmpty();
+        }
+
+        if (bcc?.Exists(string.IsNullOrWhiteSpace) is true)
+        {
+            return EmailErrors.BccAddressEmpty();
+        }
+
+        return Result.Success(new EmailMessage(to, subject, body, isHtml, from, cc, bcc, headers));
     }
 
     public void MarkAsSent()

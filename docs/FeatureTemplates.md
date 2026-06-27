@@ -27,7 +27,7 @@ Application/<Feature>/
   │   Get<Feature>QueryHandler.cs
   └── <Feature>PermissionsConstants.cs
 
-Infrastructure/<Feature>/
+Infrastructure/Database/Configuration/<Feature>/
   └── <Feature>Configuration.cs
 
 Web.Api/Endpoints/<Feature>/
@@ -67,9 +67,10 @@ Application/<Feature>/
   │   ├── <Event1>DomainEventHandler.cs
   └── <Feature>PermissionsConstants.cs
 
-Infrastructure/<Feature>/
+Infrastructure/Database/Configuration/<Feature>/
   ├── <Feature>Configuration.cs
   ├── <Related>Configuration.cs         # For related entities
+Infrastructure/Database/Seeder/<Feature>/
   └── <Feature>Seeder.cs                # Optional: seed data
 
 Web.Api/Endpoints/<Feature>/
@@ -116,10 +117,11 @@ Application/<Feature>/
   │   └── <Event2>DomainEventHandler.cs
   └── <Feature>PermissionsConstants.cs
 
-Infrastructure/<Feature>/
+Infrastructure/Database/Configuration/<Feature>/
   ├── <Feature>Configuration.cs
   ├── <Related1>Configuration.cs
   ├── <Related2>Configuration.cs
+Infrastructure/Database/Seeder/<Feature>/
   ├── <Feature>Seeder.cs
   └── <SubFeature>/                     # Optional: sub-services
       └── <Service>.cs
@@ -161,10 +163,10 @@ Web.Api/Endpoints/<Feature>/
 5. Add `<Feature>PermissionsConstants.cs`
 
 ### 3. Infrastructure Layer
-1. Create `Infrastructure/<Feature>/` folder
+1. Create `Infrastructure/Database/Configuration/<Feature>/` folder
 2. Add `<Feature>Configuration.cs` (implements `IEntityTypeConfiguration<T>`)
 3. Configure entity mapping, indexes, relationships
-4. Add `<Feature>Seeder.cs` if seed data needed
+4. If seed data needed: create `Infrastructure/Database/Seeder/<Feature>/` folder and add `<Feature>Seeder.cs`
 5. Register seeder in `DbSeeder.cs`
 
 ### 4. Web.Api Layer
@@ -172,8 +174,82 @@ Web.Api/Endpoints/<Feature>/
 2. For each endpoint:
    - Add `<Operation>.cs` file
    - Implement `IEndpoint` interface
-   - Define `MapEndpoint` method with route, HTTP method, and handler invocation
-3. Add nested folders for complex features
+   - Register the route in `MapEndpoint` using a **method reference** to a `private static HandleAsync` method
+   - For POST/PUT endpoints, call `.Accepts<TRequest>("application/json")`
+   - Declare all response shapes with `.Produces<T>()` and `.ProducesProblem()`
+   - Set `.WithTags(Tags.<Feature>)` and `.AddOpenApiOperationTransformer` for `Summary` and `Description`
+3. Define request/response records in the same file (positional syntax)
+4. Add the tag constant to `Endpoints/Tags.cs`
+5. Add nested folders for complex features
+
+**Standard endpoint structure (POST command):**
+```csharp
+internal sealed class CreateFeature : IEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapPost("/features", HandleAsync)
+            .WithName(nameof(CreateFeature))
+            .WithDescription("Create a new feature")
+            .Accepts<CreateFeatureRequest>("application/json")
+            .Produces<Guid>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithTags(Tags.Features)
+            .AddOpenApiOperationTransformer((operation, context, ct) =>
+            {
+                operation.Summary = "Create feature";
+                operation.Description = "Create a new feature.";
+                return Task.CompletedTask;
+            });
+    }
+
+    private static async Task<IResult> HandleAsync(
+        CreateFeatureRequest request,
+        ICommandHandler<CreateFeatureCommand, Guid> handler,
+        CancellationToken cancellationToken)
+    {
+        var command = new CreateFeatureCommand { Name = request.Name };
+        Result<Guid> result = await handler.Handle(command, cancellationToken);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+}
+
+internal sealed record CreateFeatureRequest(string Name, string Description);
+```
+
+**Standard endpoint structure (GET query):**
+```csharp
+internal sealed class GetFeature : IEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapGet("/features/{id:guid}", HandleAsync)
+            .WithName(nameof(GetFeature))
+            .WithDescription("Get a feature by ID")
+            .Produces<FeatureResponse>()
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithTags(Tags.Features)
+            .AddOpenApiOperationTransformer((operation, context, ct) =>
+            {
+                operation.Summary = "Get feature";
+                operation.Description = "Get a feature by ID.";
+                return Task.CompletedTask;
+            });
+    }
+
+    private static async Task<IResult> HandleAsync(
+        Guid id,
+        IQueryHandler<GetFeatureQuery, FeatureResponse> handler,
+        CancellationToken cancellationToken)
+    {
+        Result<FeatureResponse> result = await handler.Handle(new GetFeatureQuery { Id = id }, cancellationToken);
+        return result.Match(Results.Ok, CustomResults.Problem);
+    }
+}
+```
 
 ### 5. Tests Layer
 1. Create `tests/Application.UnitTests/<Feature>/` folder
@@ -218,9 +294,15 @@ Verify all files follow naming conventions:
 
 ### Web.Api Layer
 - [ ] Endpoints implement `IEndpoint` interface
-- [ ] Endpoint classes are internal
+- [ ] Endpoint classes are `internal sealed`
 - [ ] Located in `Endpoints/<Feature>/` folder
-- [ ] Use proper HTTP verbs and status codes
+- [ ] Route registered via method reference to `private static HandleAsync` (not an inline lambda)
+- [ ] POST/PUT endpoints call `.Accepts<TRequest>("application/json")`
+- [ ] All responses declared with `.Produces<T>()` and `.ProducesProblem()`
+- [ ] `.WithTags(Tags.<Feature>)` set on every endpoint
+- [ ] `.AddOpenApiOperationTransformer` sets `Summary` and `Description` on every endpoint
+- [ ] Request/response types are positional records defined in the same file
+- [ ] Tag constant added to `Endpoints/Tags.cs`
 
 ### Testing
 - [ ] Unit tests follow AAA pattern (Arrange, Act, Assert)
@@ -248,7 +330,11 @@ Avoid these mistakes:
 - ❌ Writing to database in integration tests (use API endpoints)
 - ❌ Missing DataAnnotations validation on commands/queries
 - ❌ Not implementing `IEndpoint` for Web.Api endpoints
-- ❌ Creating endpoints as public classes (must be internal)
+- ❌ Creating endpoints as public classes (must be `internal sealed`)
+- ❌ Putting handler logic inline in `MapEndpoint` lambda — extract to `private static HandleAsync`
+- ❌ Missing `.Accepts<T>("application/json")` on POST/PUT endpoints
+- ❌ Missing `.ProducesProblem()` declarations for error responses
+- ❌ Missing `.WithTags()` or `.AddOpenApiOperationTransformer` on any endpoint
 
 ## Reference
 

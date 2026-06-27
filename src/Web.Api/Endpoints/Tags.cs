@@ -4,4 +4,5 @@ public static class Tags
 {
     public const string AuditLogs = "audit-logs";
     public const string Information = "info";
+    public const string Emails = "emails";
 }

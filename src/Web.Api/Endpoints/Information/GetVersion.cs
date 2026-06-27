@@ -8,22 +8,21 @@ internal sealed class GetVersion : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("info/version", () => Results.Ok(new
-            {
-                buildDate = GetBuildDate(),
-                buildVersion = GetBuildVersion()
-            }))
+        app.MapGet("info/version", HandleAsync)
             .WithName(nameof(GetVersion))
             .WithDescription("Get the current build version of the application")
-            .Produces(StatusCodes.Status200OK)
+            .Produces<GetVersionResponse>()
             .WithTags(Tags.Information)
-            .AddOpenApiOperationTransformer((opperation, context, ct) =>
+            .AddOpenApiOperationTransformer((operation, context, ct) =>
             {
-                opperation.Summary = "Get version";
-                opperation.Description = "Get version";
+                operation.Summary = "Get version";
+                operation.Description = "Get the current build version of the application";
                 return Task.CompletedTask;
             });
     }
+
+    private static IResult HandleAsync() =>
+        Results.Ok(new GetVersionResponse(GetBuildDate(), GetBuildVersion()));
 
     private static string GetBuildDate()
     {
@@ -32,8 +31,8 @@ internal sealed class GetVersion : IEndpoint
         return attribute.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
     }
 
-    private static string GetBuildVersion()
-    {
-        return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0";
-    }
+    private static string GetBuildVersion() =>
+        Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0";
 }
+
+internal sealed record GetVersionResponse(string BuildDate, string BuildVersion);

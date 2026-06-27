@@ -1,4 +1,4 @@
-﻿using Domain.Emails.Messages;
+﻿using Domain.Emails;
 using SharedKernel;
 
 namespace Application.Abstractions.Communication.Email;

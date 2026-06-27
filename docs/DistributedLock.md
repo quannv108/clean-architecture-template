@@ -82,7 +82,7 @@ public class ProcessOrderCommandHandler(
 
 ### ❌ When NOT to Use
 
-1. **Regular Entity Updates** → Use **optimistic concurrency** (automatic via `xmin` - see [Architecture.md](Architecture.md))
+1. **Regular Entity Updates** → Use **optimistic concurrency** (automatic via `xmin` - see [Concurrency.md](Concurrency.md))
 2. **ACID Transactions** → Use database transactions
 3. **High-Frequency Operations** → Use caching, queues, CQRS patterns
 4. **Read-Only Queries** → No locking needed
@@ -153,6 +153,6 @@ A: Avoid it. If necessary, always acquire in the same order to prevent deadlocks
 
 **Related Documentation:**
 - [Caching.md](Caching.md) - HybridCache and Redis configuration
-- [Architecture.md](Architecture.md) - Optimistic concurrency with `xmin`
+- [Concurrency.md](Concurrency.md) - Optimistic concurrency, atomic transactions, and when to use distributed locks
 - [OutboxPattern.md](OutboxPattern.md) - Real-world lock usage example
 - [Medallion.Threading](https://github.com/madelson/DistributedLock) - Underlying library

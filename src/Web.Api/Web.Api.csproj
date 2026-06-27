@@ -9,26 +9,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Asp.Versioning.Http"/>
-        <PackageReference Include="AspNetCore.HealthChecks.UI.Client"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+        <PackageReference Include="Asp.Versioning.Http" />
+        <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets"/>
-        <PackageReference Include="Serilog.AspNetCore"/>
-        <PackageReference Include="Serilog.Sinks.Seq"/>
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI"/>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+        <PackageReference Include="Serilog.AspNetCore" />
+<PackageReference Include="Serilog.Sinks.Seq" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
-        <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj"/>
+        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+        <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Content Remove="appsettings.Testing.json"/>
+        <Content Remove="appsettings.Testing.json" />
     </ItemGroup>
 
     <ItemGroup>
@@ -36,8 +36,8 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <_ContentIncludedByDefault Remove="Pages\Consents\Unsubscribe.cshtml"/>
-        <_ContentIncludedByDefault Remove="Pages\Consents\UnsubscribeSuccess.cshtml"/>
+        <_ContentIncludedByDefault Remove="Pages\Consents\Unsubscribe.cshtml" />
+        <_ContentIncludedByDefault Remove="Pages\Consents\UnsubscribeSuccess.cshtml" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 #pragma warning disable CA1873
-using Domain.Emails.Messages;
+using Domain.Emails;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 

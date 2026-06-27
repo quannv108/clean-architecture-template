@@ -9,7 +9,7 @@ var db = builder.AddPostgres("db")
     .WithPassword(postgresPassword)
     .WithPgWeb()
     .WithLifetime(ContainerLifetime.Persistent)
-    .AddDatabase("main-read-write");
+    .AddDatabase("MainReadWrite");
 
 var seq = builder.AddSeq("seq")
     .WithEnvironment("ACCEPT_EULA", "Y")
@@ -21,6 +21,7 @@ var seq = builder.AddSeq("seq")
 builder.AddProject<Projects.Web_Api>("web-api")
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
     .WithReference(db)
+    .WithReference(seq)
     .WaitFor(db)
     .WaitFor(seq);
 

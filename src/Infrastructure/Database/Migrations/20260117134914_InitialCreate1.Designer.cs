@@ -97,7 +97,7 @@ namespace Infrastructure.Database.Migrations
                     b.ToTable("audit_logs", "public");
                 });
 
-            modelBuilder.Entity("Domain.Emails.Messages.EmailMessage", b =>
+            modelBuilder.Entity("Domain.Emails.EmailMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
