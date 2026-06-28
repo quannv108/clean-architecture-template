@@ -18,6 +18,13 @@ A .NET 10 Clean Architecture template implementing Domain-Driven Design with CQR
 - **Tests** — architecture, unit (NetArchTest, NSubstitute, Shouldly), and API integration tests (Testcontainers).
 - **CI** — GitHub Actions for build, test, and code-coverage reporting.
 
+## Prerequisites
+
+- **[.NET 10 SDK](https://dotnet.microsoft.com/download)** — the template targets .NET 10.
+- **Podman** — the default container runtime .NET Aspire uses to run Postgres, pgweb, and Seq. The Podman machine must
+  be running. Docker can be used instead by overriding the runtime; see
+  [docs/DevelopmentGuideline.md](docs/DevelopmentGuideline.md) for runtime selection details.
+
 ## Getting Started
 
 ```bash

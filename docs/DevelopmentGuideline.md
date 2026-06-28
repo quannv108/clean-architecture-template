@@ -37,6 +37,28 @@ dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage
 reportgenerator -reports:"coverage/**/coverage.cobertura.xml" -targetdir:"coverage/report" -reporttypes:"Html"
 ```
 
+## Container runtime (Docker vs Podman)
+
+Aspire defaults to **Podman** for local containers (`db`/Postgres, `pgweb`, `seq`) — set via `DOTNET_ASPIRE_CONTAINER_RUNTIME` in `src/AppHost/AppHost.cs`, before the builder is created. No per-developer setup is required.
+
+To use Docker instead, set the env var before launching — it overrides the in-code default:
+
+```powershell
+# CLI
+$env:DOTNET_ASPIRE_CONTAINER_RUNTIME='docker'; dotnet run --project src/AppHost
+```
+
+```json
+// VS Code: add to the "Run Aspire AppHost" launch config's "env" block
+"env": {
+    "DOTNET_ASPIRE_CONTAINER_RUNTIME": "docker"
+}
+```
+
+**Prerequisite (Podman):** the Podman machine must be running — check with `podman machine list`.
+
+**Persistence caveat:** `ContainerLifetime.Persistent` containers and named volumes created under Docker do not migrate to Podman. Switching runtimes gives you fresh containers/volumes, so dev Postgres data starts empty (re-run migrations/seed as needed). This is expected, not a bug.
+
 ## Code Formatting
 
 ```bash

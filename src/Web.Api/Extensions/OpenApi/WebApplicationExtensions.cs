@@ -7,11 +7,12 @@ public static class WebApplicationExtensions
         // Map the OpenAPI endpoint with document name "v1"
         app.MapOpenApi("/openapi/{documentName}.json");
 
-        // Configure SwaggerUI to work with native OpenAPI specification
+        // Configure SwaggerUI to work with native OpenAPI specification.
+        // Served under /swagger (matches launchSettings launchUrl) so the root path is free for the /_dev hub.
         app.UseSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/openapi/v1.json", "API V1");
-            options.RoutePrefix = "";
+            options.RoutePrefix = "swagger";
         });
 
         return app;

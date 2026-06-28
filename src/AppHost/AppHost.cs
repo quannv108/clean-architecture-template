@@ -1,3 +1,11 @@
+// Default the container runtime to Podman (this team has moved off Docker).
+// Honour an explicit override so Docker remains reachable: set
+// DOTNET_ASPIRE_CONTAINER_RUNTIME=docker to use Docker instead.
+if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_ASPIRE_CONTAINER_RUNTIME")))
+{
+    Environment.SetEnvironmentVariable("DOTNET_ASPIRE_CONTAINER_RUNTIME", "podman");
+}
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgresUsername = builder.AddParameter("postgres-username", "postgres");

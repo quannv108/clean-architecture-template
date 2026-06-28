@@ -1,0 +1,133 @@
+@page "/_dev"
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    Layout = null;
+    // Aspire injects the Seq server URL as the "seq" connection string; that same URL serves the Seq dashboard.
+    // GetConnectionString is the sanctioned exception to the IOptions rule (connection strings have no IOptions binding).
+    var seqUrl = Configuration.GetConnectionString("seq");
+    var hasSeq = !string.IsNullOrWhiteSpace(seqUrl);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dev Tools — Clean Architecture API</title>
+    <style>
+        :root {
+            --bg: #0f1115;
+            --panel: #171a21;
+            --panel-hover: #1f2430;
+            --border: #262b36;
+            --text: #e6e9ef;
+            --muted: #8b93a3;
+            --accent: #5b9dff;
+            --soon: #3a3f4b;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+        .wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+        header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+        h1 { font-size: 1.6rem; margin: 0; font-weight: 650; }
+        .badge {
+            font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+            background: rgba(91,157,255,.15); color: var(--accent); border: 1px solid rgba(91,157,255,.3);
+        }
+        .subtitle { color: var(--muted); margin: 0 0 36px; font-size: .95rem; }
+        section { margin-bottom: 36px; }
+        h2 {
+            font-size: .8rem; text-transform: uppercase; letter-spacing: .08em;
+            color: var(--muted); font-weight: 600; margin: 0 0 14px; padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+        .card {
+            display: block; text-decoration: none; color: inherit;
+            background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 18px; transition: background .15s, border-color .15s, transform .15s;
+        }
+        a.card:hover { background: var(--panel-hover); border-color: var(--accent); transform: translateY(-2px); }
+        .card .title { font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .card .desc { color: var(--muted); font-size: .85rem; margin-top: 4px; }
+        .card .path { color: var(--accent); font-size: .8rem; margin-top: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+        .card.soon { opacity: .55; cursor: not-allowed; }
+        .pill {
+            margin-left: auto; font-size: .65rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .05em; padding: 2px 8px; border-radius: 999px;
+            background: var(--soon); color: var(--muted);
+        }
+        footer { color: var(--muted); font-size: .8rem; margin-top: 48px; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>🛠 Dev Tools</h1>
+            <span class="badge">@Env.EnvironmentName</span>
+        </header>
+        <p class="subtitle">Tooling and reference hub for the Clean Architecture API. Available in development only.</p>
+
+        <section>
+            <h2>1 · API Documentation</h2>
+            <div class="grid">
+                <a class="card" href="/swagger">
+                    <div class="title">Swagger UI</div>
+                    <div class="desc">Interactive API explorer (v1)</div>
+                    <div class="path">/swagger</div>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>2 · Tooling</h2>
+            <div class="grid">
+                <a class="card" href="/hangfire">
+                    <div class="title">Hangfire Dashboard</div>
+                    <div class="desc">Background &amp; recurring jobs</div>
+                    <div class="path">/hangfire</div>
+                </a>
+                <a class="card" href="/health">
+                    <div class="title">Health Checks</div>
+                    <div class="desc">Liveness &amp; dependency status</div>
+                    <div class="path">/health</div>
+                </a>
+                @if (hasSeq)
+                {
+                    <a class="card" href="@seqUrl" target="_blank" rel="noopener">
+                        <div class="title">Seq Logs</div>
+                        <div class="desc">Structured log viewer</div>
+                        <div class="path">@seqUrl</div>
+                    </a>
+                }
+                <div class="card soon">
+                    <div class="title">Test Email <span class="pill">Soon</span></div>
+                    <div class="desc">For now use <code>POST /emails/test-send</code> via Swagger</div>
+                </div>
+                <div class="card soon">
+                    <div class="title">Test Storage <span class="pill">Soon</span></div>
+                    <div class="desc">Upload/list against the configured file storage provider</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>3 · Reports</h2>
+            <div class="grid">
+                <div class="card soon">
+                    <div class="title">Reports <span class="pill">Soon</span></div>
+                    <div class="desc">To be defined</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>Clean Architecture template · this page is served only in the Development environment.</footer>
+    </div>
+</body>
+</html>

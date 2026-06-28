@@ -94,10 +94,10 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.UseOpenApiWithUi();
-        // keep razor testing page available on dev env only
+        // keep razor testing/dev pages available on dev env only
         app.MapRazorPages();
-        // Redirect root endpoint to OpenAPI UI in development
-        app.MapGet("/", () => Results.Redirect("/index.html")).ExcludeFromDescription();
+        // Redirect root endpoint to the dev tools hub in development
+        app.MapGet("/", () => Results.Redirect("/_dev")).ExcludeFromDescription();
     }
 
     app.MapHealthChecks("health", new HealthCheckOptions

@@ -18,10 +18,10 @@ This file is a concise entry point. Detailed guidance lives in `docs/` — read 
 dotnet build CleanArchitecture.slnx          # Build
 dotnet test CleanArchitecture.slnx           # Run all tests
 dotnet test tests/ArchitectureTests/         # Architecture tests (run before completing work)
-dotnet run --project src/AppHost             # Run full stack with Aspire
+dotnet run --project src/AppHost             # Run full stack with Aspire (defaults to Podman; see below)
 ```
 
-See [docs/DevelopmentGuideline.md](docs/DevelopmentGuideline.md) for the full command set, formatting, testing, and migrations.
+See [docs/DevelopmentGuideline.md](docs/DevelopmentGuideline.md) for the full command set, formatting, testing, and migrations. For switching between Docker and Podman, see [Container runtime (Docker vs Podman)](docs/DevelopmentGuideline.md#container-runtime-docker-vs-podman).
 
 ## Documentation
 
