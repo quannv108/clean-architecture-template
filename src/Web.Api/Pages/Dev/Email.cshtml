@@ -1,0 +1,286 @@
+@page "/_dev/email"
+@model Web.Api.Pages.Dev.EmailModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Test Email — Dev Tools</title>
+    <style>
+            :root {
+                --bg: #0f1115;
+                --panel: #171a21;
+                --panel-hover: #1f2430;
+                --border: #262b36;
+                --text: #e6e9ef;
+                --muted: #8b93a3;
+                --accent: #5b9dff;
+                --good: #4caf50;
+                --warn: #e0a030;
+                --bad: #e05a4f;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.5;
+            }
+
+            .wrap {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 40px 24px 80px;
+            }
+
+            header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 8px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+                margin: 0;
+                font-weight: 650;
+            }
+
+            .back {
+                color: var(--accent);
+                text-decoration: none;
+                font-size: .85rem;
+            }
+
+            .back:hover {
+                text-decoration: underline;
+            }
+
+            .subtitle {
+                color: var(--muted);
+                margin: 0 0 28px;
+                font-size: .95rem;
+            }
+
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 14px;
+                margin-bottom: 20px;
+            }
+
+            .stat {
+                background: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 16px 18px;
+            }
+
+            .stat .label {
+                color: var(--muted);
+                font-size: .75rem;
+                text-transform: uppercase;
+                letter-spacing: .06em;
+            }
+
+            .stat .value {
+                font-size: 1.2rem;
+                font-weight: 650;
+                margin-top: 4px;
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            }
+
+            .notice {
+                display: flex;
+                gap: 10px;
+                align-items: flex-start;
+                background: rgba(224, 160, 48, .1);
+                border: 1px solid var(--warn);
+                color: var(--warn);
+                border-radius: 12px;
+                padding: 12px 16px;
+                font-size: .85rem;
+                margin-bottom: 28px;
+            }
+
+            form.filters {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                flex-wrap: wrap;
+                background: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 18px;
+                margin-bottom: 20px;
+            }
+
+            form.filters label {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                font-size: .85rem;
+                color: var(--muted);
+                flex: 1 1 260px;
+            }
+
+            form.filters input[type="email"] {
+                background: var(--bg);
+                border: 1px solid var(--border);
+                color: var(--text);
+                border-radius: 8px;
+                padding: 8px 10px;
+                font-size: .9rem;
+            }
+
+            form.filters button {
+                background: var(--accent);
+                color: #0f1115;
+                border: none;
+                border-radius: 8px;
+                padding: 9px 18px;
+                font-size: .85rem;
+                font-weight: 600;
+                cursor: pointer;
+                align-self: flex-end;
+            }
+
+            form.filters button:disabled {
+                opacity: .6;
+                cursor: not-allowed;
+            }
+
+            .result {
+                border-radius: 12px;
+                padding: 14px 16px;
+                font-size: .88rem;
+                border: 1px solid var(--border);
+                margin-bottom: 20px;
+                display: none;
+            }
+
+            .result.ok {
+                display: block;
+                border-color: var(--good);
+                color: var(--good);
+                background: rgba(76, 175, 80, .1);
+            }
+
+            .result.err {
+                display: block;
+                border-color: var(--bad);
+                color: var(--bad);
+                background: rgba(224, 90, 79, .1);
+            }
+
+            footer {
+                color: var(--muted);
+                font-size: .8rem;
+                margin-top: 32px;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Test Email</h1>
+        </header>
+        <p class="subtitle">
+            <a class="back" href="/_dev">&larr; back to dev tools</a> · Send a test email via the configured provider.
+        </p>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="label">Provider</div>
+                <div class="value">@Model.Provider</div>
+            </div>
+            <div class="stat">
+                <div class="label">From address</div>
+                <div class="value">@Model.FromAddress</div>
+            </div>
+        </div>
+
+        @if (Model.IsDummyProvider)
+        {
+            <div class="notice">
+                ⚠ The Dummy provider only logs emails — it does not deliver them. Don't expect anything to arrive in an
+                inbox.
+            </div>
+        }
+
+        <form class="filters" id="test-email-form">
+            <label for="to">Target email
+                <input type="email" id="to" name="to" required placeholder="you@example.com" />
+            </label>
+            <button type="submit" id="send-btn">Send</button>
+        </form>
+
+        <div id="result" class="result"></div>
+
+        <footer>Clean Architecture template · this page is served only in the Development environment.</footer>
+    </div>
+
+    <script>
+        document.getElementById('test-email-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const button = document.getElementById('send-btn');
+            const resultEl = document.getElementById('result');
+            const to = document.getElementById('to').value;
+
+            resultEl.className = 'result';
+            resultEl.textContent = '';
+            button.disabled = true;
+            button.textContent = 'Sending…';
+
+            try {
+                const res = await fetch('/api/v1/emails/test-send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: to,
+                        subject: 'Test email from Dev Tools',
+                        body: '<p>This is a test email sent from the Dev Tools page.</p>',
+                        isHtml: true
+                    })
+                });
+
+                if (res.ok) {
+                    resultEl.className = 'result ok';
+                    resultEl.textContent = 'Sent ✓ — check your provider/logs.';
+                } else {
+                    let title = res.statusText;
+                    let detail = '';
+                    try {
+                        const problem = await res.json();
+                        title = problem.title || title;
+                        detail = problem.detail || '';
+                    } catch {
+                        // response wasn't JSON; fall back to status text
+                    }
+                    resultEl.className = 'result err';
+                    resultEl.textContent = detail ? `${title} — ${detail}` : title;
+                }
+            } catch (err) {
+                resultEl.className = 'result err';
+                resultEl.textContent = `Request failed: ${err.message}`;
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Send';
+            }
+        });
+    </script>
+</body>
+
+</html>

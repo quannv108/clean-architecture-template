@@ -57,6 +57,8 @@ app.MapPost("/users", async (
 });
 ```
 
+**Route prefix (`api/v1`)** — `MapEndpoints` (in `Web.Api/Extensions/EndpointExtensions.cs`) registers every `IEndpoint` inside a versioned group: `app.MapGroup("api/v1")`. The path passed to `MapPost`/`MapGet` is **relative to that group**, so the example above is reachable at `/api/v1/users`, not `/users`. The route declared in an endpoint file is never the full URL — always prepend `api/v1` when calling an endpoint from JS, tests, or external clients. The default version (`1.0`) is assumed when unspecified, so no `api-version` parameter is required.
+
 ## Data Access
 
 - **Reads**: CachedRepository classes in `Application/<Feature>/Data/` using HybridCache, returning DTOs (never entities) — see [Caching.md](Caching.md)

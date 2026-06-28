@@ -11,7 +11,7 @@ public static class EndpointExtensions
         Assembly assembly,
         RouteGroupBuilder? routeGroupBuilder = null)
     {
-        IEnumerable<IEndpoint> endpoints = assembly
+        IEnumerable<IEndpoint> v1Endpoints = assembly
             .DefinedTypes
             .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                            type.IsAssignableTo(typeof(IEndpoint)))
@@ -35,7 +35,7 @@ public static class EndpointExtensions
 
         IEndpointRouteBuilder builder = routeGroupBuilder ?? v1Group;
 
-        foreach (IEndpoint endpoint in endpoints)
+        foreach (IEndpoint endpoint in v1Endpoints)
         {
             Log.Information("Mapping endpoint: {Endpoint}", endpoint.GetType().FullName);
             endpoint.MapEndpoint(builder);

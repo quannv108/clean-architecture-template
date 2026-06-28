@@ -154,3 +154,4 @@ dotnet ef migrations remove \
 - Adding pessimistic locks before trying optimistic concurrency — `xmin` handles concurrent entity writes automatically
 - Not implementing `IEndpoint` on Web.Api endpoints, or putting handler logic inline in the `MapEndpoint` lambda instead of a `private static HandleAsync` method
 - Missing `.Accepts<T>("application/json")` on POST/PUT endpoints, or missing `.ProducesProblem()`, `.WithTags()`, or `.AddOpenApiOperationTransformer` declarations
+- Calling an endpoint by the bare path from its file (e.g. `/emails/test-send`) — every endpoint is mounted under the `api/v1` group, so the real URL is `/api/v1/emails/test-send` (404 otherwise). See [Architecture.md → Route prefix (`api/v1`)](Architecture.md#cqrs-scrutor-decorators-not-mediatr)
