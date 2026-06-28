@@ -32,12 +32,17 @@ public interface IOutboxMessageProcessor
 /// <param name="SkipCount">Number of messages skipped (already being processed by another instance).</param>
 /// <param name="SucceedLogs">List of successfully processed event types.</param>
 /// <param name="FailedLogs">List of failed event types with error messages.</param>
+/// <param name="FetchedCount">
+/// Number of rows fetched from the database for this batch (regardless of how many were
+/// processed vs. skipped). Used by the hosted service to detect a full batch and keep draining.
+/// </param>
 public sealed record ProcessedResult(
     int ProcessedCount,
     int FailedCount,
     int SkipCount,
     List<string> SucceedLogs,
-    List<string> FailedLogs);
+    List<string> FailedLogs,
+    int FetchedCount = 0);
 
 internal sealed class OutboxMessageProcessor(
     IServiceScopeFactory serviceScopeFactory,
@@ -45,7 +50,7 @@ internal sealed class OutboxMessageProcessor(
     ILogger<OutboxMessageProcessor> logger) : IOutboxMessageProcessor
 {
     private static readonly ProcessedResult EmptyProcessedResult = new(0, 0, 0,
-        [], []);
+        [], [], 0);
 
     public async Task<ProcessedResult> ProcessAsync(int batchSize, CancellationToken cancellationToken = default)
     {
@@ -166,7 +171,7 @@ internal sealed class OutboxMessageProcessor(
         logger.LogInformation(
             "Outbox processing completed. Success: {SuccessCount}, Failures: {FailureCount}, Skip {SkipCount}",
             successCount, failureCount, skipCount);
-        return new ProcessedResult(successCount, failureCount, skipCount, processed, failed);
+        return new ProcessedResult(successCount, failureCount, skipCount, processed, failed, outboxMessages.Count);
     }
 
     private IDomainEvent? DeserializeDomainEvent(OutboxMessage outboxMessage)

@@ -144,6 +144,8 @@ public static class DependencyInjection
             .BindConfiguration("Outbox")
             .ValidateDataAnnotations()
             .ValidateOnStart();
+        services.AddSingleton<IValidateOptions<OutboxOptions>, OutboxOptionsValidator>();
+        services.AddSingleton<OutboxSignal>();
 
         services.AddTransient<IDomainEventsDispatcher, DomainEventsDispatcher>();
 

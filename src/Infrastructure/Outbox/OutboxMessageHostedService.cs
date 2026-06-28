@@ -9,6 +9,7 @@ namespace Infrastructure.Outbox;
 internal sealed class OutboxMessageHostedService(
     IServiceScopeFactory scopeFactory,
     IOptions<OutboxOptions> options,
+    OutboxSignal signal,
     IHostApplicationLifetime applicationLifetime,
     ILogger<OutboxMessageHostedService> logger)
     : IHostedService, IDisposable
@@ -64,17 +65,15 @@ internal sealed class OutboxMessageHostedService(
 
     private async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(_options.PollingIntervalMs));
+        var idleInterval = TimeSpan.FromMilliseconds(_options.MaxPollingIntervalMs);
 
         try
         {
-            while (await timer.WaitForNextTickAsync(stoppingToken))
+            while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    using var scope = scopeFactory.CreateScope();
-                    var processor = scope.ServiceProvider.GetRequiredService<IOutboxMessageProcessor>();
-                    await processor.ProcessAsync(_options.BatchSize, stoppingToken);
+                    await DrainAsync(stoppingToken);
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
                 {
@@ -84,11 +83,49 @@ internal sealed class OutboxMessageHostedService(
                 {
                     logger.LogError(ex, "Error processing outbox messages");
                 }
+
+                // Idle until a new message signals us, or the fallback interval elapses.
+                await signal.WaitAsync(idleInterval, stoppingToken);
             }
         }
-        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        catch (OperationCanceledException e) when (stoppingToken.IsCancellationRequested)
         {
             // Expected during shutdown
+            logger.LogInformation(message: $"{nameof(OutboxMessageHostedService)} stopping due to {nameof(OperationCanceledException)}", exception: e);
+        }
+    }
+
+    /// <summary>
+    /// Processes batches while they come back full (rows fetched == batch size), draining a backlog
+    /// instead of waiting for the next idle tick. The first batch runs immediately (so a signalled
+    /// wake stays instant); subsequent batches are paced by <see cref="OutboxOptions.MinPollingIntervalMs"/>
+    /// to avoid hammering the database. Stops on the first partial or empty batch.
+    /// </summary>
+    private async Task DrainAsync(CancellationToken stoppingToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(_options.MinPollingIntervalMs));
+
+        while (true)
+        {
+            int fetched;
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var processor = scope.ServiceProvider.GetRequiredService<IOutboxMessageProcessor>();
+                var result = await processor.ProcessAsync(_options.BatchSize, stoppingToken);
+                fetched = result.FetchedCount;
+            }
+
+            if (fetched < _options.BatchSize)
+            {
+                break;
+            }
+
+            // Backlog continues: pace the next batch poll. Scope above is already disposed so we
+            // don't hold a DbContext open during the wait. Exits if the app is stopping.
+            if (!await timer.WaitForNextTickAsync(stoppingToken))
+            {
+                break;
+            }
         }
     }
 }

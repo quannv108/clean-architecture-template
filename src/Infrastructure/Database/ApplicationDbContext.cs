@@ -1,13 +1,15 @@
 using Application.Abstractions.Data;
 using Domain.AuditLogs;
 using Domain.Outbox;
+using Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
 
 namespace Infrastructure.Database;
 
 internal sealed class ApplicationDbContext(
-    DbContextOptions<ApplicationDbContext> options)
+    DbContextOptions<ApplicationDbContext> options,
+    OutboxSignal outboxSignal)
     : BaseApplicationDbContext(options), IApplicationDbContext
 {
     public DbSet<AuditLog> AuditLogs { get; set; }
@@ -29,6 +31,14 @@ internal sealed class ApplicationDbContext(
         await StoreDomainEventsAsync(domainEvents);
 
         int result = await base.SaveChangesAsync(cancellationToken);
+
+        // Wake the outbox processor only for genuine new business events. The processor's own
+        // status-update saves (MarkAsProcessing/MarkAsProcessed/SetError) raise no domain events,
+        // so this never self-triggers a feedback loop.
+        if (domainEvents.Count > 0)
+        {
+            outboxSignal.Notify();
+        }
 
         return result;
     }

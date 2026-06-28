@@ -109,7 +109,8 @@ public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncLifet
             new("Jwt:Issuer", "Issuer1"),
             new("Jwt:Audience", "Audience1"),
             new("Jwt:TokenExpirationMinutes", "5"),
-            new("Outbox:PollingIntervalMs", "1000"),
+            new("Outbox:MinPollingIntervalMs", "1000"),
+            new("Outbox:MaxPollingIntervalMs", "5000"),
             new("Outbox:BatchSize", "10"),
         };
 

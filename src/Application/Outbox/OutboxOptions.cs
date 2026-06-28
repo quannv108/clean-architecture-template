@@ -8,10 +8,17 @@ namespace Application.Outbox;
 public sealed class OutboxOptions
 {
     /// <summary>
-    /// Polling interval in milliseconds for checking new outbox messages.
+    /// Interval, in milliseconds, between consecutive batch polls while draining a backlog.
     /// </summary>
-    [Range(100, 60000, ErrorMessage = "Outbox PollingIntervalMs must be between 100ms and 60000ms (1 minute)")]
-    public int PollingIntervalMs { get; set; } = 5000;
+    [Range(100, 600000, ErrorMessage = "Outbox MinPollingIntervalMs must be between 100ms and 600000ms (10 minutes)")]
+    public int MinPollingIntervalMs { get; set; } = 1000;
+
+    /// <summary>
+    /// Idle poll interval, in milliseconds: how long to wait for new messages before polling again
+    /// when the outbox is empty. A signal (new outbox row committed) wakes the processor earlier.
+    /// </summary>
+    [Range(100, 600000, ErrorMessage = "Outbox MaxPollingIntervalMs must be between 100ms and 600000ms (10 minutes)")]
+    public int MaxPollingIntervalMs { get; set; } = 300000;
 
     /// <summary>
     /// Maximum number of messages to process in a single batch.
