@@ -86,6 +86,13 @@ Infrastructure/Communication/Sms/
 
 **Rule:** Application defines the shape of configuration it needs; Infrastructure decides where to load it from (appsettings, environment variables, secrets manager, etc.). This keeps Application free of infrastructure concerns while allowing Infrastructure to swap configuration sources without touching Application code.
 
+### Where Error classes go
+
+`*Errors` classes must never live in Application or Web.Api — enforced by ArchitectureTests.
+
+- **Relates to a domain entity/slice** → `Domain/<Feature>/`. Example: `AuditLogsErrors` → `Domain/AuditLogs/`.
+- **Cross-cutting abstraction with no domain entity** (interacts with Infrastructure) → `SharedKernel/<Concept>/`. Examples: `StorageErrors` → `SharedKernel/Storage/`.
+
 ### Hosted services
 
 `IHostedService` / `BackgroundService` implementations belong in **Infrastructure**, never in Application or Web.Api. They are infrastructure concerns: polling databases, processing queues, scheduling background work. Register them in Infrastructure's `DependencyInjection.cs`:
@@ -141,6 +148,8 @@ Infrastructure/BackgroundJobs/
 | Background job logic (`OutboxMessageCleanupJob`, `DeleteOldAuditLogsBackgroundJob`, …) | `Application/<Feature>/` | Calls command handlers; no job-runner library dependency |
 | Background job library adapters (`HangfireBackgroundJob`, …) | `Infrastructure/BackgroundJobs/` | Implements `IBackgroundJob`; wraps Hangfire/other SDK |
 | Slice-specific value objects | `Domain/<Feature>/` | Owned by one slice only |
+| Error classes tied to a domain entity (`AuditLogErrors`, …) | `Domain/<Feature>/` | Relates to a specific domain entity/slice |
+| Error classes for cross-cutting abstractions (`StorageErrors`, …) | `SharedKernel/<Concept>/` | No domain entity; interacts with Infrastructure; never Application/Web.Api |
 
 ## Feature Complexity Patterns
 

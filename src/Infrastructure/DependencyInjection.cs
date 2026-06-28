@@ -7,14 +7,15 @@ using Application.Abstractions.Cryptography;
 using Application.Abstractions.Data;
 using Application.Abstractions.DomainEvents;
 using Application.Abstractions.Locking;
+using Application.Abstractions.Storage;
 using Application.Abstractions.Time;
 using Application.Outbox;
-using Infrastructure.Communication.Email;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Infrastructure.Authentication;
 using Infrastructure.BackgroundJobs;
 using Infrastructure.BackgroundJobs.Hangfire;
+using Infrastructure.Communication.Email;
 using Infrastructure.Communication.Sms;
 using Infrastructure.Cryptography;
 using Infrastructure.Database;
@@ -23,6 +24,7 @@ using Infrastructure.Database.Seeding;
 using Infrastructure.DomainEvents;
 using Infrastructure.Locking;
 using Infrastructure.Outbox;
+using Infrastructure.Storage;
 using Infrastructure.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -64,6 +66,7 @@ public static class DependencyInjection
                 .AddEmailIntegration(configuration)
                 .AddSmsIntegration(configuration, logger)
                 .AddAuthenticationInternal()
+                .AddStorageIntegration()
             ;
     }
 
@@ -377,6 +380,19 @@ public static class DependencyInjection
         {
             services.AddSingleton<ISmsSender, DummySmsSender>();
         }
+
+        return services;
+    }
+
+
+
+    internal static IServiceCollection AddStorageIntegration(this IServiceCollection services)
+    {
+        services.AddOptions<StorageOptions>()
+            .BindConfiguration("Storage")
+            .ValidateOnStart();
+        services.AddSingleton<IValidateOptions<StorageOptions>, StorageOptionsValidator>();
+        services.AddSingleton<IStorageFactory, StorageFactory>();
 
         return services;
     }

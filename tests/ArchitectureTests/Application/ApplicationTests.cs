@@ -1,8 +1,8 @@
 using Application.Abstractions.BackgroundJobs;
 using Application.Abstractions.Messaging;
 using NetArchTest.Rules;
-using Shouldly;
 using SharedKernel;
+using Shouldly;
 
 namespace ArchitectureTests.Application;
 
@@ -359,87 +359,97 @@ public class ApplicationTests : BaseTest
         failingCommands.Count.ShouldBe(0, detailedMessage);
     }
 
-    // [Fact]
-    // public void Application_Slices_Should_Not_Have_Cross_Slice_Dependencies()
-    // {
-    //     var violations = new List<string>();
-    //
-    //     // Get all Application types (excluding shared abstractions and infrastructure)
-    //     var applicationTypes = Types.InAssembly(ApplicationAssembly)
-    //         .That()
-    //         .AreClasses()
-    //         .And()
-    //         .DoNotResideInNamespace("Application.Abstractions")
-    //         .GetTypes()
-    //         .ToList(); // Materialize to avoid multiple enumerations
-    //
-    //     // Get all Application namespaces to build the forbidden list dynamically
-    //     var allApplicationNamespaces = applicationTypes
-    //         .Where(t => !string.IsNullOrEmpty(t.Namespace))
-    //         .Select(t => t.Namespace!)
-    //         .Where(ns => ns.StartsWith("Application.", StringComparison.InvariantCulture))
-    //         .Select(ns =>
-    //         {
-    //             var parts = ns.Split('.');
-    //             return parts.Length >= 2 ? $"{parts[0]}.{parts[1]}" : ns;
-    //         })
-    //         .Distinct()
-    //         .ToList();
-    //
-    //     // Group Application types by their feature namespace
-    //     var applicationFeatureGroups = applicationTypes
-    //         .Where(t => t.Namespace != null &&
-    //                     t.Namespace.StartsWith("Application.", StringComparison.InvariantCulture))
-    //         .GroupBy(t =>
-    //         {
-    //             var parts = t.Namespace!.Split('.');
-    //             return parts.Length >= 2 ? $"{parts[0]}.{parts[1]}" : t.Namespace!;
-    //         })
-    //         .ToList();
-    //
-    //     foreach (var featureGroup in applicationFeatureGroups)
-    //     {
-    //         var applicationFeatureNamespace = featureGroup.Key;
-    //
-    //         // Build forbidden namespaces: all Application namespaces except:
-    //         // 1. The current slice itself
-    //         // 2. Shared infrastructure (Abstractions, Outbox)
-    //         var forbiddenNamespaces = allApplicationNamespaces
-    //             .Where(ns => ns != applicationFeatureNamespace
-    //                          && ns != "Application.Abstractions"
-    //                          && ns != "Application.Outbox"
-    //                          && ns != "Application")
-    //             .ToArray();
-    //
-    //         // Check each forbidden namespace - STRICT ISOLATION
-    //         foreach (var forbiddenNamespace in forbiddenNamespaces)
-    //         {
-    //             var result = Types.InAssembly(ApplicationAssembly)
-    //                 .That()
-    //                 .ResideInNamespace(applicationFeatureNamespace)
-    //                 .Should()
-    //                 .NotHaveDependencyOn(forbiddenNamespace)
-    //                 .GetResult();
-    //
-    //             if (!result.IsSuccessful)
-    //             {
-    //                 var failingTypes = result.FailingTypeNames ?? new List<string>();
-    //                 foreach (var failingType in failingTypes)
-    //                 {
-    //                     violations.Add(
-    //                         $"Application type {failingType} in namespace {applicationFeatureNamespace} " +
-    //                         $"should not reference other Application slices. " +
-    //                         $"Found reference to {forbiddenNamespace} namespace. " +
-    //                         $"Each vertical slice should be self-contained and isolated.");
-    //                 }
-    //             }
-    //         }
-    //     }
-    //
-    //     if (violations.Count > 0)
-    //     {
-    //         var message = $"Found {violations.Count} cross-slice dependency violations:\n{string.Join("\n", violations)}";
-    //         violations.Count.ShouldBe(0, message);
-    //     }
-    // }
+    [Fact]
+    public void Application_Should_Not_Contain_Error_Classes()
+    {
+        var offenders = Types.InAssembly(ApplicationAssembly).That().HaveNameEndingWith("Errors").GetTypes()
+            .Select(t => t.FullName).ToList();
+
+        offenders.ShouldBeEmpty(
+            $"Error classes must live in Domain or SharedKernel, not Application: {string.Join(", ", offenders)}");
+    }
+
+    [Fact]
+    public void Application_Slices_Should_Not_Have_Cross_Slice_Dependencies()
+    {
+        var violations = new List<string>();
+
+        // Get all Application types (excluding shared abstractions and infrastructure)
+        var applicationTypes = Types.InAssembly(ApplicationAssembly)
+            .That()
+            .AreClasses()
+            .And()
+            .DoNotResideInNamespace("Application.Abstractions")
+            .GetTypes()
+            .ToList(); // Materialize to avoid multiple enumerations
+
+        // Get all Application namespaces to build the forbidden list dynamically
+        var allApplicationNamespaces = applicationTypes
+            .Where(t => !string.IsNullOrEmpty(t.Namespace))
+            .Select(t => t.Namespace!)
+            .Where(ns => ns.StartsWith("Application.", StringComparison.InvariantCulture))
+            .Select(ns =>
+            {
+                var parts = ns.Split('.');
+                return parts.Length >= 2 ? $"{parts[0]}.{parts[1]}" : ns;
+            })
+            .Distinct()
+            .ToList();
+
+        // Group Application types by their feature namespace
+        var applicationFeatureGroups = applicationTypes
+            .Where(t => t.Namespace != null &&
+                        t.Namespace.StartsWith("Application.", StringComparison.InvariantCulture))
+            .GroupBy(t =>
+            {
+                var parts = t.Namespace!.Split('.');
+                return parts.Length >= 2 ? $"{parts[0]}.{parts[1]}" : t.Namespace!;
+            })
+            .ToList();
+
+        foreach (var featureGroup in applicationFeatureGroups)
+        {
+            var applicationFeatureNamespace = featureGroup.Key;
+
+            // Build forbidden namespaces: all Application namespaces except:
+            // 1. The current slice itself
+            // 2. Shared infrastructure (Abstractions, Outbox)
+            var forbiddenNamespaces = allApplicationNamespaces
+                .Where(ns => ns != applicationFeatureNamespace
+                             && ns != "Application.Abstractions"
+                             && ns != "Application.Outbox"
+                             && ns != "Application")
+                .ToArray();
+
+            // Check each forbidden namespace - STRICT ISOLATION
+            foreach (var forbiddenNamespace in forbiddenNamespaces)
+            {
+                var result = Types.InAssembly(ApplicationAssembly)
+                    .That()
+                    .ResideInNamespace(applicationFeatureNamespace)
+                    .Should()
+                    .NotHaveDependencyOn(forbiddenNamespace)
+                    .GetResult();
+
+                if (!result.IsSuccessful)
+                {
+                    var failingTypes = result.FailingTypeNames ?? new List<string>();
+                    foreach (var failingType in failingTypes)
+                    {
+                        violations.Add(
+                            $"Application type {failingType} in namespace {applicationFeatureNamespace} " +
+                            $"should not reference other Application slices. " +
+                            $"Found reference to {forbiddenNamespace} namespace. " +
+                            $"Each vertical slice should be self-contained and isolated.");
+                    }
+                }
+            }
+        }
+
+        if (violations.Count > 0)
+        {
+            var message = $"Found {violations.Count} cross-slice dependency violations:\n{string.Join("\n", violations)}";
+            violations.Count.ShouldBe(0, message);
+        }
+    }
 }

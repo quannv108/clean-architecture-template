@@ -125,3 +125,5 @@ See the full naming-convention table in [VerticalSliceStructure.md](VerticalSlic
 ## Error Codes
 
 Domain error codes use the `"{Entity}.{ErrorName}"` pattern (e.g. `"User.NotFound"`, `"Order.InvalidStatusTransition"`). These go in the `Error.Code` field, defined as `public static` factory methods in `<Feature>Errors.cs`.
+
+`*Errors` classes must live in Domain or SharedKernel, never in Application or Web.Api (enforced by ArchitectureTests) — see [Where Error classes go](VerticalSliceStructure.md#where-error-classes-go) for the placement rule.

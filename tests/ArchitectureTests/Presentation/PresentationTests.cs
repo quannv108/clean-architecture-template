@@ -199,6 +199,16 @@ public class PresentationTests : BaseTest
         }
     }
 
+    [Fact]
+    public void Presentation_Should_Not_Contain_Error_Classes()
+    {
+        var offenders = Types.InAssembly(PresentationAssembly).That().HaveNameEndingWith("Errors").GetTypes()
+            .Select(t => t.FullName).ToList();
+
+        offenders.ShouldBeEmpty(
+            $"Error classes must live in Domain or SharedKernel, not Web.Api: {string.Join(", ", offenders)}");
+    }
+
     private static string GetAccessModifier(Type nestedType)
     {
         if (nestedType.IsNestedPrivate)
