@@ -1,0 +1,392 @@
+@page "/_dev/outbox"
+@model Web.Api.Pages.Dev.OutboxModel
+@{
+    Layout = null;
+
+    string OtherWindowQuery(string window)
+    {
+        var qs = new Dictionary<string, string?>
+        {
+            ["window"] = window,
+            ["q"] = Model.Q,
+            ["errorsOnly"] = Model.ErrorsOnly ? "true" : null,
+            ["sort"] = Model.Sort
+        };
+        return "?" + string.Join("&", qs.Where(kv => !string.IsNullOrEmpty(kv.Value))
+            .Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value!)}"));
+    }
+
+    string OtherSortQuery(string sort)
+    {
+        var qs = new Dictionary<string, string?>
+        {
+            ["window"] = Model.Window,
+            ["q"] = Model.Q,
+            ["errorsOnly"] = Model.ErrorsOnly ? "true" : null,
+            ["sort"] = sort
+        };
+        return "?" + string.Join("&", qs.Where(kv => !string.IsNullOrEmpty(kv.Value))
+            .Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value!)}"));
+    }
+
+    string RateClass(double rate)
+    {
+        if (rate >= 1) return "rate-good";
+        if (rate >= .9) return "rate-warn";
+        return "rate-bad";
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Outbox Stats — Dev Tools</title>
+    <style>
+            :root {
+                --bg: #0f1115;
+                --panel: #171a21;
+                --panel-hover: #1f2430;
+                --border: #262b36;
+                --text: #e6e9ef;
+                --muted: #8b93a3;
+                --accent: #5b9dff;
+                --good: #4caf50;
+                --warn: #e0a030;
+                --bad: #e05a4f;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.5;
+            }
+
+            .wrap {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 40px 24px 80px;
+            }
+
+            header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 8px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+                margin: 0;
+                font-weight: 650;
+            }
+
+            .back {
+                color: var(--accent);
+                text-decoration: none;
+                font-size: .85rem;
+            }
+
+            .back:hover {
+                text-decoration: underline;
+            }
+
+            .subtitle {
+                color: var(--muted);
+                margin: 0 0 28px;
+                font-size: .95rem;
+            }
+
+            .toolbar {
+                display: flex;
+                align-items: center;
+                gap: 18px;
+                flex-wrap: wrap;
+                margin-bottom: 24px;
+            }
+
+            .tabs {
+                display: flex;
+                gap: 6px;
+            }
+
+            .tabs a {
+                padding: 6px 14px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-size: .85rem;
+                color: var(--muted);
+                border: 1px solid var(--border);
+                background: var(--panel);
+            }
+
+            .tabs a.active {
+                color: var(--accent);
+                border-color: var(--accent);
+                background: rgba(91, 157, 255, .12);
+            }
+
+            form.filters {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            form.filters input[type="text"] {
+                background: var(--panel);
+                border: 1px solid var(--border);
+                color: var(--text);
+                border-radius: 8px;
+                padding: 6px 10px;
+                font-size: .85rem;
+            }
+
+            form.filters label {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: .85rem;
+                color: var(--muted);
+            }
+
+            form.filters button {
+                background: var(--accent);
+                color: #0f1115;
+                border: none;
+                border-radius: 8px;
+                padding: 6px 14px;
+                font-size: .85rem;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 14px;
+                margin-bottom: 28px;
+            }
+
+            .stat {
+                background: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 16px 18px;
+            }
+
+            .stat .label {
+                color: var(--muted);
+                font-size: .75rem;
+                text-transform: uppercase;
+                letter-spacing: .06em;
+            }
+
+            .stat .value {
+                font-size: 1.7rem;
+                font-weight: 650;
+                margin-top: 4px;
+            }
+
+            .stat.processed .value {
+                color: var(--good);
+            }
+
+            .stat.failed .value {
+                color: var(--bad);
+            }
+
+            .stat.inflight .value {
+                color: var(--accent);
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                overflow: hidden;
+            }
+
+            th,
+            td {
+                padding: 10px 14px;
+                text-align: right;
+                font-size: .88rem;
+                border-bottom: 1px solid var(--border);
+            }
+
+            th:first-child,
+            td:first-child {
+                text-align: left;
+            }
+
+            th {
+                color: var(--muted);
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: .72rem;
+                letter-spacing: .05em;
+            }
+
+            tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+            tbody tr:hover {
+                background: var(--panel-hover);
+            }
+
+            td.type a {
+                color: var(--text);
+                text-decoration: none;
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: .82rem;
+            }
+
+            td.type a:hover {
+                color: var(--accent);
+            }
+
+            .rate-good {
+                color: var(--good);
+                font-weight: 600;
+            }
+
+            .rate-warn {
+                color: var(--warn);
+                font-weight: 600;
+            }
+
+            .rate-bad {
+                color: var(--bad);
+                font-weight: 600;
+            }
+
+            .empty {
+                color: var(--muted);
+                text-align: center;
+                padding: 24px;
+            }
+
+            .sort-links {
+                display: flex;
+                gap: 10px;
+                font-size: .8rem;
+            }
+
+            .sort-links a {
+                color: var(--muted);
+                text-decoration: none;
+            }
+
+            .sort-links a.active {
+                color: var(--accent);
+            }
+
+            footer {
+                color: var(--muted);
+                font-size: .8rem;
+                margin-top: 32px;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Outbox Stats</h1>
+        </header>
+        <p class="subtitle">
+            <a class="back" href="/_dev">&larr; back to dev tools</a> · Processed/failed rates by message type.
+        </p>
+
+        <div class="toolbar">
+            <div class="tabs">
+                <a class="@(Model.Window == "24h" ? "active" : "")" href="@OtherWindowQuery("24h")">Last 24h</a>
+                <a class="@(Model.Window == "7d" ? "active" : "")" href="@OtherWindowQuery("7d")">Last 7d</a>
+            </div>
+
+            <form class="filters" method="get">
+                <input type="hidden" name="window" value="@Model.Window" />
+                <input type="hidden" name="sort" value="@Model.Sort" />
+                <input type="text" name="q" placeholder="Filter by type…" value="@Model.Q" />
+                <label><input type="checkbox" name="errorsOnly" value="true" @(Model.ErrorsOnly ? "checked" : "") /> has
+                    errors only</label>
+                    <button type="submit">Apply</button>
+                </form>
+
+                <div class="sort-links">
+                    Sort:
+                    <a class="@(Model.Sort == "total" ? "active" : "")" href="@OtherSortQuery("total")">Total</a>
+                    <a class="@(Model.Sort == "rate" ? "active" : "")" href="@OtherSortQuery("rate")">Worst rate</a>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat processed">
+                    <div class="label">Processed</div>
+                    <div class="value">@Model.TotalProcessed</div>
+                </div>
+                <div class="stat failed">
+                    <div class="label">Failed</div>
+                    <div class="value">@Model.TotalFailed</div>
+                </div>
+                <div class="stat inflight">
+                    <div class="label">In-flight</div>
+                    <div class="value">@Model.TotalInFlight</div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Total</th>
+                        <th>Processed</th>
+                        <th>Failed</th>
+                        <th>Pending</th>
+                        <th>Processing</th>
+                        <th>Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.TypeStats.Count == 0)
+                    {
+                        <tr>
+                            <td class="empty" colspan="7">No outbox messages in this window.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var stat in Model.TypeStats)
+                        {
+                            <tr>
+                                <td class="type"><a href="/_dev/outbox/type?type=@Uri.EscapeDataString(stat.Type)">@stat.Type</a>
+                                </td>
+                                <td>@stat.Total</td>
+                                <td>@stat.Count(Domain.Outbox.OutboxMessageStatus.Processed)</td>
+                                <td>@stat.Count(Domain.Outbox.OutboxMessageStatus.Failed)</td>
+                                <td>@stat.Count(Domain.Outbox.OutboxMessageStatus.Pending)</td>
+                                <td>@stat.Count(Domain.Outbox.OutboxMessageStatus.Processing)</td>
+                                <td class="@RateClass(stat.SuccessRate)">@stat.SuccessRate.ToString("P0")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <footer>Clean Architecture template · this page is served only in the Development environment.</footer>
+        </div>
+    </body>
+
+</html>

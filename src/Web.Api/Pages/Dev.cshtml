@@ -98,6 +98,11 @@
                     <div class="desc">Liveness &amp; dependency status</div>
                     <div class="path">/health</div>
                 </a>
+                <a class="card" href="/_dev/outbox">
+                    <div class="title">Outbox Stats</div>
+                    <div class="desc">Processed/failed rates by type</div>
+                    <div class="path">/_dev/outbox</div>
+                </a>
                 @if (hasSeq)
                 {
                     <a class="card" href="@seqUrl" target="_blank" rel="noopener">
