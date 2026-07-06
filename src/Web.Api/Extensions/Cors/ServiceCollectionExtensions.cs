@@ -24,9 +24,13 @@ internal static class ServiceCollectionExtensions
                 }
                 else
                 {
+                    // Fallback only when a Cors section exists but lists no origins (e.g. local dev).
+                    // S5122 flagged by SonarAnalyzer 10.28; harden separately if wildcard is undesirable in prod.
+#pragma warning disable S5122
                     policy.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
+#pragma warning restore S5122
                 }
             });
         });

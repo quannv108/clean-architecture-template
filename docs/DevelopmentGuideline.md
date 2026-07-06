@@ -59,6 +59,22 @@ $env:DOTNET_ASPIRE_CONTAINER_RUNTIME='docker'; dotnet run --project src/AppHost
 
 **Persistence caveat:** `ContainerLifetime.Persistent` containers and named volumes created under Docker do not migrate to Podman. Switching runtimes gives you fresh containers/volumes, so dev Postgres data starts empty (re-run migrations/seed as needed). This is expected, not a bug.
 
+### Integration tests with Podman (Testcontainers)
+
+`Api.IntegrationTests` uses **Testcontainers**, which talks to a Docker-compatible API socket directly — the Aspire `DOTNET_ASPIRE_CONTAINER_RUNTIME` setting does **not** apply to it. With Podman, set two env vars before running the tests:
+
+```powershell
+# Point Testcontainers at the Podman machine's API pipe (Windows)
+$env:DOCKER_HOST = 'npipe://./pipe/podman-machine-default'
+# Podman's rootless Ryuk reaper is unreliable; disable it
+$env:TESTCONTAINERS_RYUK_DISABLED = 'true'
+dotnet test tests/Api.IntegrationTests/
+```
+
+Notes:
+- The Podman machine must be running (`podman machine list`). The pipe name matches the machine name — confirm with `podman machine inspect --format '{{.ConnectionInfo.PodmanPipe.Path}}'`.
+- On Docker (Docker Desktop running), neither env var is needed — Testcontainers finds `npipe://./pipe/docker_engine` by default.
+
 ## Code Formatting
 
 ```bash
