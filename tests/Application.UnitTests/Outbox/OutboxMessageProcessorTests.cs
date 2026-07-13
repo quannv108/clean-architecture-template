@@ -90,7 +90,7 @@ public class OutboxMessageProcessorTests
 
         // Verify domain event was dispatched
         await _domainEventsDispatcher.Received(1).DispatchAsync(
-            Arg.Is<IDomainEvent[]>(events => events.Length == 1 && events[0] is EmailSentDomainEvent),
+            Arg.Is<IDomainEvent[]>(events => events != null && events.Length == 1 && events[0] is EmailSentDomainEvent),
             Arg.Any<CancellationToken>());
 
         // Verify SaveChangesAsync was called (for MarkAsProcessing and MarkAsProcessed)
