@@ -173,11 +173,13 @@ public static class DependencyInjection
         }
 
         // Mask password and other sensitive fields
+        // Timeout guards against catastrophic backtracking (S6444); runs on startup-only connection strings
         var masked = System.Text.RegularExpressions.Regex.Replace(
             connectionString,
             @"(Password|Pwd|User\s*Id|Username)\s*=\s*[^;]+",
             "$1=****",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase,
+            TimeSpan.FromMilliseconds(100));
         return masked;
     }
 

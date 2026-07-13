@@ -82,11 +82,13 @@ public static class StringExtensions
         }
 
         // Insert hyphens before uppercase letters or digits following lowercase letters
+        // Timeout guards against catastrophic backtracking (S6444); inputs are short identifiers
         string kebab = Regex.Replace(
             value,
             @"(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z0-9])",
             "-$1",
-            RegexOptions.Compiled
+            RegexOptions.Compiled,
+            TimeSpan.FromMilliseconds(100)
         );
 
         return kebab.ToLowerInvariant();
