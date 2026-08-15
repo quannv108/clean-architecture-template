@@ -140,7 +140,7 @@ public class OutboxMessageHostedServiceTests : IDisposable
         await WaitUntil(() => callCount >= 1, TimeSpan.FromSeconds(5)); // first poll completes, enters wait
         _signal.Notify();
 
-        var completed = await Task.WhenAny(secondCallTcs.Task, Task.Delay(TimeSpan.FromSeconds(5)));
+        var completed = await Task.WhenAny(secondCallTcs.Task, Task.Delay(TimeSpan.FromSeconds(5), CancellationToken.None));
         await sut.StopAsync(CancellationToken.None);
 
         // Assert
@@ -168,7 +168,7 @@ public class OutboxMessageHostedServiceTests : IDisposable
 
         // Act - stop while parked. If WaitAsync ignored cancellation this would hang for 10 minutes.
         var stop = sut.StopAsync(CancellationToken.None);
-        var completed = await Task.WhenAny(stop, Task.Delay(TimeSpan.FromSeconds(5)));
+        var completed = await Task.WhenAny(stop, Task.Delay(TimeSpan.FromSeconds(5), CancellationToken.None));
 
         // Assert - StopAsync returns promptly, not blocked on the idle wait.
         completed.ShouldBe(stop, "StopAsync must not block on the idle WaitAsync");

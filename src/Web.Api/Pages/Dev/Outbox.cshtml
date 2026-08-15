@@ -13,7 +13,7 @@
             ["sort"] = Model.Sort
         };
         return "?" + string.Join("&", qs.Where(kv => !string.IsNullOrEmpty(kv.Value))
-            .Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value!)}"));
+            .Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value ?? string.Empty)}"));
     }
 
     string OtherSortQuery(string sort)
@@ -26,7 +26,7 @@
             ["sort"] = sort
         };
         return "?" + string.Join("&", qs.Where(kv => !string.IsNullOrEmpty(kv.Value))
-            .Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value!)}"));
+            .Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value ?? string.Empty)}"));
     }
 
     string RateClass(double rate)
