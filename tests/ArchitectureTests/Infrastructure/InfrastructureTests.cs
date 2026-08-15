@@ -298,7 +298,7 @@ public class InfrastructureTests : BaseTest
         infraSourceDir.ShouldNotBeNull(
             "Could not find src/Infrastructure directory by walking up from the test output path");
 
-        var diFiles = infraSourceDir!.GetFiles("DependencyInjection.cs", SearchOption.AllDirectories);
+        var diFiles = infraSourceDir.GetFiles("DependencyInjection.cs", SearchOption.AllDirectories);
         diFiles.ShouldNotBeEmpty("Expected at least one DependencyInjection.cs file in Infrastructure");
 
         var diContent = string.Join("\n", diFiles.Select(f => File.ReadAllText(f.FullName)));

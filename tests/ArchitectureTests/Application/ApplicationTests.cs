@@ -403,7 +403,7 @@ public class ApplicationTests : BaseTest
             .GroupBy(t =>
             {
                 var parts = t.Namespace!.Split('.');
-                return parts.Length >= 2 ? $"{parts[0]}.{parts[1]}" : t.Namespace!;
+                return parts.Length >= 2 ? $"{parts[0]}.{parts[1]}" : t.Namespace;
             })
             .ToList();
 

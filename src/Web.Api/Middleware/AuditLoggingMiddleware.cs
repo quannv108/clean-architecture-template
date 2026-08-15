@@ -37,7 +37,9 @@ internal sealed class AuditLoggingMiddleware
         // Execute the request
         await _next(context);
 
-        // Send audit log command (fire and forget)
+        // Send audit log command (fire and forget).
+        // CancellationToken.None is deliberate: the audit record must outlive the request, so a client
+        // disconnect (context.RequestAborted) must not abandon the write.
         _ = Task.Run(async () =>
         {
             try
@@ -50,7 +52,7 @@ internal sealed class AuditLoggingMiddleware
                 _logger.LogError(ex, "Failed to log audit data for request to {Path} with action {ActionName}",
                     context.Request.Path, auditMetadata.ActionName);
             }
-        });
+        }, CancellationToken.None);
     }
 
     private static AuditRequestData CaptureRequestData(HttpContext context, AuditAttribute auditMetadata)
