@@ -1,0 +1,36 @@
+#!/bin/sh
+# Pre-commit gates. Installed for every clone by the InstallGitHooks target in Directory.Build.props
+# (any `dotnet build`/`dotnet test`); by hand: git config core.hooksPath .githooks
+#
+#   1. staged .cs files  -> dotnet format, then re-stage them (only files with no unstaged edits)
+#   2. staged .okf/ files -> python .okf/tools/okf.py --check
+set -e
+
+# ---- 1. dotnet format, scoped to the staged .cs files -------------------------------------------
+cs=$(git diff --cached --name-only --diff-filter=ACMR -- '*.cs')
+if [ -n "$cs" ]; then
+    # Re-staging after format would also stage any unstaged hunks, so refuse partially staged files up front.
+    for f in $cs; do
+        if ! git diff --quiet -- "$f"; then
+            echo "pre-commit: $f is partially staged and would be reformatted as a whole - stage all of it or stash the rest" >&2
+            exit 1
+        fi
+    done
+    # shellcheck disable=SC2086  # word-splitting on $cs is intended (no spaces in repo paths)
+    dotnet format CleanArchitecture.slnx --include $cs --verbosity quiet
+    # shellcheck disable=SC2086
+    git add $cs
+fi
+
+# ---- 2. knowledge base check --------------------------------------------------------------------
+if git diff --cached --name-only --diff-filter=ACMRD | grep -q '^\.okf/'; then
+    # python3 on Linux/macOS; on Windows `python3` may be the Store stub, so probe before trusting it
+    for candidate in python3 python; do
+        if "$candidate" -c "pass" >/dev/null 2>&1; then PY=$candidate; break; fi
+    done
+    if [ -z "$PY" ]; then
+        echo "pre-commit: python is required to check .okf/ (https://www.python.org/downloads/)" >&2
+        exit 1
+    fi
+    "$PY" .okf/tools/okf.py --check
+fi
