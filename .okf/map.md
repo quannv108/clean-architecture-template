@@ -184,7 +184,7 @@ add, move or rename a file. One read makes the whole bundle greppable.
 | [glossary/shared-kernel.md](glossary/shared-kernel.md) | Term | The dependency-free set of types every layer may use. | architecture, ddd, sharedkernel |
 | [glossary/soft-delete.md](glossary/soft-delete.md) | Term | Marking a row deleted instead of removing it, and hiding it with a query filter. | data, persistence, data-retention |
 | [glossary/span.md](glossary/span.md) | Term | A timed unit of work within a distributed trace. | observability, tracing, opentelemetry |
-| [glossary/structured-logging.md](glossary/structured-logging.md) | Term | Logging named properties alongside the message so logs can be queried rather than grepped. | observability, logging |
+| [glossary/structured-logging.md](glossary/structured-logging.md) | Term | Emitting each log event as an object - a message template plus named properties - instead of a rendered string, so log tools can filter and aggregate by property. | observability, logging |
 | [glossary/tdd.md](glossary/tdd.md) | Term | Writing or adjusting the test before the implementation. | testing, process |
 | [glossary/testcontainer.md](glossary/testcontainer.md) | Term | A throwaway container started by a test run to provide a real dependency. | testing, containers |
 | [glossary/trace.md](glossary/trace.md) | Term | The tree of spans describing one end-to-end operation. | observability, tracing, opentelemetry |
