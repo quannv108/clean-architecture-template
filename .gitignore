@@ -426,3 +426,9 @@ app/admin/.playwright-mcp/*
 uploads/
 **/uploads/
 reference/
+
+# Claude
+CLAUDE.local.md
+.claude/settings.local.json
+# you should remove this when start working on real project
+.claude/skills

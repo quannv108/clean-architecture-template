@@ -15,6 +15,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v7
 
+    - name: Check knowledge base (.okf)
+      run: python3 .okf/tools/okf.py --check
+
     - name: Setup .NET 10.0
       uses: actions/setup-dotnet@v6
       with:
