@@ -1,4 +1,3 @@
-#pragma warning disable CA1873
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Application.Abstractions.Time;
@@ -11,7 +10,7 @@ namespace Application.Outbox;
 
 public sealed record CleanupProcessedOutboxMessagesCommand : ICommand<int>;
 
-internal sealed class CleanupProcessedOutboxMessagesCommandHandler(
+internal sealed partial class CleanupProcessedOutboxMessagesCommandHandler(
     IApplicationDbContext dbContext,
     IDateTimeProvider dateTimeProvider,
     ILogger<CleanupProcessedOutboxMessagesCommandHandler> logger)
@@ -32,18 +31,22 @@ internal sealed class CleanupProcessedOutboxMessagesCommandHandler(
                              om.ProcessedOnUtc < oneMonthAgo)
                 .ExecuteDeleteAsync(cancellationToken);
 
-            logger.LogInformation(
-                "Outbox message cleanup completed. Deleted {DeletedCount} processed outbox messages older than {CutoffDate}",
-                deletedCount,
-                oneMonthAgo);
+            LogCleanupCompleted(deletedCount, oneMonthAgo);
 
             return Result.Success(deletedCount);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error occurred while cleaning up outbox messages");
+            LogCleanupFailed(ex);
             return Result.Failure<int>(Error.Failure("OutboxMessageCleanup.Failed",
                 "Failed to cleanup processed outbox messages"));
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Information,
+        Message = "Outbox message cleanup completed. Deleted {DeletedCount} processed outbox messages older than {CutoffDate}")]
+    private partial void LogCleanupCompleted(int deletedCount, DateTime cutoffDate);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Error occurred while cleaning up outbox messages")]
+    private partial void LogCleanupFailed(Exception exception);
 }

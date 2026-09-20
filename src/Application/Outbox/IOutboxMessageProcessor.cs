@@ -1,4 +1,3 @@
-#pragma warning disable CA1873
 using Application.Abstractions.Data;
 using Application.Abstractions.DomainEvents;
 using Application.Abstractions.Locking;
@@ -44,7 +43,7 @@ public sealed record ProcessedResult(
     List<string> FailedLogs,
     int FetchedCount = 0);
 
-internal sealed class OutboxMessageProcessor(
+internal sealed partial class OutboxMessageProcessor(
     IServiceScopeFactory serviceScopeFactory,
     IDistributedLockProvider lockProvider,
     ILogger<OutboxMessageProcessor> logger) : IOutboxMessageProcessor
@@ -70,11 +69,11 @@ internal sealed class OutboxMessageProcessor(
 
         if (outboxMessages.Count == 0)
         {
-            logger.LogDebug("No outbox messages to process");
+            LogNoMessages();
             return EmptyProcessedResult;
         }
 
-        logger.LogInformation("Processing {Count} outbox messages", outboxMessages.Count);
+        LogProcessingBatch(outboxMessages.Count);
 
         var successCount = 0;
         var failureCount = 0;
@@ -85,7 +84,7 @@ internal sealed class OutboxMessageProcessor(
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                logger.LogInformation("Cancellation requested, stopping outbox processing in the middle of batch");
+                LogCancellationRequested();
                 break;
             }
 
@@ -99,9 +98,7 @@ internal sealed class OutboxMessageProcessor(
             {
                 // Another instance is already processing this message
                 skipCount++;
-                logger.LogDebug(
-                    "Skipping outbox message {Id} because it is already being processed by another instance",
-                    outboxMessage.Id);
+                LogSkippedLocked(outboxMessage.Id);
                 continue;
             }
 
@@ -114,7 +111,7 @@ internal sealed class OutboxMessageProcessor(
                 {
                     failureCount++;
                     failed.Add(outboxMessage.Type + "(deserialize failed)");
-                    logger.LogWarning("Failed to deserialize domain event of type {EventType}", outboxMessage.Type);
+                    LogDeserializeFailed(outboxMessage.Type);
                     continue;
                 }
 
@@ -127,8 +124,7 @@ internal sealed class OutboxMessageProcessor(
                 if (currentStatus != OutboxMessageStatus.Pending)
                 {
                     skipCount++;
-                    logger.LogDebug("Skipping outbox message {Id} because status changed to {Status}",
-                        outboxMessage.Id, currentStatus);
+                    LogSkippedStatusChanged(outboxMessage.Id, currentStatus);
                     continue;
                 }
 
@@ -147,9 +143,7 @@ internal sealed class OutboxMessageProcessor(
                 await dbContext.SaveChangesAsync(CancellationToken.None);
                 timer.Stop();
 
-                logger.LogDebug(
-                    "Successfully processed outbox message {MessageId} of type {EventType} Take {ElapsedMilliseconds} ms",
-                    outboxMessage.Id, outboxMessage.Type, timer.ElapsedMilliseconds);
+                LogProcessed(outboxMessage.Id, outboxMessage.Type, timer.ElapsedMilliseconds);
                 successCount++;
                 processed.Add(outboxMessage.Type);
             }
@@ -157,8 +151,7 @@ internal sealed class OutboxMessageProcessor(
             {
                 failureCount++;
                 failed.Add(outboxMessage.Type + $"(Ex:{ex.Message}");
-                logger.LogError(ex, "Error processing outbox message {MessageId} of type {EventType}",
-                    outboxMessage.Id, outboxMessage.Type);
+                LogProcessingFailed(ex, outboxMessage.Id, outboxMessage.Type);
 
                 // Update the outbox message with error information
                 outboxMessage.SetError(ex.ToString());
@@ -168,9 +161,7 @@ internal sealed class OutboxMessageProcessor(
             // Lock is automatically released here when lockHandle is disposed
         }
 
-        logger.LogInformation(
-            "Outbox processing completed. Success: {SuccessCount}, Failures: {FailureCount}, Skip {SkipCount}",
-            successCount, failureCount, skipCount);
+        LogBatchCompleted(successCount, failureCount, skipCount);
         return new ProcessedResult(successCount, failureCount, skipCount, processed, failed, outboxMessages.Count);
     }
 
@@ -179,10 +170,40 @@ internal sealed class OutboxMessageProcessor(
         var domainEvent = outboxMessage.GetDomainEvent();
         if (domainEvent.IsFailure)
         {
-            logger.LogError("Error deserializing domain event of type {EventType}", outboxMessage.Type);
+            LogDeserializeError(outboxMessage.Type);
             return null;
         }
 
         return domainEvent.Value;
     }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "No outbox messages to process")]
+    private partial void LogNoMessages();
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Processing {Count} outbox messages")]
+    private partial void LogProcessingBatch(int count);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Cancellation requested, stopping outbox processing in the middle of batch")]
+    private partial void LogCancellationRequested();
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Skipping outbox message {Id} because it is already being processed by another instance")]
+    private partial void LogSkippedLocked(Guid id);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Failed to deserialize domain event of type {EventType}")]
+    private partial void LogDeserializeFailed(string eventType);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Skipping outbox message {Id} because status changed to {Status}")]
+    private partial void LogSkippedStatusChanged(Guid id, OutboxMessageStatus status);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Successfully processed outbox message {MessageId} of type {EventType} Take {ElapsedMilliseconds} ms")]
+    private partial void LogProcessed(Guid messageId, string eventType, long elapsedMilliseconds);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Error processing outbox message {MessageId} of type {EventType}")]
+    private partial void LogProcessingFailed(Exception exception, Guid messageId, string eventType);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox processing completed. Success: {SuccessCount}, Failures: {FailureCount}, Skip {SkipCount}")]
+    private partial void LogBatchCompleted(int successCount, int failureCount, int skipCount);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Error deserializing domain event of type {EventType}")]
+    private partial void LogDeserializeError(string eventType);
 }

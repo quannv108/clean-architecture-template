@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Outbox;
 
-internal sealed class OutboxMessageHostedService(
+internal sealed partial class OutboxMessageHostedService(
     IServiceScopeFactory scopeFactory,
     IOptions<OutboxOptions> options,
     OutboxSignal signal,
@@ -20,14 +20,14 @@ internal sealed class OutboxMessageHostedService(
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Starting Outbox Message Processor");
+        LogStarting();
 
         _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
         // Stop immediately when the application is stopping to avoid querying disposed DbContext
         applicationLifetime.ApplicationStopping.Register(() =>
         {
-            logger.LogInformation("Stopping Outbox Message Processor");
+            LogStopping();
             _cts?.Cancel();
         });
 
@@ -55,7 +55,7 @@ internal sealed class OutboxMessageHostedService(
             }
         }
 
-        logger.LogInformation("Outbox Message Processor stopped");
+        LogStopped();
     }
 
     public void Dispose()
@@ -81,7 +81,7 @@ internal sealed class OutboxMessageHostedService(
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "Error processing outbox messages");
+                    LogProcessingFailed(ex);
                 }
 
                 // Idle until a new message signals us, or the fallback interval elapses.
@@ -91,7 +91,7 @@ internal sealed class OutboxMessageHostedService(
         catch (OperationCanceledException e) when (stoppingToken.IsCancellationRequested)
         {
             // Expected during shutdown
-            logger.LogInformation(message: $"{nameof(OutboxMessageHostedService)} stopping due to {nameof(OperationCanceledException)}", exception: e);
+            LogStoppingOnCancellation(e);
         }
     }
 
@@ -128,4 +128,19 @@ internal sealed class OutboxMessageHostedService(
             }
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Starting Outbox Message Processor")]
+    private partial void LogStarting();
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Stopping Outbox Message Processor")]
+    private partial void LogStopping();
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Outbox Message Processor stopped")]
+    private partial void LogStopped();
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Error processing outbox messages")]
+    private partial void LogProcessingFailed(Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "OutboxMessageHostedService stopping due to OperationCanceledException")]
+    private partial void LogStoppingOnCancellation(Exception exception);
 }

@@ -1,5 +1,18 @@
 # Knowledge Base Update Log
 
+## 2026-09-20 (LoggerMessage migration)
+
+* **Removal**: Deleted `backlog/remove-ca1873-suppressions.md`. The premise ("wait for the analyzer fix") did
+  not hold - `CA1873` still fires at `Logging.Abstractions 10.0.12` because `logger.Log*(string, params object[])`
+  boxes every value-type argument. Every `logger.Log*` call in `src/` is now a `[LoggerMessage]` partial method
+  in its owning class, the pragmas are gone, and `CA1848` is an error so the old form cannot come back.
+* **Rewrite**: [Observability](architecture/cross-cutting/observability.md) states the logging rule and links a
+  real instance; [Serilog](engineering/technologies/serilog.md) and [Structured Logging](glossary/structured-logging.md)
+  show the new shape; the "Known issue" left [.NET 10](engineering/technologies/dotnet-10.md).
+* **Removal**: Deleted `backlog/code-generator-missing.md` - decided: the `tools/CodeGenerator` the old docs
+  mentioned never shipped and is not planned. [Add a Feature](workflows/engineering/add-a-feature.md) now says
+  so in one line.
+
 ## 2026-09-20 (remove engineering/code)
 
 * **Removal**: Deleted `engineering/code/` (123 one-file-per-type concepts) - it mirrored the source 1-1,

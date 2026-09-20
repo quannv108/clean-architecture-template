@@ -1,8 +1,8 @@
-﻿using Application.Abstractions.Communication.Email;
-using Amazon;
+﻿using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
+using Application.Abstractions.Communication.Email;
 using Domain.Emails;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -10,7 +10,7 @@ using SharedKernel;
 
 namespace Infrastructure.Communication.Email;
 
-internal sealed class SesEmailSender : IEmailSender
+internal sealed partial class SesEmailSender : IEmailSender
 {
     private const string Provider = "SES";
 
@@ -99,18 +99,27 @@ internal sealed class SesEmailSender : IEmailSender
                 return Result.Success();
             }
 
-            _logger.LogError("SES SendEmail failed with status code {StatusCode}", response.HttpStatusCode);
+            LogSendFailed(response.HttpStatusCode);
             return Result.Failure(EmailErrors.SendFailed(Provider, response.HttpStatusCode));
         }
         catch (MessageRejectedException ex)
         {
-            _logger.LogError(ex, "SES message rejected: {Message}", ex.Message);
+            LogRejected(ex, ex.Message);
             return Result.Failure(EmailErrors.Rejected(Provider, ex.Message));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "SES SendEmail threw exception");
+            LogSendThrew(ex);
             return Result.Failure(EmailErrors.UnexpectedException(Provider, ex.Message));
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "SES SendEmail failed with status code {StatusCode}")]
+    private partial void LogSendFailed(System.Net.HttpStatusCode statusCode);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "SES message rejected: {Message}")]
+    private partial void LogRejected(Exception exception, string message);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "SES SendEmail threw exception")]
+    private partial void LogSendThrew(Exception exception);
 }

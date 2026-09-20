@@ -17,12 +17,15 @@ status: stable
   correlation properties so every log line in a request shares them.
 * [`LoggingDecorator`](../../../src/Application/Abstractions/Behaviors/LoggingDecorator.cs) logs the start, completion and failure of every
   handler. Do not log the same thing inside a handler.
-* Log **structured properties**, never interpolated strings: `logger.LogInformation("Email {Id} sent", id)`.
+* Log through a **`[LoggerMessage]` partial method declared in the owning class** - the class becomes
+  `partial`, the method sits at the bottom, parameters are typed (`Guid`, `int`, `DateTime`), the template
+  names **structured properties**, never an interpolated string. Real instance:
+  [`EmailSentDomainEventHandler`](../../../src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs).
+  `CA1848` (error) rejects `logger.LogInformation(...)`; `CA1873` is why: it boxes every value-type argument
+  before checking `IsEnabled`. Static classes and generic types pass `ILogger` explicitly to a `static` method -
+  see [`DependencyInjection`](../../../src/Infrastructure/DependencyInjection.cs).
 * Never log secrets, tokens or personal data. Lock names and cache keys may be logged, which is why neither
   may embed sensitive values - see [Distributed Lock](../../engineering/patterns/distributed-lock.md).
-
-`CA1873` is currently suppressed in several files because of a .NET 10 analyzer regression - see
-[Remove the CA1873 suppressions once the analyzer is fixed](../../backlog/remove-ca1873-suppressions.md).
 
 ## Tracing and metrics
 

@@ -9,11 +9,13 @@ status: stable
 # Structured Logging
 
 ```csharp
-logger.LogInformation("Email {Id} sent", id);      // queryable: filter by Id
-logger.LogInformation($"Email {id} sent");         // a string; nothing to filter on
+[LoggerMessage(Level = LogLevel.Information, Message = "Email {Id} sent")]
+private partial void LogEmailSent(Guid id);        // queryable: filter by Id; typed, no boxing
+
+logger.LogInformation($"Email {id} sent");         // a string; nothing to filter on - and CA1848 rejects it
 ```
 
-Always the first form. [`LoggingDecorator`](../../src/Application/Abstractions/Behaviors/LoggingDecorator.cs) already logs handler
+Always the first form - a `[LoggerMessage]` partial method in the owning class ([Observability](../architecture/cross-cutting/observability.md)). [`LoggingDecorator`](../../src/Application/Abstractions/Behaviors/LoggingDecorator.cs) already logs handler
 start, success and failure - do not log the same thing again from inside a handler.
 
 **Never log secrets or personal data.** See [Observability](../architecture/cross-cutting/observability.md).

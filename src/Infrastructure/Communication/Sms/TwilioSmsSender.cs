@@ -1,5 +1,4 @@
-﻿#pragma warning disable CA1873
-using Application.Abstractions.Communication.Sms;
+﻿using Application.Abstractions.Communication.Sms;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SharedKernel.PhoneNumbers;
@@ -9,7 +8,7 @@ using PhoneNumberE164 = Twilio.Types.PhoneNumber;
 
 namespace Infrastructure.Communication.Sms;
 
-internal sealed class TwilioSmsSender : ISmsSender
+internal sealed partial class TwilioSmsSender : ISmsSender
 {
     private readonly ILogger<TwilioSmsSender> _logger;
     private readonly TwilioSmsOptions _options;
@@ -58,12 +57,18 @@ internal sealed class TwilioSmsSender : ISmsSender
                     : null
             ).ConfigureAwait(false);
 
-            _logger.LogInformation("Twilio SMS sent. SID: {Sid}, To: {To}", msg.Sid, to.ToString());
+            LogSent(msg.Sid, to);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send SMS via Twilio");
+            LogSendFailed(ex);
             throw new InvalidOperationException("Failed to send SMS via Twilio", ex);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Twilio SMS sent. SID: {Sid}, To: {To}")]
+    private partial void LogSent(string sid, PhoneNumberE164 to);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Failed to send SMS via Twilio")]
+    private partial void LogSendFailed(Exception exception);
 }

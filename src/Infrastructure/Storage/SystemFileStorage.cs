@@ -5,7 +5,7 @@ using SharedKernel.Storage;
 
 namespace Infrastructure.Storage;
 
-internal sealed class SystemFileStorage : IStorage
+internal sealed partial class SystemFileStorage : IStorage
 {
     private const string Provider = "system";
 
@@ -41,7 +41,7 @@ internal sealed class SystemFileStorage : IStorage
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException)
         {
-            _logger.LogError(ex, "System storage failed to save path {Path}", path);
+            LogSaveFailed(ex, path);
             return StorageErrors.OperationFailed(Provider, ex.Message);
         }
     }
@@ -67,7 +67,7 @@ internal sealed class SystemFileStorage : IStorage
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException)
         {
-            _logger.LogError(ex, "System storage failed to download path {Path}", path);
+            LogDownloadFailed(ex, path);
             return Result.Failure<string>(StorageErrors.OperationFailed(Provider, ex.Message));
         }
     }
@@ -93,7 +93,7 @@ internal sealed class SystemFileStorage : IStorage
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException)
         {
-            _logger.LogError(ex, "System storage failed to delete path {Path}", path);
+            LogDeleteFailed(ex, path);
             return Task.FromResult(Result.Failure(StorageErrors.OperationFailed(Provider, ex.Message)));
         }
     }
@@ -112,7 +112,7 @@ internal sealed class SystemFileStorage : IStorage
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException)
         {
-            _logger.LogError(ex, "System storage failed to check existence of path {Path}", path);
+            LogExistsFailed(ex, path);
             return Task.FromResult(Result.Failure<bool>(StorageErrors.OperationFailed(Provider, ex.Message)));
         }
     }
@@ -134,4 +134,16 @@ internal sealed class SystemFileStorage : IStorage
 
         return combined;
     }
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "System storage failed to save path {Path}")]
+    private partial void LogSaveFailed(Exception exception, string path);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "System storage failed to download path {Path}")]
+    private partial void LogDownloadFailed(Exception exception, string path);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "System storage failed to delete path {Path}")]
+    private partial void LogDeleteFailed(Exception exception, string path);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "System storage failed to check existence of path {Path}")]
+    private partial void LogExistsFailed(Exception exception, string path);
 }
