@@ -84,7 +84,7 @@ general definition cannot give.
 * [Correlation ID](correlation-id.md) - An identifier shared by every log line and span belonging to one request.
 * [Health Check](health-check.md) - An endpoint reporting whether the application and its dependencies are usable.
 * [Span](span.md) - A timed unit of work within a distributed trace.
-* [Structured Logging](structured-logging.md) - Logging named properties alongside the message so logs can be queried rather than grepped.
+* [Structured Logging](structured-logging.md) - Emitting each log event as an object - a message template plus named properties - instead of a rendered string, so log tools can filter and aggregate by property.
 * [Trace](trace.md) - The tree of spans describing one end-to-end operation.
 
 # Testing

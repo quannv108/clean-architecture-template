@@ -2,7 +2,7 @@
 
 namespace Web.Api.Infrastructure;
 
-internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+internal sealed partial class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
     : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
@@ -10,7 +10,7 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
         Exception exception,
         CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "Unhandled exception occurred");
+        LogUnhandledException(exception);
 
         var problemDetails = new
         {
@@ -25,4 +25,7 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
 
         return true;
     }
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Unhandled exception occurred")]
+    private partial void LogUnhandledException(Exception exception);
 }

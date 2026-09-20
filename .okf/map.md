@@ -59,10 +59,8 @@ add, move or rename a file. One read makes the whole bundle greppable.
 | [architecture/delivery/local-development-environment.md](architecture/delivery/local-development-environment.md) | Mechanism | Running the full stack locally with .NET Aspire, and the Podman/Docker container runtime choice. | local-development, aspire, podman, docker, containers |
 | [architecture/delivery/test-architecture.md](architecture/delivery/test-architecture.md) | Mechanism | Three test projects with three different jobs - architecture rules, Application unit tests, and end-to-end API integration tests. | testing, architecture-tests, unit-tests, integration-tests |
 | [architecture/solution-layout.md](architecture/solution-layout.md) | Reference | The projects, directories and root files that make up the repository. | structure, solution, repository |
-| [backlog/code-generator-missing.md](backlog/code-generator-missing.md) | Task | The previous docs pointed at tools/CodeGenerator for scaffolding; no such project exists. | backlog, tooling, documentation, discrepancy |
 | [backlog/outbox-channel-notification.md](backlog/outbox-channel-notification.md) | Task | Stop polling OutboxMessage on a fixed interval; use a Channel to notify the processor and back off polling when idle. | backlog, outbox, performance, database |
 | [backlog/outbox-failure-retry.md](backlog/outbox-failure-retry.md) | Task | Persist failed messages in a distinct status and add a background service that retries them with back-off for transient failures. | backlog, outbox, reliability, retry |
-| [backlog/remove-ca1873-suppressions.md](backlog/remove-ca1873-suppressions.md) | Task | A .NET 10 analyzer regression fires on ordinary logger calls; suppressions are in place across Application and Infrastructure. | backlog, dotnet, analyzers, technical-debt |
 | [domains/_templates/domain.md](domains/_templates/domain.md) | Template | Copy this when adding a business domain or slice to a project built from this template. | template, domain, slice |
 | [domains/_templates/entity.md](domains/_templates/entity.md) | Template | Copy this when adding an entity or aggregate root. | template, domain, entity |
 | [domains/_templates/value-object.md](domains/_templates/value-object.md) | Template | Copy this when adding a value object. | template, domain, value-object |
@@ -186,7 +184,7 @@ add, move or rename a file. One read makes the whole bundle greppable.
 | [glossary/shared-kernel.md](glossary/shared-kernel.md) | Term | The dependency-free set of types every layer may use. | architecture, ddd, sharedkernel |
 | [glossary/soft-delete.md](glossary/soft-delete.md) | Term | Marking a row deleted instead of removing it, and hiding it with a query filter. | data, persistence, data-retention |
 | [glossary/span.md](glossary/span.md) | Term | A timed unit of work within a distributed trace. | observability, tracing, opentelemetry |
-| [glossary/structured-logging.md](glossary/structured-logging.md) | Term | Logging named properties alongside the message so logs can be queried rather than grepped. | observability, logging |
+| [glossary/structured-logging.md](glossary/structured-logging.md) | Term | Emitting each log event as an object - a message template plus named properties - instead of a rendered string, so log tools can filter and aggregate by property. | observability, logging |
 | [glossary/tdd.md](glossary/tdd.md) | Term | Writing or adjusting the test before the implementation. | testing, process |
 | [glossary/testcontainer.md](glossary/testcontainer.md) | Term | A throwaway container started by a test run to provide a real dependency. | testing, containers |
 | [glossary/trace.md](glossary/trace.md) | Term | The tree of spans describing one end-to-end operation. | observability, tracing, opentelemetry |

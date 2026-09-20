@@ -8,6 +8,9 @@ status: stable
 
 # Add a Feature
 
+The files are created by hand - there is no scaffolding tool (older docs mentioned a `tools/CodeGenerator`; it
+never shipped and is not planned).
+
 ## 0. Pick the tier
 
 | Tier | Operations | Files | Examples |

@@ -1,4 +1,3 @@
-#pragma warning disable CA1873
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,7 @@ public record DeleteOldAuditLogsCommand : ICommand
     public int BatchSize { get; set; } = 10000;
 }
 
-internal sealed class DeleteOldAuditLogsCommandHandler(
+internal sealed partial class DeleteOldAuditLogsCommandHandler(
     IApplicationDbContext dbContext,
     ILogger<DeleteOldAuditLogsCommandHandler> logger) : ICommandHandler<DeleteOldAuditLogsCommand>
 {
@@ -48,7 +47,10 @@ internal sealed class DeleteOldAuditLogsCommandHandler(
             await Task.Delay(100, cancellationToken);
         }
 
-        logger.LogInformation("Audit log cleanup completed. Total deleted: {TotalDeleted} records", totalDeleted);
+        LogCleanupCompleted(totalDeleted);
         return Result.Success();
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Audit log cleanup completed. Total deleted: {TotalDeleted} records")]
+    private partial void LogCleanupCompleted(int totalDeleted);
 }

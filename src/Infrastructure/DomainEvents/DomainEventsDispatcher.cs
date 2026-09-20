@@ -1,5 +1,3 @@
-#pragma warning disable CA1873
-﻿#pragma warning disable CA1873
 using System.Collections.Concurrent;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.DomainEvents;
@@ -10,7 +8,7 @@ using SharedKernel;
 
 namespace Infrastructure.DomainEvents;
 
-internal sealed class DomainEventsDispatcher(
+internal sealed partial class DomainEventsDispatcher(
     IServiceScopeFactory serviceScopeFactory,
     ILogger<DomainEventsDispatcher> logger)
     : IDomainEventsDispatcher
@@ -39,7 +37,7 @@ internal sealed class DomainEventsDispatcher(
 
             if (handlerList.Count == 0)
             {
-                logger.LogInformation("No handler registered for domain event {DomainEventType}", domainEventType.Name);
+                LogNoHandler(domainEventType.Name);
                 continue;
             }
 
@@ -58,12 +56,17 @@ internal sealed class DomainEventsDispatcher(
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "Error dispatch domain event {DomainEventType} with handler {HandlerType}",
-                        domainEventType.Name, handler.GetType().Name);
+                    LogDispatchFailed(ex, domainEventType.Name, handler.GetType().Name);
                 }
             }
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "No handler registered for domain event {DomainEventType}")]
+    private partial void LogNoHandler(string domainEventType);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Error dispatch domain event {DomainEventType} with handler {HandlerType}")]
+    private partial void LogDispatchFailed(Exception exception, string domainEventType, string handlerType);
 
     private abstract class HandlerWrapper
     {
@@ -76,7 +79,7 @@ internal sealed class DomainEventsDispatcher(
                 et => typeof(HandlerWrapper<>).MakeGenericType(et));
 
             var wrapperInstance = Activator.CreateInstance(wrapperType, handler);
-            return (HandlerWrapper) (wrapperInstance ?? throw new InvalidOperationException($"Failed to create handler wrapper for {domainEventType.Name}"));
+            return (HandlerWrapper)(wrapperInstance ?? throw new InvalidOperationException($"Failed to create handler wrapper for {domainEventType.Name}"));
         }
     }
 

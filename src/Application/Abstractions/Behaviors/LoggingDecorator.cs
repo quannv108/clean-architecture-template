@@ -1,11 +1,10 @@
-#pragma warning disable CA1873
 using Application.Abstractions.Messaging;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
 namespace Application.Abstractions.Behaviors;
 
-internal static class LoggingDecorator
+internal static partial class LoggingDecorator
 {
     internal sealed class CommandHandler<TCommand, TResponse>(
         ICommandHandler<TCommand, TResponse> innerHandler,
@@ -17,17 +16,17 @@ internal static class LoggingDecorator
         {
             string commandName = typeof(TCommand).Name;
 
-            logger.LogInformation("Processing command {Command}", commandName);
+            LogProcessingCommand(logger, commandName);
 
             Result<TResponse> result = await innerHandler.Handle(command, cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed command {Command}", commandName);
+                LogCompletedCommand(logger, commandName);
             }
             else
             {
-                logger.LogError("Completed command {Command} with error: {Error}", commandName, result.Error);
+                LogCommandFailed(logger, commandName, result.Error);
             }
 
             return result;
@@ -44,17 +43,17 @@ internal static class LoggingDecorator
         {
             string commandName = typeof(TCommand).Name;
 
-            logger.LogInformation("Processing command {Command}", commandName);
+            LogProcessingCommand(logger, commandName);
 
             Result result = await innerHandler.Handle(command, cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed command {Command}", commandName);
+                LogCompletedCommand(logger, commandName);
             }
             else
             {
-                logger.LogError("Completed command {Command} with error: {Error}", commandName, result.Error);
+                LogCommandFailed(logger, commandName, result.Error);
             }
 
             return result;
@@ -71,17 +70,17 @@ internal static class LoggingDecorator
         {
             string queryName = typeof(TQuery).Name;
 
-            logger.LogInformation("Processing query {Query}", queryName);
+            LogProcessingQuery(logger, queryName);
 
             Result<TResponse> result = await innerHandler.Handle(query, cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed query {Query}", queryName);
+                LogCompletedQuery(logger, queryName);
             }
             else
             {
-                logger.LogError("Completed query {Query} with error: {Error}", queryName, result.Error);
+                LogQueryFailed(logger, queryName, result.Error);
             }
 
             return result;
@@ -98,19 +97,48 @@ internal static class LoggingDecorator
         {
             string eventName = typeof(TDomainEvent).Name;
 
-            logger.LogInformation("Processing domain event {DomainEvent}", eventName);
+            LogProcessingDomainEvent(logger, eventName);
 
             try
             {
                 await innerHandler.Handle(domainEvent, cancellationToken);
-                logger.LogInformation("Completed domain event {DomainEvent}", eventName);
+                LogCompletedDomainEvent(logger, eventName);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error processing domain event {DomainEvent}", eventName);
+                LogDomainEventFailed(logger, ex, eventName);
                 throw new InvalidOperationException(
                     $"Failed to process domain event {eventName}. See inner exception for details.", ex);
             }
         }
     }
+
+    // The nested handlers are generic, so the generator cannot pick up their `logger` primary-ctor
+    // parameter - ILogger is passed explicitly to static methods on this outer class.
+    [LoggerMessage(Level = LogLevel.Information, Message = "Processing command {Command}")]
+    private static partial void LogProcessingCommand(ILogger logger, string command);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Completed command {Command}")]
+    private static partial void LogCompletedCommand(ILogger logger, string command);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Completed command {Command} with error: {Error}")]
+    private static partial void LogCommandFailed(ILogger logger, string command, Error error);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Processing query {Query}")]
+    private static partial void LogProcessingQuery(ILogger logger, string query);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Completed query {Query}")]
+    private static partial void LogCompletedQuery(ILogger logger, string query);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Completed query {Query} with error: {Error}")]
+    private static partial void LogQueryFailed(ILogger logger, string query, Error error);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Processing domain event {DomainEvent}")]
+    private static partial void LogProcessingDomainEvent(ILogger logger, string domainEvent);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Completed domain event {DomainEvent}")]
+    private static partial void LogCompletedDomainEvent(ILogger logger, string domainEvent);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Error processing domain event {DomainEvent}")]
+    private static partial void LogDomainEventFailed(ILogger logger, Exception exception, string domainEvent);
 }

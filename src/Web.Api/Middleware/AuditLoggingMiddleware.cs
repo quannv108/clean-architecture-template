@@ -7,7 +7,7 @@ using Web.Api.Infrastructure;
 
 namespace Web.Api.Middleware;
 
-internal sealed class AuditLoggingMiddleware
+internal sealed partial class AuditLoggingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -49,8 +49,7 @@ internal sealed class AuditLoggingMiddleware
             catch (Exception ex)
             {
                 // Fallback logging in case of failure
-                _logger.LogError(ex, "Failed to log audit data for request to {Path} with action {ActionName}",
-                    context.Request.Path, auditMetadata.ActionName);
+                LogAuditFailed(ex, context.Request.Path, auditMetadata.ActionName);
             }
         }, CancellationToken.None);
     }
@@ -107,4 +106,7 @@ internal sealed class AuditLoggingMiddleware
         Uri UrlPath,
         string? IpAddress,
         Guid? TenantId);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Failed to log audit data for request to {Path} with action {ActionName}")]
+    private partial void LogAuditFailed(Exception exception, PathString path, string actionName);
 }

@@ -1,5 +1,4 @@
-﻿#pragma warning disable CA1873
-using Application.Abstractions.Authentication;
+﻿using Application.Abstractions.Authentication;
 using Application.Abstractions.BackgroundJobs;
 using Application.Abstractions.Communication.Email;
 using Application.Abstractions.Communication.Sms;
@@ -38,7 +37,7 @@ using StackExchange.Redis;
 
 namespace Infrastructure;
 
-public static class DependencyInjection
+public static partial class DependencyInjection
 {
     private const string MainDatabaseConnectionKey = "MainReadWrite";
     private const string ReadOnlyDatabaseConnectionKey = "MainReadOnly";
@@ -80,8 +79,7 @@ public static class DependencyInjection
 
         if (hasRedis)
         {
-            logger.LogInformation("Configuring HybridCache with Redis L2 cache at {RedisConnection}",
-                redisConnection);
+            LogCacheRedis(logger, redisConnection);
 
             services.AddStackExchangeRedisCache(options =>
             {
@@ -91,7 +89,7 @@ public static class DependencyInjection
         }
         else
         {
-            logger.LogInformation("Configuring HybridCache with L1 in-memory cache only (Redis not configured)");
+            LogCacheInMemory(logger);
         }
 
         services.AddHybridCache(options =>
@@ -124,7 +122,7 @@ public static class DependencyInjection
                 return new RedisDistributedLockProvider(connection.GetDatabase());
             });
 
-            logger.LogInformation("Distributed locks: Redis provider (high-performance mode)");
+            LogLocksRedis(logger);
         }
         else
         {
@@ -132,7 +130,7 @@ public static class DependencyInjection
                 new PostgresDistributedLockProvider(
                     GetWriteConnectionString(configuration)!));
 
-            logger.LogInformation("Distributed locks: PostgreSQL advisory locks (using existing database)");
+            LogLocksPostgres(logger);
         }
 
         return services;
@@ -189,12 +187,13 @@ public static class DependencyInjection
         string? writeConnectionString = GetWriteConnectionString(configuration);
         string? readConnectionString = GetReadConnectionString(configuration);
 
-        logger.LogInformation("Configuring write database with connection string: {ConnectionString}",
-            MaskConnectionString(writeConnectionString));
+        // Masked up front (startup only); CA1873 flags a call expression inside a log argument
+        string maskedWrite = MaskConnectionString(writeConnectionString);
+        LogWriteDatabase(logger, maskedWrite);
         if (!string.IsNullOrWhiteSpace(readConnectionString))
         {
-            logger.LogInformation("Configuring read database with connection string: {ConnectionString}",
-                MaskConnectionString(readConnectionString));
+            string maskedRead = MaskConnectionString(readConnectionString);
+            LogReadDatabase(logger, maskedRead);
         }
 
         // database interceptors
@@ -288,11 +287,11 @@ public static class DependencyInjection
                 name: "redis",
                 tags: RedisHealthCheckTags);
 
-            logger.LogInformation("Health checks: PostgreSQL + Redis");
+            LogHealthChecksWithRedis(logger);
         }
         else
         {
-            logger.LogInformation("Health checks: PostgreSQL only");
+            LogHealthChecksPostgresOnly(logger);
         }
 
         return services;
@@ -373,7 +372,7 @@ public static class DependencyInjection
         services.AddSingleton<IValidateOptions<SmsOptions>, SmsOptionsValidator>();
 
         var provider = configuration["Sms:Provider"];
-        logger.LogInformation("SmsProvider = {SmsProvider}", provider);
+        LogSmsProvider(logger, provider);
         if (string.Equals(provider, "Twilio", StringComparison.OrdinalIgnoreCase))
         {
             services.AddSingleton<ISmsSender, TwilioSmsSender>();
@@ -398,4 +397,32 @@ public static class DependencyInjection
 
         return services;
     }
+
+    // Static class: the generator cannot pick up a logger field, so ILogger is passed explicitly.
+    [LoggerMessage(Level = LogLevel.Information, Message = "Configuring HybridCache with Redis L2 cache at {RedisConnection}")]
+    private static partial void LogCacheRedis(ILogger logger, string? redisConnection);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Configuring HybridCache with L1 in-memory cache only (Redis not configured)")]
+    private static partial void LogCacheInMemory(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Distributed locks: Redis provider (high-performance mode)")]
+    private static partial void LogLocksRedis(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Distributed locks: PostgreSQL advisory locks (using existing database)")]
+    private static partial void LogLocksPostgres(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Configuring write database with connection string: {ConnectionString}")]
+    private static partial void LogWriteDatabase(ILogger logger, string? connectionString);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Configuring read database with connection string: {ConnectionString}")]
+    private static partial void LogReadDatabase(ILogger logger, string? connectionString);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Health checks: PostgreSQL + Redis")]
+    private static partial void LogHealthChecksWithRedis(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Health checks: PostgreSQL only")]
+    private static partial void LogHealthChecksPostgresOnly(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "SmsProvider = {SmsProvider}")]
+    private static partial void LogSmsProvider(ILogger logger, string? smsProvider);
 }
