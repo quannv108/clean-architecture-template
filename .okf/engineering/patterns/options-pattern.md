@@ -39,11 +39,11 @@ composition root would close the gap.
 
 | Options | Section | For |
 |---|---|---|
-| [`EmailOptions`](../../../src/Application/Abstractions/Communication/Email/EmailOptions.cs) | `Email` | outbound mail |
-| [`SmsOptions`](../../../src/Application/Abstractions/Communication/Sms/SmsOptions.cs) | `Sms` | outbound SMS |
-| [`EncryptionOptions`](../../../src/Application/Abstractions/Cryptography/EncryptionOptions.cs) | `Encryption` | key version and legacy keys - [Encryption](encryption.md) |
-| [`StorageOptions`](../../../src/Application/Abstractions/Storage/StorageOptions.cs) | `Storage` | file storage roots and entry options |
-| [`OutboxOptions`](../../../src/Application/Outbox/OutboxOptions.cs) | `Outbox` | poll interval, batch size, retention |
+| [`EmailOptions`](../../../api/src/Application/Abstractions/Communication/Email/EmailOptions.cs) | `Email` | outbound mail |
+| [`SmsOptions`](../../../api/src/Application/Abstractions/Communication/Sms/SmsOptions.cs) | `Sms` | outbound SMS |
+| [`EncryptionOptions`](../../../api/src/Application/Abstractions/Cryptography/EncryptionOptions.cs) | `Encryption` | key version and legacy keys - [Encryption](encryption.md) |
+| [`StorageOptions`](../../../api/src/Application/Abstractions/Storage/StorageOptions.cs) | `Storage` | file storage roots and entry options |
+| [`OutboxOptions`](../../../api/src/Application/Outbox/OutboxOptions.cs) | `Outbox` | poll interval, batch size, retention |
 | Redis | `Redis` | [Caching Tiers](../../architecture/cross-cutting/caching-tiers.md) |
 
 ## Secrets

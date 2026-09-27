@@ -2,7 +2,7 @@
 type: Domain Slice
 title: "Outbox"
 description: "The slice that makes domain event delivery reliable: events persisted with the business transaction and dispatched afterwards."
-resource: src/Domain/Outbox
+resource: api/src/Domain/Outbox
 tags: [domain, outbox, domain-events, infrastructure-slice]
 status: stable
 ---
@@ -17,9 +17,9 @@ file layout, but it is infrastructure by purpose - almost every product built on
 | Layer | Files |
 |---|---|
 | Domain | [`OutboxMessage`](outbox-message.md), [`OutboxMessageErrors`](outbox-message-errors.md) |
-| Application | [`OutboxMessageProcessor`](../../../src/Application/Outbox), [`IOutboxMessageProcessor`](../../../src/Application/Outbox/IOutboxMessageProcessor.cs), [`OutboxOptions`](../../../src/Application/Outbox/OutboxOptions.cs), [cleanup command](../../../src/Application/Outbox/CleanupProcessedOutboxMessagesCommand.cs) and [job](../../../src/Application/Outbox/OutboxMessageCleanupJob.cs), [stats](../../../src/Application/Outbox/GetOutboxStatsQuery.cs) and [error](../../../src/Application/Outbox/GetOutboxTypeErrorsQuery.cs) queries |
-| Infrastructure | [`OutboxMessageHostedService`](../../../src/Infrastructure/Outbox/OutboxMessageHostedService.cs), [`OutboxSignal`](../../../src/Infrastructure/Outbox/OutboxSignal.cs), [`OutboxMessageConfiguration`](../../../src/Infrastructure/Database/Configuration/Outbox/OutboxMessageConfiguration.cs) |
-| Web.Api | [Outbox dev pages](../../../src/Web.Api/Pages/Dev) |
+| Application | [`OutboxMessageProcessor`](../../../api/src/Application/Outbox), [`IOutboxMessageProcessor`](../../../api/src/Application/Outbox/IOutboxMessageProcessor.cs), [`OutboxOptions`](../../../api/src/Application/Outbox/OutboxOptions.cs), [cleanup command](../../../api/src/Application/Outbox/CleanupProcessedOutboxMessagesCommand.cs) and [job](../../../api/src/Application/Outbox/OutboxMessageCleanupJob.cs), [stats](../../../api/src/Application/Outbox/GetOutboxStatsQuery.cs) and [error](../../../api/src/Application/Outbox/GetOutboxTypeErrorsQuery.cs) queries |
+| Infrastructure | [`OutboxMessageHostedService`](../../../api/src/Infrastructure/Outbox/OutboxMessageHostedService.cs), [`OutboxSignal`](../../../api/src/Infrastructure/Outbox/OutboxSignal.cs), [`OutboxMessageConfiguration`](../../../api/src/Infrastructure/Database/Configuration/Outbox/OutboxMessageConfiguration.cs) |
+| Web.Api | [Outbox dev pages](../../../api/src/Web.Api/Pages/Dev) |
 
 ## How it behaves
 
@@ -39,4 +39,4 @@ backlog means side effects across the whole system are silently not happening. K
 * [OutboxMessage](outbox-message.md) - The persisted form of a raised domain event, written in the same transaction as the business data.
 * [OutboxMessageErrors](outbox-message-errors.md) - Domain error factories for outbox message failures.
 
-Implementation: [`src/Application/Outbox`](../../../src/Application/Outbox) and [`src/Infrastructure/Outbox`](../../../src/Infrastructure/Outbox); mechanism in [Outbox Pattern](../../engineering/patterns/outbox-pattern.md).
+Implementation: [`api/src/Application/Outbox`](../../../api/src/Application/Outbox) and [`api/src/Infrastructure/Outbox`](../../../api/src/Infrastructure/Outbox); mechanism in [Outbox Pattern](../../engineering/patterns/outbox-pattern.md).

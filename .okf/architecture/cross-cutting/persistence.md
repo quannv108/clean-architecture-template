@@ -2,7 +2,7 @@
 type: Mechanism
 title: Persistence
 description: PostgreSQL through EF Core - contexts, configurations, interceptors, converters, migrations, seeding and schema.
-resource: src/Infrastructure/Database
+resource: api/src/Infrastructure/Database
 tags: [persistence, ef-core, postgresql, migrations]
 status: stable
 ---
@@ -10,15 +10,15 @@ status: stable
 # Persistence
 
 [PostgreSQL](../../engineering/technologies/postgresql.md) via [EF Core](../../engineering/technologies/ef-core.md), all of it in
-`src/Infrastructure/Database`.
+`api/src/Infrastructure/Database`.
 
 ## Contexts
 
 | Type | Interface | Use |
 |---|---|---|
-| [`ApplicationDbContext`](../../../src/Infrastructure/Database/ApplicationDbContext.cs) | [`IApplicationDbContext`](../../../src/Application/Abstractions/Data/IApplicationDbContext.cs) | Writes, in command handlers |
-| [`ReadOnlyApplicationDbContext`](../../../src/Infrastructure/Database/ReadOnlyApplicationDbContext.cs) | [`IReadOnlyApplicationDbContext`](../../../src/Application/Abstractions/Data/IReadOnlyApplicationDbContext.cs) | Untracked reads |
-| [`BaseApplicationDbContext`](../../../src/Infrastructure/Database/BaseApplicationDbContext.cs) | - | Shared conventions both inherit |
+| [`ApplicationDbContext`](../../../api/src/Infrastructure/Database/ApplicationDbContext.cs) | [`IApplicationDbContext`](../../../api/src/Application/Abstractions/Data/IApplicationDbContext.cs) | Writes, in command handlers |
+| [`ReadOnlyApplicationDbContext`](../../../api/src/Infrastructure/Database/ReadOnlyApplicationDbContext.cs) | [`IReadOnlyApplicationDbContext`](../../../api/src/Application/Abstractions/Data/IReadOnlyApplicationDbContext.cs) | Untracked reads |
+| [`BaseApplicationDbContext`](../../../api/src/Infrastructure/Database/BaseApplicationDbContext.cs) | - | Shared conventions both inherit |
 
 The base class exists so the two contexts cannot drift: if they ever disagreed about a filter, queries would
 return different rows depending on which one was injected.
@@ -29,19 +29,19 @@ Contexts are `internal`. See [Visibility](../../engineering/conventions/visibili
 
 | Convention | Where |
 |---|---|
-| Enums stored as strings | [`BaseApplicationDbContext`](../../../src/Infrastructure/Database/BaseApplicationDbContext.cs) |
+| Enums stored as strings | [`BaseApplicationDbContext`](../../../api/src/Infrastructure/Database/BaseApplicationDbContext.cs) |
 | Soft-delete query filter on every `Entity` | [Soft Delete](../../engineering/patterns/soft-delete.md) |
 | `xmin` mapped to `Entity.Version` as row version | [Optimistic Concurrency](../../engineering/patterns/optimistic-concurrency.md) |
-| `EncryptedString` transparently encrypted | [`EncryptedStringConverter`](../../../src/Infrastructure/Database/Converters/EncryptedStringConverter.cs) |
-| Version 7 GUID ids assigned on add | [`EntityIdGenerationInterceptor`](../../../src/Infrastructure/Database/Interceptors/EntityIdGenerationInterceptor.cs) |
-| Created/modified stamps | [`AuditableEntityInterceptor`](../../../src/Infrastructure/Database/Interceptors/AuditableEntityInterceptor.cs) |
+| `EncryptedString` transparently encrypted | [`EncryptedStringConverter`](../../../api/src/Infrastructure/Database/Converters/EncryptedStringConverter.cs) |
+| Version 7 GUID ids assigned on add | [`EntityIdGenerationInterceptor`](../../../api/src/Infrastructure/Database/Interceptors/EntityIdGenerationInterceptor.cs) |
+| Created/modified stamps | [`AuditableEntityInterceptor`](../../../api/src/Infrastructure/Database/Interceptors/AuditableEntityInterceptor.cs) |
 
 ## Per-entity configuration
 
 One `IEntityTypeConfiguration<T>` per entity, at
 `Infrastructure/Database/Configuration/<Feature>/<Entity>Configuration.cs`. It owns table and column names,
 indexes, relationships and max lengths. Schema names are constants in
-[`SchemaNameConstants`](../../../src/Infrastructure/Database/SchemaNameConstants.cs).
+[`SchemaNameConstants`](../../../api/src/Infrastructure/Database/SchemaNameConstants.cs).
 
 ## Adding an entity
 
@@ -52,7 +52,7 @@ indexes, relationships and max lengths. Schema names are constants in
 
 ## Migrations
 
-In `src/Infrastructure/Database/Migrations`, and **`internal partial`** - architecture tests require every
+In `api/src/Infrastructure/Database/Migrations`, and **`internal partial`** - architecture tests require every
 Infrastructure type to be internal, and EF scaffolds them public. The `--output-dir` and
 `-- --environment Migration` flags are both mandatory. Never delete a migration file by hand; use
 `dotnet ef migrations remove`, which also reverts the model snapshot. Full procedure:
@@ -60,11 +60,11 @@ Infrastructure type to be internal, and EF scaffolds them public. The `--output-
 
 ## Seeding
 
-[`IEntitySeeder`](../../../src/Infrastructure/Database/Seeding/IEntitySeeder.cs) implementations per feature, orchestrated by
-[`DbSeeder`](../../../src/Infrastructure/Database/Seeding/DbSeeder.cs). Register a new seeder there or it never runs.
+[`IEntitySeeder`](../../../api/src/Infrastructure/Database/Seeding/IEntitySeeder.cs) implementations per feature, orchestrated by
+[`DbSeeder`](../../../api/src/Infrastructure/Database/Seeding/DbSeeder.cs). Register a new seeder there or it never runs.
 
 ## Deleting
 
-[`IEntityDeleter`](../../../src/Application/Abstractions/Data/IEntityDeleter.cs) /
-[`EntityDeleter`](../../../src/Infrastructure/Database/EntityDeleter.cs) perform soft deletes consistently. Do not set `IsDeleted`
+[`IEntityDeleter`](../../../api/src/Application/Abstractions/Data/IEntityDeleter.cs) /
+[`EntityDeleter`](../../../api/src/Infrastructure/Database/EntityDeleter.cs) perform soft deletes consistently. Do not set `IsDeleted`
 by hand and do not `ExecuteDelete` - [Data Access](data-access.md) says why.

@@ -40,7 +40,7 @@ Slices are allowed to talk, but only through three doors:
 | Mechanism | Use for | Example |
 |---|---|---|
 | [Domain events](domain-event-dispatch.md) | Asynchronous, decoupled reaction | `UserRegisteredDomainEvent` |
-| [Cached repository](../../../src/Application) | Reading another slice's data | Orders reads users via `IUserCachedRepository` |
+| [Cached repository](../../../api/src/Application) | Reading another slice's data | Orders reads users via `IUserCachedRepository` |
 | Shared response DTOs | Public read shapes | `UserResponse` |
 
 **Anti-patterns** - all of these create the coupling slices exist to prevent:

@@ -2,7 +2,7 @@
 type: Pattern
 title: "Audit Logging"
 description: "Record who did what, when and where by marking an endpoint - non-intrusive, asynchronous, and never able to fail a request."
-resource: src/Web.Api/Middleware/AuditLoggingMiddleware.cs
+resource: api/src/Web.Api/Middleware/AuditLoggingMiddleware.cs
 tags: [audit, security, compliance, middleware]
 status: stable
 ---
@@ -22,7 +22,7 @@ app.MapPost("users/register", HandleAsync)
     .WithTags(Tags.Users);
 ```
 
-That is the entire developer-facing API. [`AuditLoggingMiddleware`](../../../src/Web.Api/Middleware/AuditLoggingMiddleware.cs)
+That is the entire developer-facing API. [`AuditLoggingMiddleware`](../../../api/src/Web.Api/Middleware/AuditLoggingMiddleware.cs)
 does the rest.
 
 ## What is recorded
@@ -60,11 +60,11 @@ inside the request's transaction, which is a different design and a different fa
 * **Never put sensitive data in audit records**, including `AdditionalData`. They are widely readable and
   long lived.
 * Records are immutable - create only, never update. Deletion happens only through
-  [retention](../../../src/Application/AuditLogs/DeleteOldAuditLogsCommand.cs), and that window is usually a compliance
+  [retention](../../../api/src/Application/AuditLogs/DeleteOldAuditLogsCommand.cs), and that window is usually a compliance
   decision.
 
 ## Not the same as entity audit stamps
 
-[`AuditedEntity`](../../../src/SharedKernel/AuditedEntity.cs) records who last changed a **row**. This records an
+[`AuditedEntity`](../../../api/src/SharedKernel/AuditedEntity.cs) records who last changed a **row**. This records an
 **action taken through the API**, whether or not it changed anything - including reads, which is usually the
 part compliance cares about.

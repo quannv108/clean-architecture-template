@@ -12,7 +12,7 @@ status: draft
 
 ## Problem
 
-When [`OutboxMessageProcessor`](../../src/Application/Outbox) fails to dispatch a message, the
+When [`OutboxMessageProcessor`](../../api/src/Application/Outbox) fails to dispatch a message, the
 error is recorded and the message stays unprocessed. Transient failures - a network blip, a provider being
 briefly down - are then retried at the same cadence as everything else, and a permanently broken message is
 retried forever alongside them.
@@ -25,7 +25,7 @@ There is no distinction between "will succeed shortly" and "will never succeed".
 * A background service that retries failed messages with exponential back-off.
 * A retry ceiling, after which a message is parked as dead-lettered rather than retried.
 * Surface parked messages so somebody is told, rather than leaving them for
-  [`GetOutboxTypeErrorsQuery`](../../src/Application/Outbox/GetOutboxTypeErrorsQuery.cs) to be noticed by chance.
+  [`GetOutboxTypeErrorsQuery`](../../api/src/Application/Outbox/GetOutboxTypeErrorsQuery.cs) to be noticed by chance.
 
 ## Considerations
 

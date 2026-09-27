@@ -12,7 +12,7 @@ status: stable
 `Microsoft.Extensions.Caching.Hybrid`. One API over both tiers, with stampede protection and automatic L2
 discovery - if an `IDistributedCache` is registered, it is used as L2 with no code change.
 
-Used by [cached repositories](../../../src/Application) via `GetOrCreateAsync`.
+Used by [cached repositories](../../../api/src/Application) via `GetOrCreateAsync`.
 
 Limits: 1 MB payload, 1024-character keys. Degrades to L1 if Redis fails rather than failing the request.
 

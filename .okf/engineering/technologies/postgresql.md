@@ -17,7 +17,7 @@ provider:
 * **`xmin`** - the system column mapped to `Entity.Version` for
   [optimistic concurrency](../patterns/optimistic-concurrency.md). No extra column, nothing to maintain.
 * **Advisory locks** - the default
-  [distributed lock provider](../../../src/Infrastructure/Locking/PostgresDistributedLockProvider.cs), released automatically
+  [distributed lock provider](../../../api/src/Infrastructure/Locking/PostgresDistributedLockProvider.cs), released automatically
   when the connection closes.
 
 Moving to another provider means replacing both.

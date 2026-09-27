@@ -8,7 +8,7 @@ status: stable
 
 # Command Handler
 
-A write use case is one file, `src/Application/<Feature>/<Operation>Command.cs`, holding the command record
+A write use case is one file, `api/src/Application/<Feature>/<Operation>Command.cs`, holding the command record
 and its handler. The handler orchestrates; the entity decides.
 
 ## How
@@ -36,12 +36,12 @@ await db.SaveChangesAsync(ct);             // once: entity + outbox
 return Result.Success();
 ```
 
-Real instance: [`CreateAuditLogCommand.cs`](../../../src/Application/AuditLogs/CreateAuditLogCommand.cs).
+Real instance: [`CreateAuditLogCommand.cs`](../../../api/src/Application/AuditLogs/CreateAuditLogCommand.cs).
 
 ## Checklist
 
 - [ ] `<Operation>Command.cs` holds the `sealed record` and the `internal sealed` handler
-- [ ] Writes through [`IApplicationDbContext`](../../../src/Application/Abstractions/Data/IApplicationDbContext.cs)
+- [ ] Writes through [`IApplicationDbContext`](../../../api/src/Application/Abstractions/Data/IApplicationDbContext.cs)
 - [ ] One `SaveChangesAsync`
 - [ ] Returns `Result.Failure(<Feature>Errors.X())`, never throws for an expected failure
 - [ ] `RemoveCacheAsync` after saving if a cached read is affected

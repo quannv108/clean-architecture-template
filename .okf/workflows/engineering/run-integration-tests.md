@@ -9,7 +9,7 @@ status: stable
 # Run Integration Tests
 
 ```bash
-dotnet test tests/Api.IntegrationTests/
+dotnet test api/tests/Api.IntegrationTests/
 ```
 
 ## Under Podman
@@ -24,7 +24,7 @@ $env:DOCKER_HOST = 'npipe://./pipe/podman-machine-default'
 # Podman's rootless Ryuk reaper is unreliable
 $env:TESTCONTAINERS_RYUK_DISABLED = 'true'
 
-dotnet test tests/Api.IntegrationTests/
+dotnet test api/tests/Api.IntegrationTests/
 ```
 
 * The Podman machine must be running - `podman machine list`.
@@ -39,7 +39,7 @@ Nothing to set. Testcontainers finds `npipe://./pipe/docker_engine` by default.
 
 * **Through API endpoints only** - never write to the database directly. See
   [Test Architecture](../../architecture/delivery/test-architecture.md).
-* Use [`ApiTestFactory`](../../../tests/Api.IntegrationTests/Infrastructure/ApiTestFactory.cs) and the `ApiClient` helper.
+* Use [`ApiTestFactory`](../../../api/tests/Api.IntegrationTests/Infrastructure/ApiTestFactory.cs) and the `ApiClient` helper.
 * **Include the `/api/v1` prefix** - the bare path from the endpoint file returns 404.
 * **Call `WaitForOutboxMessagesAsync()`** before asserting a domain event side effect, or the test races
   the outbox and fails intermittently.

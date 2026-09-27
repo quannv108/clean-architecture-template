@@ -2,7 +2,7 @@
 type: Pattern
 title: "Outbox Pattern"
 description: "Persist a raised domain event in the same transaction as the business change, and dispatch it from a background service afterwards."
-resource: src/Application/Outbox
+resource: api/src/Application/Outbox
 tags: [outbox, domain-events, reliability, async]
 status: stable
 ---
@@ -27,12 +27,12 @@ await db.SaveChangesAsync(ct);     // order row + OutboxMessage row, one transac
 
 | Step | Owner |
 |---|---|
-| Collect raised events | [`Entity`](../../../src/SharedKernel/Entity.cs) |
-| Write [`OutboxMessage`](../../domains/outbox/outbox-message.md) rows | [`ApplicationDbContext`](../../../src/Infrastructure/Database/ApplicationDbContext.cs) save path |
-| Poll (or be woken by [`OutboxSignal`](../../../src/Infrastructure/Outbox/OutboxSignal.cs)) | [`OutboxMessageHostedService`](../../../src/Infrastructure/Outbox/OutboxMessageHostedService.cs) |
-| Deserialize, dispatch, mark processed or failed | [`OutboxMessageProcessor`](../../../src/Application/Outbox) - in Application, not Infrastructure, so it unit-tests without a host |
-| Resolve and invoke handlers | [`DomainEventsDispatcher`](../../../src/Infrastructure/DomainEvents/DomainEventsDispatcher.cs) |
-| Prune processed rows | [`OutboxMessageCleanupJob`](../../../src/Application/Outbox/OutboxMessageCleanupJob.cs) |
+| Collect raised events | [`Entity`](../../../api/src/SharedKernel/Entity.cs) |
+| Write [`OutboxMessage`](../../domains/outbox/outbox-message.md) rows | [`ApplicationDbContext`](../../../api/src/Infrastructure/Database/ApplicationDbContext.cs) save path |
+| Poll (or be woken by [`OutboxSignal`](../../../api/src/Infrastructure/Outbox/OutboxSignal.cs)) | [`OutboxMessageHostedService`](../../../api/src/Infrastructure/Outbox/OutboxMessageHostedService.cs) |
+| Deserialize, dispatch, mark processed or failed | [`OutboxMessageProcessor`](../../../api/src/Application/Outbox) - in Application, not Infrastructure, so it unit-tests without a host |
+| Resolve and invoke handlers | [`DomainEventsDispatcher`](../../../api/src/Infrastructure/DomainEvents/DomainEventsDispatcher.cs) |
+| Prune processed rows | [`OutboxMessageCleanupJob`](../../../api/src/Application/Outbox/OutboxMessageCleanupJob.cs) |
 
 ## Rules for handlers
 
@@ -45,8 +45,8 @@ await db.SaveChangesAsync(ct);     // order row + OutboxMessage row, one transac
 
 Watch pending count and pending age. A rising backlog means every asynchronous side effect in the system is
 silently not happening - and the only symptom is absence. Failures by type:
-[`GetOutboxTypeErrorsQuery`](../../../src/Application/Outbox/GetOutboxTypeErrorsQuery.cs) and the
-[dev pages](../../../src/Web.Api/Pages/Dev).
+[`GetOutboxTypeErrorsQuery`](../../../api/src/Application/Outbox/GetOutboxTypeErrorsQuery.cs) and the
+[dev pages](../../../api/src/Web.Api/Pages/Dev).
 
 ## Related
 

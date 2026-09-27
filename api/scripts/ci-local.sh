@@ -2,6 +2,7 @@
 
 # Local CI script - runs the same build, test, and coverage process as GitHub Actions
 set -e
+cd "$(dirname "$0")/.."
 
 echo "🏗️  Building solution..."
 dotnet build CleanArchitecture.slnx --configuration Release

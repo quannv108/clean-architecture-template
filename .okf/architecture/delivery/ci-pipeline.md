@@ -25,12 +25,12 @@ Both workflows run on every push and pull request. Pull requests target `main`.
 * Each pull request gets a coverage summary in its checks.
 * Reports are downloadable from the Actions tab.
 
-Reproduce locally with `./scripts/ci-local.sh` (Linux/macOS) or `scripts\ci-local.bat` (Windows), or run the
+Reproduce locally with `./api/scripts/ci-local.sh` (Linux/macOS) or `api\scripts\ci-local.bat` (Windows), or run the
 commands by hand - see [Generate a Coverage Report](../../workflows/engineering/generate-coverage.md).
 
 ## What fails the build
 
-Anything that fails `dotnet test CleanArchitecture.slnx`, which includes
+Anything that fails `dotnet test api/CleanArchitecture.slnx`, which includes
 [architecture tests](test-architecture.md). Treat a failing architecture test as a design
 error, not a test to adjust - the rule it asserts is documented in
 [Constraints](../../engineering/constraints.md) with its reasoning.

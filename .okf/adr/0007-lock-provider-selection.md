@@ -23,13 +23,13 @@ deployment - or to run locally - is a heavy prerequisite for a capability most s
 
 ## Decision
 
-[`IDistributedLockProvider`](../../src/Application/Abstractions/Locking/IDistributedLockProvider.cs) in Application, implemented over
+[`IDistributedLockProvider`](../../api/src/Application/Abstractions/Locking/IDistributedLockProvider.cs) in Application, implemented over
 [Medallion.Threading](../engineering/technologies/medallion-threading.md), with the provider chosen by configuration:
 
 | `Redis:ConnectionString` | Provider |
 |---|---|
-| empty | [PostgreSQL advisory locks](../../src/Infrastructure/Locking/PostgresDistributedLockProvider.cs) |
-| populated | [Redis locks](../../src/Infrastructure/Locking/RedisDistributedLockProvider.cs) |
+| empty | [PostgreSQL advisory locks](../../api/src/Infrastructure/Locking/PostgresDistributedLockProvider.cs) |
+| populated | [Redis locks](../../api/src/Infrastructure/Locking/RedisDistributedLockProvider.cs) |
 
 The same setting enables the [L2 cache tier](../architecture/cross-cutting/caching-tiers.md), so a deployment adds Redis once
 and gets both.

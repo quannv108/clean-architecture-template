@@ -1,6 +1,6 @@
 ---
 paths:
-  - "tests/**"
+  - "api/tests/**"
 ---
 
 # Testing Rules
@@ -12,9 +12,9 @@ Detail: [.okf/architecture/delivery/test-architecture.md](../../.okf/architectur
 
 - AAA pattern (Arrange, Act, Assert).
 - **NSubstitute** for mocking (not Moq); **Shouldly** for assertions (not FluentAssertions) — enforced by
-  `tests/ArchitectureTests/Testing/TestingStandardsTests.cs`.
+  `api/tests/ArchitectureTests/Testing/TestingStandardsTests.cs`.
 - DbSet mocking: `BuildMock()` from MockQueryable.NSubstitute.
-- Unit test naming: `<Operation>HandlerTests.cs` in `tests/Application.UnitTests/<Feature>/`.
+- Unit test naming: `<Operation>HandlerTests.cs` in `api/tests/Application.UnitTests/<Feature>/`.
 - Assert on `Error.Code`, not just that the result failed.
 - Coverage target: 70%+ for the Application layer.
 
@@ -30,5 +30,5 @@ Detail: [.okf/architecture/delivery/test-architecture.md](../../.okf/architectur
 
 ## Before completing any work
 
-- Run `dotnet test tests/ArchitectureTests/`. A failure there is a design error, not a test to loosen —
+- Run `dotnet test api/tests/ArchitectureTests/`. A failure there is a design error, not a test to loosen —
   [.okf/engineering/constraints.md](../../.okf/engineering/constraints.md).

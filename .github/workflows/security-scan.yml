@@ -59,6 +59,9 @@ jobs:
   dotnet-vulnerability-audit:
     name: .NET Vulnerability Audit
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
 
     steps:
     - name: Checkout code
@@ -101,4 +104,4 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: vulnerability-scan-results
-        path: scan-results.txt
+        path: api/scan-results.txt

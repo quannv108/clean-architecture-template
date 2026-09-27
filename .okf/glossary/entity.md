@@ -11,6 +11,6 @@ status: stable
 Identified by its id, not by its values - two entities with identical properties are different if their ids
 differ. Contrast a [value object](value-object.md).
 
-Here every entity inherits [`Entity`](../../src/SharedKernel/Entity.cs) or
-[`AuditedEntity`](../../src/SharedKernel/AuditedEntity.cs), is constructed through a static `Create` factory
+Here every entity inherits [`Entity`](../../api/src/SharedKernel/Entity.cs) or
+[`AuditedEntity`](../../api/src/SharedKernel/AuditedEntity.cs), is constructed through a static `Create` factory
 returning `Result<T>`, and changes state only through behaviour methods.

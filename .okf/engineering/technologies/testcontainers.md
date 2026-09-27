@@ -9,7 +9,7 @@ status: stable
 
 # Testcontainers
 
-Used by [`ApiTestFactory`](../../../tests/Api.IntegrationTests/Infrastructure/ApiTestFactory.cs) to start a real PostgreSQL instance per test
+Used by [`ApiTestFactory`](../../../api/tests/Api.IntegrationTests/Infrastructure/ApiTestFactory.cs) to start a real PostgreSQL instance per test
 run.
 
 Real PostgreSQL rather than an in-memory provider because the behaviour this codebase depends on -

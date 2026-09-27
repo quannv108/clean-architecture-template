@@ -8,7 +8,7 @@ status: stable
 
 # Cursor Pagination
 
-Used by [`GetAuditLogsQuery`](../../src/Application/AuditLogs/GetAuditLogsQuery.cs), with `ActionDateTime` as the cursor.
+Used by [`GetAuditLogsQuery`](../../api/src/Application/AuditLogs/GetAuditLogsQuery.cs), with `ActionDateTime` as the cursor.
 
 Against an append-heavy table, [offset paging](offset-pagination.md) skips and repeats rows as new ones
 arrive between page requests. A cursor is stable regardless of inserts, and stays fast at depth because the

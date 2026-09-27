@@ -1,7 +1,7 @@
-﻿using Application.Abstractions.Data;
+﻿using System.Linq.Expressions;
+using Application.Abstractions.Data;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel;
-using System.Linq.Expressions;
 
 namespace Infrastructure.Database;
 

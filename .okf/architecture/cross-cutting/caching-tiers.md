@@ -35,7 +35,7 @@ Lookup order is L1, then L2, then the database - populating each tier on the way
   and uses it as L2 automatically. The same setting also switches the
   [distributed lock provider](../../engineering/patterns/distributed-lock.md) to Redis and adds Redis to `/health`.
 
-Wired in `src/Infrastructure/DependencyInjection.cs` (`AddCache`). If Redis fails at runtime, HybridCache
+Wired in `api/src/Infrastructure/DependencyInjection.cs` (`AddCache`). If Redis fails at runtime, HybridCache
 degrades to L1 rather than failing the request.
 
 ## Limits

@@ -2,26 +2,26 @@
 type: Component
 title: Domain Layer
 description: Pure business logic - entities, domain events, domain errors and slice-local value objects, referencing only SharedKernel.
-resource: src/Domain
+resource: api/src/Domain
 tags: [layer, domain, ddd]
 status: stable
 ---
 
 # Domain Layer
 
-`src/Domain` references **only SharedKernel**. No EF Core, no logging, no HTTP, no clock. Enforced by
-`tests/ArchitectureTests/Domain/DomainTests.cs`.
+`api/src/Domain` references **only SharedKernel**. No EF Core, no logging, no HTTP, no clock. Enforced by
+`api/tests/ArchitectureTests/Domain/DomainTests.cs`.
 
 ## What lives here
 
 Organised per slice as `Domain/<Feature>/`:
 
-* `<Feature>.cs` - the aggregate root entity, inheriting [`Entity`](../../../src/SharedKernel/Entity.cs) or
-  [`AuditedEntity`](../../../src/SharedKernel/AuditedEntity.cs)
+* `<Feature>.cs` - the aggregate root entity, inheriting [`Entity`](../../../api/src/SharedKernel/Entity.cs) or
+  [`AuditedEntity`](../../../api/src/SharedKernel/AuditedEntity.cs)
 * `<Feature>Errors.cs` - a static class of `public static` factory methods returning
-  [`Error`](../../../src/SharedKernel/Error.cs)
+  [`Error`](../../../api/src/SharedKernel/Error.cs)
 * `<Event>DomainEvent.cs` - immutable positional records implementing
-  [`IDomainEvent`](../../../src/SharedKernel/IDomainEvent.cs)
+  [`IDomainEvent`](../../../api/src/SharedKernel/IDomainEvent.cs)
 * `<Related>.cs` - child entities and slice-local value objects
 
 Slices that ship with the template: [Audit Logs](../../domains/audit-logs/audit-logs.md),
@@ -32,14 +32,14 @@ Slices that ship with the template: [Audit Logs](../../domains/audit-logs/audit-
 * **Construction goes through a factory.** Private constructor plus `public static Create(...)` returning
   `Result<T>`; validation lives in the factory, not in the caller. See
   [Entity Factory Method](../../engineering/patterns/entity-factory-method.md).
-* **IDs are never set by hand.** [`EntityIdGenerationInterceptor`](../../../src/Infrastructure/Database/Interceptors/EntityIdGenerationInterceptor.cs)
+* **IDs are never set by hand.** [`EntityIdGenerationInterceptor`](../../../api/src/Infrastructure/Database/Interceptors/EntityIdGenerationInterceptor.cs)
   assigns `Guid.CreateVersion7()` on save.
 * **State changes happen in behaviour methods**, and those methods `Raise(...)` domain events. See
   [Domain Event Dispatch](../cross-cutting/domain-event-dispatch.md).
 * **Failure is a return value.** Domain code returns `Result.Failure(SomeErrors.X())`; it does not throw for
   expected outcomes. See [ADR 0008: Result<T> for expected failures, exceptions for the unexpected](../../adr/0008-result-pattern-over-exceptions.md).
 * **No time, no randomness, no I/O.** If a behaviour needs "now", the Application layer passes it in via
-  [`IDateTimeProvider`](../../../src/Application/Abstractions/Time/IDateTimeProvider.cs).
+  [`IDateTimeProvider`](../../../api/src/Application/Abstractions/Time/IDateTimeProvider.cs).
 
 ## Error codes
 

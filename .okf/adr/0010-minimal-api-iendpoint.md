@@ -25,7 +25,7 @@ that but tend to sprawl into one enormous `Program.cs`.
 
 One `internal sealed class <Operation> : IEndpoint` per operation, in `Endpoints/<Feature>/<Operation>.cs`,
 discovered by assembly scan in
-[`EndpointExtensions.MapEndpoints`](../../src/Web.Api/Extensions/EndpointExtensions.cs) and registered inside
+[`EndpointExtensions.MapEndpoints`](../../api/src/Web.Api/Extensions/EndpointExtensions.cs) and registered inside
 `app.MapGroup("api/v1")`.
 
 The route handler is a method reference to a `private static HandleAsync`; request and response types are
@@ -43,5 +43,5 @@ regularly causes 404s from tests and clients calling the bare path. The builder 
 be complete for the generated OpenAPI document to be usable.
 
 **Rules:** [Minimal API Endpoint](../engineering/patterns/minimal-api-endpoint.md), enforced by
-`tests/ArchitectureTests/Presentation/PresentationTests.cs`. Shape:
+`api/tests/ArchitectureTests/Presentation/PresentationTests.cs`. Shape:
 [Minimal API Endpoint](../engineering/patterns/minimal-api-endpoint.md).

@@ -12,9 +12,9 @@ status: stable
 Two things, both in `Application/DependencyInjection.cs`:
 
 * **Scanning** - registers every
-  [`ICommandHandler`](../../../src/Application/Abstractions/Messaging/ICommandHandler.cs) /
-  [`IQueryHandler`](../../../src/Application/Abstractions/Messaging/IQueryHandler.cs) /
-  [`IDomainEventHandler`](../../../src/Application/Abstractions/Messaging/IQueryHandler.cs) implementation against its closed
+  [`ICommandHandler`](../../../api/src/Application/Abstractions/Messaging/ICommandHandler.cs) /
+  [`IQueryHandler`](../../../api/src/Application/Abstractions/Messaging/IQueryHandler.cs) /
+  [`IDomainEventHandler`](../../../api/src/Application/Abstractions/Messaging/IQueryHandler.cs) implementation against its closed
   interface, so a new handler needs no registration line.
 * **`Decorate<,>`** - wraps each handler in the
   [decorator pipeline](../../architecture/cross-cutting/decorator-pipeline.md). **Registration order is load-bearing**: later

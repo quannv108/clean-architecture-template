@@ -2,7 +2,7 @@
 type: Domain Errors
 title: "OutboxMessageErrors"
 description: "Domain error factories for outbox message failures."
-resource: src/Domain/Outbox/OutboxMessageErrors.cs
+resource: api/src/Domain/Outbox/OutboxMessageErrors.cs
 tags: [domain, outbox, errors]
 status: stable
 ---

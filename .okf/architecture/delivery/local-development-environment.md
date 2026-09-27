@@ -10,13 +10,13 @@ status: stable
 
 ## Prerequisites
 
-* [.NET 10 SDK](../../engineering/technologies/dotnet-10.md) - pinned by `global.json`.
+* [.NET 10 SDK](../../engineering/technologies/dotnet-10.md) - pinned by `api/global.json`.
 * [Podman](../../engineering/technologies/podman.md) with a running machine (`podman machine list`), or Docker.
 
 ## Running everything
 
 ```bash
-dotnet run --project src/AppHost
+dotnet run --project api/src/AppHost
 ```
 
 [AppHost](../containers/apphost.md) starts PostgreSQL, pgweb, Seq and the API together and injects the connection strings.
@@ -27,7 +27,7 @@ Aspire defaults to **Podman**: `AppHost.cs` sets `DOTNET_ASPIRE_CONTAINER_RUNTIM
 created, so no per-developer configuration is needed. Override it to use Docker:
 
 ```powershell
-$env:DOTNET_ASPIRE_CONTAINER_RUNTIME='docker'; dotnet run --project src/AppHost
+$env:DOTNET_ASPIRE_CONTAINER_RUNTIME='docker'; dotnet run --project api/src/AppHost
 ```
 
 In VS Code, add it to the `env` block of the "Run Aspire AppHost" launch configuration.
@@ -49,7 +49,7 @@ the Aspire runtime setting. Under Podman it needs `DOCKER_HOST` and `TESTCONTAIN
 | `http://localhost:8081` | Seq log viewer |
 | `/health`, `/alive` | Health and liveness |
 | `/scalar` or the OpenAPI UI | Generated API documentation |
-| Dev pages under `/Dev` | [Email and outbox inspectors](../../../src/Web.Api/Pages/Dev) |
+| Dev pages under `/Dev` | [Email and outbox inspectors](../../../api/src/Web.Api/Pages/Dev) |
 
 Port numbers other than Seq's are assigned by Aspire; read them from the Aspire dashboard rather than
 hard-coding them.

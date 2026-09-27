@@ -2,7 +2,7 @@
 type: Pattern
 title: "Minimal API Endpoint"
 description: "The required shape of an endpoint: IEndpoint, a static HandleAsync, positional request records and a complete builder chain."
-resource: src/Web.Api/Endpoints
+resource: api/src/Web.Api/Endpoints
 tags: [web-api, endpoints, minimal-api, openapi]
 status: stable
 ---
@@ -36,8 +36,8 @@ app.MapPost("/features", HandleAsync)
     .AddOpenApiOperationTransformer(...);              // Summary and Description
 ```
 
-Real instances: [`SendTestEmail.cs`](../../../src/Web.Api/Endpoints/Emails/SendTestEmail.cs) (POST) and
-[`GetAuditLogs.cs`](../../../src/Web.Api/Endpoints/AuditLogs/GetAuditLogs.cs) (GET with paging).
+Real instances: [`SendTestEmail.cs`](../../../api/src/Web.Api/Endpoints/Emails/SendTestEmail.cs) (POST) and
+[`GetAuditLogs.cs`](../../../api/src/Web.Api/Endpoints/AuditLogs/GetAuditLogs.cs) (GET with paging).
 
 ## Checklist
 
@@ -47,7 +47,7 @@ Real instances: [`SendTestEmail.cs`](../../../src/Web.Api/Endpoints/Emails/SendT
 - [ ] `.WithName(nameof(<Operation>))`
 - [ ] `.Accepts<TRequest>("application/json")` on POST/PUT
 - [ ] `.Produces<T>()` plus `.ProducesProblem()` for every error status
-- [ ] `.WithTags(Tags.<Feature>)` - add the constant to [`Tags`](../../../src/Web.Api/Endpoints/Tags.cs) if new
+- [ ] `.WithTags(Tags.<Feature>)` - add the constant to [`Tags`](../../../api/src/Web.Api/Endpoints/Tags.cs) if new
 - [ ] `.AddOpenApiOperationTransformer` setting `Summary` and `Description`
 - [ ] `result.Match(Results.Ok, CustomResults.Problem)`
 - [ ] `.WithAuditLog("...")` if the endpoint is security-relevant - [Audit Logging](audit-logging.md)
@@ -58,5 +58,5 @@ Real instances: [`SendTestEmail.cs`](../../../src/Web.Api/Endpoints/Emails/SendT
 2. **You called the bare path.** `/features` is really `/api/v1/features` -
    [API Surface](../../architecture/cross-cutting/api-surface.md).
 
-Enforced by `tests/ArchitectureTests/Presentation/PresentationTests.cs` for the structural parts; the builder
+Enforced by `api/tests/ArchitectureTests/Presentation/PresentationTests.cs` for the structural parts; the builder
 chain is review.

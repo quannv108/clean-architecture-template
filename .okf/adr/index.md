@@ -23,4 +23,5 @@ the time. Correct any you have first-hand knowledge of, and add
 * [ADR 0013: DataAnnotations for shape validation, domain errors for business rules](0013-dataannotations-validation.md) - Validate command shape with DataAnnotations in a decorator, and leave rules that need data to the domain.
 * [ADR 0014: NSubstitute, Shouldly and Testcontainers as the test stack](0014-nsubstitute-shouldly-testcontainers.md) - Standardise on one mocking library, one assertion library and real containerised dependencies, enforced by architecture tests.
 * [ADR 0015: Replace docs/ with an OKF knowledge base at .okf/](0015-adopt-okf-knowledge-base.md) - Decompose prose documentation into one concept per file in Open Knowledge Format, and reduce the agent entry point to a pointer.
+* [ADR 0016: Move the backend into api/ to prepare for a monorepo](0016-monorepo-backend-in-api.md) - Move the .NET solution and its root config into api/ so the repository can grow into a monorepo without reshuffling paths again.
 * [ADR Template](_template-adr.md) - Copy this when recording an architecture decision.

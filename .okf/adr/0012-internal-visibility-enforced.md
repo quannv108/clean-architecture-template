@@ -26,7 +26,7 @@ Application. Each such reference makes the implementation impossible to change w
 Infrastructure services, the DbContexts, handlers and endpoints are **`internal sealed`**. Only interfaces,
 extension classes, configuration types, constants and enums are public.
 
-`tests/ArchitectureTests/Infrastructure/InfrastructureTests.cs` and
+`api/tests/ArchitectureTests/Infrastructure/InfrastructureTests.cs` and
 `Presentation/PresentationTests.cs` assert it.
 
 ## Consequences

@@ -8,10 +8,10 @@ status: stable
 
 # Command
 
-A `sealed record` implementing [`ICommand`](../../src/Application/Abstractions/Messaging/ICommand.cs) or `ICommand<TResponse>`, declared in
+A `sealed record` implementing [`ICommand`](../../api/src/Application/Abstractions/Messaging/ICommand.cs) or `ICommand<TResponse>`, declared in
 the same file as its handler, using standard record syntax with DataAnnotations.
 
 Named for the business action: `ConfirmOrderCommand`, not `UpdateOrderCommand`. Returns
-[`Result`](../../src/SharedKernel/Result.cs).
+[`Result`](../../api/src/SharedKernel/Result.cs).
 
 Shape: [Command Handler](../engineering/patterns/command-handler.md).

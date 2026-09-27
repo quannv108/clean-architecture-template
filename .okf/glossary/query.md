@@ -8,7 +8,7 @@ status: stable
 
 # Query
 
-A `sealed record` implementing [`IQuery<TResponse>`](../../src/Application/Abstractions/Messaging/IQuery.cs), declared with its handler.
+A `sealed record` implementing [`IQuery<TResponse>`](../../api/src/Application/Abstractions/Messaging/IQuery.cs), declared with its handler.
 Returns a response DTO - never a domain entity, never an `IQueryable`.
 
 A query handler that calls `SaveChangesAsync` is a design error.

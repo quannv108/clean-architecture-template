@@ -9,7 +9,7 @@ this file; add a concept file to `.okf/` and, at most, a link here.
 ## Five rules that override anything else you infer
 
 1. **`main` is the default branch.** Feature branches branch off `main` and pull requests target `main`.
-2. **Run `dotnet test tests/ArchitectureTests/` before completing any work.** A failure there is a design
+2. **Run `dotnet test api/tests/ArchitectureTests/` before completing any work.** A failure there is a design
    error, not a test to loosen — [`.okf/engineering/constraints.md`](.okf/engineering/constraints.md) explains each rule.
 3. **No MediatR.** Handlers (`ICommandHandler<T>` / `IQueryHandler<T,R>`) are registered via Scrutor and
    injected directly into endpoints. There is no `IMediator.Send()`.
@@ -26,12 +26,12 @@ this file; add a concept file to `.okf/` and, at most, a link here.
 ## Commands
 
 ```bash
-dotnet build CleanArchitecture.slnx          # Build
-dotnet test CleanArchitecture.slnx           # All tests
-dotnet test tests/ArchitectureTests/         # Run before completing work
-dotnet run --project src/AppHost             # Full stack via Aspire (Podman by default)
+dotnet build api/CleanArchitecture.slnx          # Build
+dotnet test api/CleanArchitecture.slnx           # All tests
+dotnet test api/tests/ArchitectureTests/         # Run before completing work
+dotnet run --project api/src/AppHost             # Full stack via Aspire (Podman by default)
 
-dotnet format CleanArchitecture.slnx style --verify-no-changes --severity error   # CI style gate
+dotnet format api/CleanArchitecture.slnx style --verify-no-changes --severity error   # CI style gate
 ```
 
 Only fix formatting violations in files you created or modified.

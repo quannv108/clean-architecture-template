@@ -12,7 +12,7 @@ The stated workflow here for class enhancements: adjust or write the test first,
 whole suite passes.
 
 The practical benefit in this codebase is that writing the test first forces you to decide what
-[`Result`](../../src/SharedKernel/Result.cs) each path returns, which is exactly the design question a handler has to
+[`Result`](../../api/src/SharedKernel/Result.cs) each path returns, which is exactly the design question a handler has to
 answer.
 
 See [Build and Test](../workflows/engineering/build-and-test.md).

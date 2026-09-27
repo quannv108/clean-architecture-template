@@ -27,7 +27,7 @@ Use `Microsoft.Extensions.Caching.Hybrid`. One API, two tiers: in-memory L1 alwa
 `Redis:ConnectionString` is populated - HybridCache discovers the registered `IDistributedCache` and uses
 it automatically.
 
-Reads go through [cached repositories](../../src/Application) in
+Reads go through [cached repositories](../../api/src/Application) in
 `Application/<Feature>/Data/`, returning DTOs.
 
 ## Consequences

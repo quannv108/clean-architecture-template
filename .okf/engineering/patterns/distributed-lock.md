@@ -2,7 +2,7 @@
 type: Pattern
 title: "Distributed Lock"
 description: "Coordinate work across application instances with a named lock - and the cases where you should not use one."
-resource: src/Application/Abstractions/Locking
+resource: api/src/Application/Abstractions/Locking
 tags: [locking, concurrency, distributed, background-jobs]
 status: stable
 ---
@@ -61,4 +61,4 @@ high-frequency operations (contention dominates - cache or queue instead). The d
 
 Provider selection is configuration -
 [ADR 0007: PostgreSQL advisory locks by default, Redis when configured](../../adr/0007-lock-provider-selection.md). Tests:
-`tests/Api.IntegrationTests/Locking/DistributedLockingIntegrationTests.cs`.
+`api/tests/Api.IntegrationTests/Locking/DistributedLockingIntegrationTests.cs`.

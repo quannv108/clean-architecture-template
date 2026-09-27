@@ -9,6 +9,7 @@ status: stable
 # Generate a Coverage Report
 
 ```bash
+cd api
 dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage
 
 reportgenerator \
@@ -17,9 +18,9 @@ reportgenerator \
   -reporttypes:"Html"
 ```
 
-Or run the whole CI pipeline locally: `./scripts/ci-local.sh` / `scripts\ci-local.bat`.
+Or run the whole CI pipeline locally: `./api/scripts/ci-local.sh` / `api\scripts\ci-local.bat`.
 
-Open `coverage/report/index.html`.
+Open `api/coverage/report/index.html`.
 
 **Target: 70%+ for the Application layer.** Coverage is a smoke detector, not a goal - a handler at 100%
 with no assertion on the failure branches proves nothing. Cover each `Result.Failure` path, not just the

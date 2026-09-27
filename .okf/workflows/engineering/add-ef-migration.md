@@ -12,8 +12,8 @@ status: stable
 
 ```bash
 dotnet ef migrations add <MigrationName> \
-  --project src/Infrastructure \
-  --startup-project src/Web.Api \
+  --project api/src/Infrastructure \
+  --startup-project api/src/Web.Api \
   --output-dir Database/Migrations \
   --context ApplicationDbContext \
   -- --environment Migration
@@ -21,7 +21,7 @@ dotnet ef migrations add <MigrationName> \
 
 **Both of these are required, and both fail confusingly when omitted:**
 
-* `--output-dir Database/Migrations` - without it EF generates into `src/Infrastructure/Migrations/`, the
+* `--output-dir Database/Migrations` - without it EF generates into `api/src/Infrastructure/Migrations/`, the
   wrong path and the wrong namespace, and the migrations are not discovered at runtime.
 * `-- --environment Migration` - without it the startup project boots in the default environment and may
   fail on missing configuration or services.
@@ -29,22 +29,22 @@ dotnet ef migrations add <MigrationName> \
 ## Then change the visibility
 
 **Change `public partial` to `internal partial` on both the migration class and its `.Designer.cs`.** EF
-scaffolds them public; `tests/ArchitectureTests` requires every Infrastructure type to be internal. This
+scaffolds them public; `api/tests/ArchitectureTests` requires every Infrastructure type to be internal. This
 step is needed every single time.
 
 ## Verify
 
 ```bash
-dotnet build CleanArchitecture.slnx
-dotnet test tests/ArchitectureTests/
+dotnet build api/CleanArchitecture.slnx
+dotnet test api/tests/ArchitectureTests/
 ```
 
 ## Remove
 
 ```bash
 dotnet ef migrations remove \
-  --project src/Infrastructure \
-  --startup-project src/Web.Api \
+  --project api/src/Infrastructure \
+  --startup-project api/src/Web.Api \
   --context ApplicationDbContext \
   -- --environment Migration
 ```

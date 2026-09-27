@@ -8,9 +8,9 @@ status: stable
 
 # ClaimsPrincipal
 
-Read in Infrastructure by [`UserContext`](../../src/Infrastructure/Authentication/UserContext.cs) through
-[`ClaimsPrincipalExtensions`](../../src/Infrastructure/Authentication/ClaimsPrincipalExtensions.cs), and exposed to Application as
-[`IUserContext`](../../src/Application/Abstractions/Authentication/IUserContext.cs).
+Read in Infrastructure by [`UserContext`](../../api/src/Infrastructure/Authentication/UserContext.cs) through
+[`ClaimsPrincipalExtensions`](../../api/src/Infrastructure/Authentication/ClaimsPrincipalExtensions.cs), and exposed to Application as
+[`IUserContext`](../../api/src/Application/Abstractions/Authentication/IUserContext.cs).
 
 Application and Domain never see it. Handlers ask "who is this?" without any HTTP type crossing the
 boundary - and without breaking in background work, where there is no principal at all.

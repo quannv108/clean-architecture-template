@@ -2,7 +2,7 @@
 type: Pattern
 title: "Cached Read"
 description: "Put HybridCache in front of a projection, return DTOs, and invalidate after every write that changes the data."
-resource: src/Application
+resource: api/src/Application
 tags: [caching, read, hybridcache, performance]
 status: stable
 ---
@@ -11,7 +11,7 @@ status: stable
 
 ## Shape
 
-One per slice, in `src/Application/<Feature>/Data/`: `I<Feature>CachedRepository`, its implementation, and
+One per slice, in `api/src/Application/<Feature>/Data/`: `I<Feature>CachedRepository`, its implementation, and
 the response DTOs it returns. The implementation injects `IReadOnlyApplicationDbContext` and `HybridCache`;
 each read is `cache.GetOrCreateAsync(key, factory)` around an `AsNoTracking` projection to a DTO, and each
 cached key has a matching `RemoveCacheAsync`.
@@ -51,7 +51,7 @@ Reference data, roles, profiles - frequently read, rarely changed, latency-sensi
 * **Real-time figures** - counters, analytics, anything a user checks immediately after changing.
 * **Rarely repeated queries** - you pay the write cost and never get a hit.
 
-Query [`IReadOnlyApplicationDbContext`](../../../src/Application/Abstractions/Data/IReadOnlyApplicationDbContext.cs) directly instead.
+Query [`IReadOnlyApplicationDbContext`](../../../api/src/Application/Abstractions/Data/IReadOnlyApplicationDbContext.cs) directly instead.
 
 ## Rules
 
@@ -60,7 +60,7 @@ Query [`IReadOnlyApplicationDbContext`](../../../src/Application/Abstractions/Da
   sensitive data (keys reach Redis and logs: `users:{email}` is wrong), under 1024 characters, payloads
   under 1 MB. Build the key in the repository that owns it, never at the call site: a key written twice is
   eventually written two ways, and then the read hits a cache the write never clears. Group-invalidation tags
-  live in [`CacheTags`](../../../src/Application/CacheTags.cs).
+  live in [`CacheTags`](../../../api/src/Application/CacheTags.cs).
 * Expiration: 2-5 minutes for changing data, 15-30 minutes for stable data.
 * Without Redis, L1 is per-instance - another instance can serve stale data until it expires. See
   [Caching Tiers](../../architecture/cross-cutting/caching-tiers.md).

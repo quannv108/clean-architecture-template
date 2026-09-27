@@ -28,7 +28,7 @@ violation; "review" means nothing automated does.
 | Cached repositories return DTOs, never entities; named `<Feature>CachedRepository` in `<Feature>/Data/` | `Application/CachedRepositoryTests.cs`, `RepositoryTests.cs` | [Cached Read](patterns/cached-read.md) |
 | Infrastructure types, handlers and endpoints are `internal`; migrations and their `.Designer.cs` are `internal partial` | `Infrastructure/InfrastructureTests.cs`, `Presentation/PresentationTests.cs`, `CodeQuality/CodeQualityTests.cs` | [Visibility](conventions/visibility.md) |
 | Every endpoint implements `IEndpoint` and declares its full OpenAPI contract | `Presentation/PresentationTests.cs` (structure); the builder chain is review | [Minimal API Endpoint](patterns/minimal-api-endpoint.md) |
-| `*Errors` classes live in Domain or SharedKernel, never Application or Web.Api | `tests/ArchitectureTests` | [Error Codes](conventions/error-codes.md) |
+| `*Errors` classes live in Domain or SharedKernel, never Application or Web.Api | `api/tests/ArchitectureTests` | [Error Codes](conventions/error-codes.md) |
 | Tests use NSubstitute and Shouldly, not Moq and FluentAssertions | `Testing/TestingStandardsTests.cs` | [Test Architecture](../architecture/delivery/test-architecture.md) |
 | Configuration is read through `IOptions<T>`, never `IConfiguration` | review - a NetArchTest rule on constructor parameters would close the gap | [Options Pattern](patterns/options-pattern.md) |
 | No `ExecuteUpdate` / `ExecuteDelete` in command handlers | review - the failure is silent at runtime, which is what makes it worth a rule | [Data Access](../architecture/cross-cutting/data-access.md) |
@@ -36,5 +36,5 @@ violation; "review" means nothing automated does.
 | Integration tests go through API endpoints, never the database | review | [Test Architecture](../architecture/delivery/test-architecture.md) |
 | A feature is complete only when every layer's file exists | review - a half-built slice is not visibly broken | [Add a Feature](../workflows/engineering/add-a-feature.md) |
 
-`BaseTest.cs` in `tests/ArchitectureTests/` holds the assembly references the rules are written against;
+`BaseTest.cs` in `api/tests/ArchitectureTests/` holds the assembly references the rules are written against;
 CI runs the suite on every push and pull request - [CI Pipeline](../architecture/delivery/ci-pipeline.md).

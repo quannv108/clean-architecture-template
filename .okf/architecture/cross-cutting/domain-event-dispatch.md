@@ -18,11 +18,11 @@ entity.Raise(new XDomainEvent(id))
    -> the row is marked processed, or the error is recorded
 ```
 
-Each arrow is a concept: [`Entity.Raise`](../../../src/SharedKernel/Entity.cs),
+Each arrow is a concept: [`Entity.Raise`](../../../api/src/SharedKernel/Entity.cs),
 [`OutboxMessage`](../../domains/outbox/outbox-message.md),
-[`OutboxMessageHostedService`](../../../src/Infrastructure/Outbox/OutboxMessageHostedService.cs),
-[`OutboxMessageProcessor`](../../../src/Application/Outbox),
-[`IDomainEventHandler<T>`](../../../src/Application/Abstractions/Messaging/IQueryHandler.cs).
+[`OutboxMessageHostedService`](../../../api/src/Infrastructure/Outbox/OutboxMessageHostedService.cs),
+[`OutboxMessageProcessor`](../../../api/src/Application/Outbox),
+[`IDomainEventHandler<T>`](../../../api/src/Application/Abstractions/Messaging/IQueryHandler.cs).
 
 ## Why asynchronous
 
@@ -44,9 +44,9 @@ business transaction makes delivery at-least-once and independent of the request
 
 Shape and code in [Domain Event](../../engineering/patterns/domain-event.md). Placement:
 
-* Event: `src/Domain/<Feature>/<Event>DomainEvent.cs`, an immutable positional record implementing
-  [`IDomainEvent`](../../../src/SharedKernel/IDomainEvent.cs).
-* Handler: `src/Application/<Feature>/Events/<Event>DomainEventHandler.cs`, `internal sealed`.
+* Event: `api/src/Domain/<Feature>/<Event>DomainEvent.cs`, an immutable positional record implementing
+  [`IDomainEvent`](../../../api/src/SharedKernel/IDomainEvent.cs).
+* Handler: `api/src/Application/<Feature>/Events/<Event>DomainEventHandler.cs`, `internal sealed`.
 
 ## Testing
 

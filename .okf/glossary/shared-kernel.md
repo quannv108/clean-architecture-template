@@ -8,8 +8,8 @@ status: stable
 
 # Shared Kernel
 
-Two things only: DDD primitives at the root ([`Entity`](../../src/SharedKernel/Entity.cs),
-[`Result`](../../src/SharedKernel/Result.cs), [`ValueObject`](../../src/SharedKernel/ValueObject.cs), ...) and cross-slice
+Two things only: DDD primitives at the root ([`Entity`](../../api/src/SharedKernel/Entity.cs),
+[`Result`](../../api/src/SharedKernel/Result.cs), [`ValueObject`](../../api/src/SharedKernel/ValueObject.cs), ...) and cross-slice
 value objects in named subfolders.
 
 Everything can see it, which is exactly why what goes in must be kept small: a type placed here becomes

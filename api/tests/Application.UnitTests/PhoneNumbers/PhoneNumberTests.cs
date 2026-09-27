@@ -129,7 +129,7 @@ public sealed class PhoneNumberTests
     public void Equals_WhenCreatedFromDifferentOverloads_WithSameNumber_ShouldBeTrue()
     {
         var fromTwoArgs = PhoneNumber.Create("44", "7911123456").Value;
-        var fromE164    = PhoneNumber.Create("+447911123456").Value;
+        var fromE164 = PhoneNumber.Create("+447911123456").Value;
 
         fromTwoArgs.Equals(fromE164).ShouldBeTrue();
     }

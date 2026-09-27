@@ -2,14 +2,14 @@
 type: Component
 title: ServiceDefaults
 description: Shared Aspire service wiring - health checks, OpenTelemetry, service discovery and HTTP resilience - applied by every hosted application.
-resource: src/ServiceDefaults/Extensions.cs
+resource: api/src/ServiceDefaults/Extensions.cs
 tags: [aspire, observability, health-checks, resilience]
 status: stable
 ---
 
 # ServiceDefaults
 
-`src/ServiceDefaults` is the standard .NET Aspire service-defaults project. Hosted applications call its
+`api/src/ServiceDefaults` is the standard .NET Aspire service-defaults project. Hosted applications call its
 extension methods during startup to pick up, in one line each:
 
 * **OpenTelemetry** - traces, metrics and logs with the standard ASP.NET Core, HttpClient and runtime
@@ -23,6 +23,6 @@ extension methods during startup to pick up, in one line each:
 ## When to change it
 
 Only for cross-cutting host behaviour that every application must have. Anything specific to the API -
-CORS, rate limits, OpenAPI, endpoint mapping - belongs in `src/Web.Api/Extensions/`, not here.
+CORS, rate limits, OpenAPI, endpoint mapping - belongs in `api/src/Web.Api/Extensions/`, not here.
 
 `ServiceDefaults` must not reference Application, Domain or Infrastructure.

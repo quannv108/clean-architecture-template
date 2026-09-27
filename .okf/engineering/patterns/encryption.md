@@ -2,7 +2,7 @@
 type: Pattern
 title: "Field Encryption and Key Rotation"
 description: "Encrypt a column by declaring EncryptedString, and rotate keys by configuration without a data migration."
-resource: src/Infrastructure/Cryptography
+resource: api/src/Infrastructure/Cryptography
 tags: [encryption, security, key-rotation, aes]
 status: stable
 ---
@@ -11,9 +11,9 @@ status: stable
 
 ## Encrypting a field
 
-Declare the property as [`EncryptedString`](../../../src/SharedKernel/EncryptedString.cs). That is the whole change -
-[`EncryptedStringConverter`](../../../src/Infrastructure/Database/Converters/EncryptedStringConverter.cs) is registered globally and calls
-[`IEncryptor`](../../../src/Application/Abstractions/Cryptography/IEncryptor.cs) in both directions.
+Declare the property as [`EncryptedString`](../../../api/src/SharedKernel/EncryptedString.cs). That is the whole change -
+[`EncryptedStringConverter`](../../../api/src/Infrastructure/Database/Converters/EncryptedStringConverter.cs) is registered globally and calls
+[`IEncryptor`](../../../api/src/Application/Abstractions/Cryptography/IEncryptor.cs) in both directions.
 
 Use a `varchar`/`nvarchar` column with headroom for the `{version}:` prefix and base64 expansion; 500 is a
 reasonable default.
@@ -63,7 +63,7 @@ reads one - possibly months later. Verify before removing.
 ## Limits to design around
 
 * Encrypted columns cannot be indexed, sorted or compared server-side. For equality lookup, store a
-  deterministic hash ([`IHasher`](../../../src/Application/Abstractions/Cryptography/IHasher.cs)) in a second column and query that.
+  deterministic hash ([`IHasher`](../../../api/src/Application/Abstractions/Cryptography/IHasher.cs)) in a second column and query that.
 * Rotation cadence: 6-12 months for high-sensitivity data, 12-24 for PII, **immediately** if a key is
   compromised.
 * Back keys up before rotating, store backups separately, and test recovery.

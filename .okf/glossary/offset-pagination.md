@@ -13,5 +13,5 @@ every skipped row, and on a table receiving inserts the pages shift under the re
 repeated.
 
 Prefer [cursor pagination](cursor-pagination.md) for append-heavy or deep result sets. Either way, list
-endpoints return [`PagedList<T>`](../../src/Web.Api/Endpoints/Generic/PagedList.cs) - a bare array makes adding paging later a
+endpoints return [`PagedList<T>`](../../api/src/Web.Api/Endpoints/Generic/PagedList.cs) - a bare array makes adding paging later a
 breaking change.

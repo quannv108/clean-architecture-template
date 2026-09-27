@@ -10,7 +10,7 @@ status: stable
 
 Configured on the model, so it applies without any query mentioning it. Used here for
 [soft delete](soft-delete.md) and for tenant scoping
-([`ITenantEntity`](../../src/SharedKernel/ITenantEntity.cs)).
+([`ITenantEntity`](../../api/src/SharedKernel/ITenantEntity.cs)).
 
 `IgnoreQueryFilters()` bypasses it - deliberately, for administrative queries, and never in a normal read
 path, because it silently returns deleted or cross-tenant rows.

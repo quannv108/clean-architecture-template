@@ -1,5 +1,6 @@
 @echo off
 REM Local CI script - runs the same build, test, and coverage process as GitHub Actions
+cd /d "%~dp0.."
 
 echo 🏗️  Building solution...
 dotnet build CleanArchitecture.slnx --configuration Release

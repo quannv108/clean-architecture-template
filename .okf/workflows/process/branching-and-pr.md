@@ -10,7 +10,7 @@ status: stable
 
 * **`main` is the default branch.** Every pull request targets `main`.
 * Feature branches branch off `main` and merge back to `main`.
-* **Run `dotnet test tests/ArchitectureTests/` before opening the pull request** -
+* **Run `dotnet test api/tests/ArchitectureTests/` before opening the pull request** -
   [Constraints](../../engineering/constraints.md).
 
 ## Before you open it
@@ -20,9 +20,9 @@ The pre-commit hook (`.githooks/pre-commit`, installed by any `dotnet build`) fo
 ([Maintain the Knowledge Base](maintain-the-knowledge-base.md)).
 
 ```bash
-dotnet build CleanArchitecture.slnx
-dotnet test CleanArchitecture.slnx
-dotnet format CleanArchitecture.slnx style --verify-no-changes --severity error
+dotnet build api/CleanArchitecture.slnx
+dotnet test api/CleanArchitecture.slnx
+dotnet format api/CleanArchitecture.slnx style --verify-no-changes --severity error
 ```
 
 - [ ] [Add a Feature](../engineering/add-a-feature.md) walked, if the change adds a

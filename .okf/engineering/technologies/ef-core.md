@@ -9,7 +9,7 @@ status: stable
 
 # Entity Framework Core
 
-Everything persistence-related lives in `src/Infrastructure/Database` - see
+Everything persistence-related lives in `api/src/Infrastructure/Database` - see
 [Persistence](../../architecture/cross-cutting/persistence.md).
 
 Features this codebase depends on:
@@ -18,7 +18,7 @@ Features this codebase depends on:
 |---|---|
 | Global query filters | [Soft delete](../patterns/soft-delete.md) |
 | Row version tokens | [`xmin` optimistic concurrency](../patterns/optimistic-concurrency.md) |
-| Value converters | [`EncryptedString`](../../../src/SharedKernel/EncryptedString.cs), enums as strings |
+| Value converters | [`EncryptedString`](../../../api/src/SharedKernel/EncryptedString.cs), enums as strings |
 | SaveChanges interceptors | Id generation, audit stamps |
 | `IEntityTypeConfiguration<T>` | Per-entity mapping, discovered by assembly scan |
 | Unit of Work | One `SaveChangesAsync` per handler - [Atomic Transaction](../patterns/atomic-transaction.md) |

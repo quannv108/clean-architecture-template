@@ -12,6 +12,6 @@ status: stable
 `Infrastructure/DependencyInjection.cs` - never in Web.Api, which would tie background processing to the
 presence of an HTTP host.
 
-Shipped example: [`OutboxMessageHostedService`](../../src/Infrastructure/Outbox/OutboxMessageHostedService.cs).
+Shipped example: [`OutboxMessageHostedService`](../../api/src/Infrastructure/Outbox/OutboxMessageHostedService.cs).
 
 See [Background Processing](../architecture/cross-cutting/background-processing.md).

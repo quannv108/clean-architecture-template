@@ -2,7 +2,7 @@
 type: Domain Event
 title: "EmailSentDomainEvent"
 description: "The template's worked domain event - an immutable positional record carrying only an id."
-resource: src/Domain/Emails
+resource: api/src/Domain/Emails
 tags: [domain, email, domain-events]
 status: stable
 ---
@@ -21,5 +21,5 @@ handing the handler a snapshot that may already be stale by the time it runs. Ca
 handler re-loads exactly what it needs.
 
 Raised by [`EmailMessage.MarkAsSent()`](email-message.md), handled by
-[`EmailSentDomainEventHandler`](../../../src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs). Shape guide:
+[`EmailSentDomainEventHandler`](../../../api/src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs). Shape guide:
 [Domain Event](../../engineering/patterns/domain-event.md).

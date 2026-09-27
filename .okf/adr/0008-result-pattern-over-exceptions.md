@@ -24,12 +24,12 @@ a status code slightly differently.
 
 ## Decision
 
-Every operation that can fail returns [`Result`](../../src/SharedKernel/Result.cs) or `Result<T>`. Failures carry an
-[`Error`](../../src/SharedKernel/Error.cs) with a dotted code and an [`ErrorType`](../../src/SharedKernel/Error.cs);
+Every operation that can fail returns [`Result`](../../api/src/SharedKernel/Result.cs) or `Result<T>`. Failures carry an
+[`Error`](../../api/src/SharedKernel/Error.cs) with a dotted code and an [`ErrorType`](../../api/src/SharedKernel/Error.cs);
 endpoints call `result.Match(Results.Ok, CustomResults.Problem)` and the status code follows from the type.
 
 Exceptions remain for the genuinely unexpected, caught once by
-[`GlobalExceptionHandler`](../../src/Web.Api/Infrastructure/GlobalExceptionHandler.cs) and returned as a 500 with no internal
+[`GlobalExceptionHandler`](../../api/src/Web.Api/Infrastructure/GlobalExceptionHandler.cs) and returned as a 500 with no internal
 detail.
 
 ## Consequences

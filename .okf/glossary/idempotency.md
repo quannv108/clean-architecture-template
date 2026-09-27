@@ -8,7 +8,7 @@ status: stable
 
 # Idempotency
 
-Required of every [domain event handler](../../src/Application/Abstractions/Messaging/IQueryHandler.cs) here, because outbox
+Required of every [domain event handler](../../api/src/Application/Abstractions/Messaging/IQueryHandler.cs) here, because outbox
 delivery is [at-least-once](at-least-once-delivery.md) and a retry will call the handler again.
 
 Achieved by checking before acting ("has this already been sent?"), by natural keys that make a duplicate

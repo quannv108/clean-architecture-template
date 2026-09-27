@@ -9,7 +9,7 @@ status: stable
 # Trace
 
 Here a trace covers the HTTP request and the handler span inside it. It does **not** extend into
-[domain event handlers](../../src/Application/Abstractions/Messaging/IQueryHandler.cs), because those run later in a different
+[domain event handlers](../../api/src/Application/Abstractions/Messaging/IQueryHandler.cs), because those run later in a different
 process context - which is a property of [eventual consistency](eventual-consistency.md), not a gap in
 instrumentation.
 

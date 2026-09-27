@@ -1,7 +1,7 @@
 ---
 paths:
-  - "src/Domain/**"
-  - "src/SharedKernel/**"
+  - "api/src/Domain/**"
+  - "api/src/SharedKernel/**"
 ---
 
 # Domain & SharedKernel Rules

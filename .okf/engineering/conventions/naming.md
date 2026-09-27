@@ -35,7 +35,7 @@ review.
 | Seeder | `Infrastructure/Database/Seeder/<Feature>/` | `<Feature>Seeder.cs` | |
 | Endpoint | `Web.Api/Endpoints/<Feature>/` | `<Operation>.cs` - **not** `<Operation>Endpoint.cs` | `CreateOrder.cs` |
 | Middleware, result mapping, exception handling | `Web.Api/` | | |
-| Unit tests | `tests/Application.UnitTests/<Feature>/` | `<Operation>HandlerTests.cs` | |
+| Unit tests | `api/tests/Application.UnitTests/<Feature>/` | `<Operation>HandlerTests.cs` | |
 
 ## Interface or implementation - which layer?
 

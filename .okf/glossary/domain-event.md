@@ -8,7 +8,7 @@ status: stable
 
 # Domain Event
 
-An immutable positional record implementing [`IDomainEvent`](../../src/SharedKernel/IDomainEvent.cs), raised by an
+An immutable positional record implementing [`IDomainEvent`](../../api/src/SharedKernel/IDomainEvent.cs), raised by an
 entity in a behaviour method, carrying identifiers rather than entities.
 
 Here events are **never dispatched in memory**. They are persisted as

@@ -28,11 +28,11 @@ where they run outside the domain, outside the transaction, and duplicate logic 
 Two tiers with a sharp line.
 
 * **Shape** - required, length, range, format - is declared as DataAnnotations attributes on the command
-  record and run by [`ValidationDecorator`](../../src/Application/Abstractions/Behaviors/ValidationDecorator.cs) before the handler.
+  record and run by [`ValidationDecorator`](../../api/src/Application/Abstractions/Behaviors/ValidationDecorator.cs) before the handler.
   Custom shape rules that fit the attribute model live in `Application/Abstractions/Validation/` (see
-  [`RegularIdAttribute`](../../src/Application/Abstractions/Validation/RegularIdAttribute.cs)).
+  [`RegularIdAttribute`](../../api/src/Application/Abstractions/Validation/RegularIdAttribute.cs)).
 * **Business rules** - anything needing the database or domain state - live in the handler or the entity
-  and return an [`Error`](../../src/SharedKernel/Error.cs).
+  and return an [`Error`](../../api/src/SharedKernel/Error.cs).
 
 ## Consequences
 

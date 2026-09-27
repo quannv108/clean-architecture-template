@@ -8,7 +8,7 @@ status: stable
 
 # Multi-Tenancy
 
-Supported by [`ITenantEntity`](../../src/SharedKernel/ITenantEntity.cs) and a tenant
+Supported by [`ITenantEntity`](../../api/src/SharedKernel/ITenantEntity.cs) and a tenant
 [global query filter](global-query-filter.md), so a query without an explicit tenant predicate is still
 scoped.
 

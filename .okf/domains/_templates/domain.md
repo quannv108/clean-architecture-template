@@ -16,7 +16,7 @@ status: stable
 type: Domain Slice
 title: "Orders"
 description: "One sentence: what business capability this slice owns."
-resource: src/Domain/Orders
+resource: api/src/Domain/Orders
 tags: [domain, orders]
 status: draft
 ---

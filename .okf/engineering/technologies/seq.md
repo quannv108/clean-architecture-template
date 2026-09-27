@@ -12,7 +12,7 @@ status: stable
 Started as part of the [Aspire stack](../../architecture/containers/apphost.md), by default at `http://localhost:8081`.
 
 Because [Serilog](serilog.md) logs structured properties and
-[`RequestContextLoggingMiddleware`](../../../src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs) adds correlation
+[`RequestContextLoggingMiddleware`](../../../api/src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs) adds correlation
 data, a single request can be reconstructed with one filter - which is the main reason to reach for Seq
 rather than the console.
 

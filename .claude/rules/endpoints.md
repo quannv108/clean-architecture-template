@@ -1,12 +1,12 @@
 ---
 paths:
-  - "src/Web.Api/**"
+  - "api/src/Web.Api/**"
 ---
 
 # Web.Api Endpoint Rules
 
 Code template: [.okf/engineering/patterns/minimal-api-endpoint.md](../../.okf/engineering/patterns/minimal-api-endpoint.md).
-Enforced by: `tests/ArchitectureTests/Presentation/PresentationTests.cs` - see [.okf/engineering/constraints.md](../../.okf/engineering/constraints.md).
+Enforced by: `api/tests/ArchitectureTests/Presentation/PresentationTests.cs` - see [.okf/engineering/constraints.md](../../.okf/engineering/constraints.md).
 
 ## Structure
 

@@ -12,8 +12,8 @@ An `ExecuteAsync` class in `Application/<Feature>/` that calls command handlers 
 Hangfire.
 
 **The naming trap:** a class ending `BackgroundJob` that does *not* implement
-[`IBackgroundJob`](../../src/Application/Abstractions/BackgroundJobs/IBackgroundJob.cs) is job logic and belongs in **Application**. Only SDK
+[`IBackgroundJob`](../../api/src/Application/Abstractions/BackgroundJobs/IBackgroundJob.cs) is job logic and belongs in **Application**. Only SDK
 adapters implement that interface, and only those live in `Infrastructure/BackgroundJobs/`.
 
-Examples: [`OutboxMessageCleanupJob`](../../src/Application/Outbox/OutboxMessageCleanupJob.cs),
-[`DeleteOldAuditLogsBackgroundJob`](../../src/Application/AuditLogs/DeleteOldAuditLogsBackgroundJob.cs).
+Examples: [`OutboxMessageCleanupJob`](../../api/src/Application/Outbox/OutboxMessageCleanupJob.cs),
+[`DeleteOldAuditLogsBackgroundJob`](../../api/src/Application/AuditLogs/DeleteOldAuditLogsBackgroundJob.cs).

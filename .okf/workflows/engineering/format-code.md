@@ -10,14 +10,14 @@ status: stable
 
 ```bash
 # Check only
-dotnet format CleanArchitecture.slnx style --verify-no-changes --severity error
+dotnet format api/CleanArchitecture.slnx style --verify-no-changes --severity error
 
 # Fix
-dotnet format CleanArchitecture.slnx style
+dotnet format api/CleanArchitecture.slnx style
 
 # Limit the check output to files you touched
-dotnet format CleanArchitecture.slnx style --verify-no-changes --severity error 2>&1 \
-  | grep "src/Application/MyFeature"
+dotnet format api/CleanArchitecture.slnx style --verify-no-changes --severity error 2>&1 \
+  | grep "api/src/Application/MyFeature"
 ```
 
 **Only fix violations in files you created or modified.** The solution may carry pre-existing violations

@@ -12,19 +12,19 @@ Two paths, chosen by direction of travel.
 
 ## Read path
 
-* Lives in `src/Application/<Feature>/Data/` as a [cached repository](../../../src/Application).
+* Lives in `api/src/Application/<Feature>/Data/` as a [cached repository](../../../api/src/Application).
 * Uses [`HybridCache`](../../engineering/technologies/hybrid-cache.md) via `GetOrCreateAsync`.
 * **Returns response DTOs, never domain entities.** A cached entity is a detached, stale, mutable copy of
   state the domain believes it owns.
 * Queries are `AsNoTracking` projections.
 * Reads that are filtered, ad hoc or need real-time accuracy skip the cache and query
-  [`IReadOnlyApplicationDbContext`](../../../src/Application/Abstractions/Data/IReadOnlyApplicationDbContext.cs) directly.
+  [`IReadOnlyApplicationDbContext`](../../../api/src/Application/Abstractions/Data/IReadOnlyApplicationDbContext.cs) directly.
 
 See [Caching Tiers](caching-tiers.md) and [Cached Read](../../engineering/patterns/cached-read.md).
 
 ## Write path
 
-* Command handlers inject [`IApplicationDbContext`](../../../src/Application/Abstractions/Data/IApplicationDbContext.cs).
+* Command handlers inject [`IApplicationDbContext`](../../../api/src/Application/Abstractions/Data/IApplicationDbContext.cs).
 * **Never use a cached repository in a command handler** - you would be mutating a DTO or reading stale
   state before a write.
 * The shape is **1 load -> N in-memory mutations -> 1 save**:
@@ -51,10 +51,10 @@ await dbContext.SaveChangesAsync(ct);   // atomic: entity + outbox messages
 |---|---|
 | Soft delete | Global query filter `IsDeleted == false` on every `Entity` - [Soft Delete](../../engineering/patterns/soft-delete.md) |
 | Optimistic concurrency | PostgreSQL `xmin` mapped to `Entity.Version` - [Optimistic Concurrency](../../engineering/patterns/optimistic-concurrency.md) |
-| Id assignment | [`EntityIdGenerationInterceptor`](../../../src/Infrastructure/Database/Interceptors/EntityIdGenerationInterceptor.cs) |
-| Audit stamps | [`AuditableEntityInterceptor`](../../../src/Infrastructure/Database/Interceptors/AuditableEntityInterceptor.cs) |
-| Enum storage | Stored as strings by convention in [`BaseApplicationDbContext`](../../../src/Infrastructure/Database/BaseApplicationDbContext.cs) |
-| Field encryption | [`EncryptedStringConverter`](../../../src/Infrastructure/Database/Converters/EncryptedStringConverter.cs), registered globally |
+| Id assignment | [`EntityIdGenerationInterceptor`](../../../api/src/Infrastructure/Database/Interceptors/EntityIdGenerationInterceptor.cs) |
+| Audit stamps | [`AuditableEntityInterceptor`](../../../api/src/Infrastructure/Database/Interceptors/AuditableEntityInterceptor.cs) |
+| Enum storage | Stored as strings by convention in [`BaseApplicationDbContext`](../../../api/src/Infrastructure/Database/BaseApplicationDbContext.cs) |
+| Field encryption | [`EncryptedStringConverter`](../../../api/src/Infrastructure/Database/Converters/EncryptedStringConverter.cs), registered globally |
 
 ## What not to do
 
