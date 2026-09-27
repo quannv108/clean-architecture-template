@@ -19,7 +19,7 @@ status: stable
 dotnet run --project api/src/AppHost
 ```
 
-[AppHost](../containers/apphost.md) starts PostgreSQL, pgweb, Seq and the API together and injects the connection strings.
+[AppHost](../containers/api/apphost.md) starts PostgreSQL, pgweb, Seq and the API together and injects the connection strings.
 
 ## Container runtime
 

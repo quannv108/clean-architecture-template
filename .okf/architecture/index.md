@@ -3,10 +3,10 @@ matches your question and stop there. Level 4 is the source itself - each compon
 
 # Subdirectories
 
-* [containers](containers/index.md) - C4 level 2 - the one deployed app, the data stores and the development-time processes.
+* [containers](containers/index.md) - C4 level 2 - one subdirectory per application: the api backend, and the planned admin-web, customer-web and customer-mobile apps.
 * [components](components/index.md) - C4 level 3 - the layer projects and the inward dependency rule.
 * [cross-cutting](cross-cutting/index.md) - Mechanisms that run through the components rather than sitting in one: CQRS, the decorator pipeline, domain event dispatch, caching, persistence, observability.
-* [delivery](delivery/index.md) - How the system is built, tested and run.
+* [delivery](delivery/index.md) - How the system is built, tested, run and (once `infra/` is filled) deployed.
 
 # Concepts
 

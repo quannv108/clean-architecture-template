@@ -17,7 +17,7 @@ extension methods during startup to pick up, in one line each:
 * **Health checks** - the `/health` and `/alive` endpoints, including any provider checks registered
   elsewhere (PostgreSQL always; Redis when configured).
 * **Service discovery** - resolves logical resource names to endpoints supplied by
-  [AppHost](../containers/apphost.md).
+  [AppHost](../containers/api/apphost.md).
 * **HTTP resilience** - standard retry, timeout and circuit-breaker handlers on outbound `HttpClient`s.
 
 ## When to change it

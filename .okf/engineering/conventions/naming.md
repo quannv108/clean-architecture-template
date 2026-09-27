@@ -36,6 +36,7 @@ review.
 | Endpoint | `Web.Api/Endpoints/<Feature>/` | `<Operation>.cs` - **not** `<Operation>Endpoint.cs` | `CreateOrder.cs` |
 | Middleware, result mapping, exception handling | `Web.Api/` | | |
 | Unit tests | `api/tests/Application.UnitTests/<Feature>/` | `<Operation>HandlerTests.cs` | |
+| Client application (repository root, not `api/`) | `apps/<audience>-<platform>/` | kebab-case, audience then platform, no abbreviations | `customer-web`, `admin-web`, `customer-mobile` |
 
 ## Interface or implementation - which layer?
 

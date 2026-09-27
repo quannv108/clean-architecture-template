@@ -18,7 +18,7 @@ status: stable
 | `api/src/Application` | `Application` | [Application Layer](components/application.md) |
 | `api/src/Infrastructure` | `Infrastructure` | [Infrastructure Layer](components/infrastructure.md) |
 | `api/src/Web.Api` | `Web.Api` | [Web.Api Layer](components/web-api.md) |
-| `api/src/AppHost` | `AppHost` | [AppHost (development orchestrator)](containers/apphost.md) |
+| `api/src/AppHost` | `AppHost` | [AppHost (development orchestrator)](containers/api/apphost.md) |
 | `api/src/ServiceDefaults` | `ServiceDefaults` | [ServiceDefaults](components/service-defaults.md) |
 | `api/tests/ArchitectureTests` | architecture rules | [ArchitectureTests](delivery/test-architecture.md) |
 | `api/tests/Application.UnitTests` | unit tests | [Application.UnitTests](delivery/test-architecture.md) |
@@ -26,8 +26,8 @@ status: stable
 
 ## Repository root vs. `api/`
 
-The repository is a monorepo; `api/` holds this .NET backend so future siblings (a web app, mobile app,
-infra, etc.) can sit next to it without reshuffling paths - see
+The repository is a monorepo; `api/` holds this .NET backend so its siblings (`apps/*`, `infra/`) can sit
+next to it without reshuffling paths - see
 [ADR 0016](../adr/0016-monorepo-backend-in-api.md). Everything that is specific to the .NET toolchain lives
 under `api/`; everything that spans (or will span) more than one app stays at the root.
 
@@ -44,6 +44,18 @@ under `api/`; everything that spans (or will span) more than one app stays at th
 | `.github/` | GitHub Actions workflows and Dependabot config, repo-wide |
 | `.githooks/pre-commit` | Pre-commit gate, repo-wide |
 | `.claude/rules/*.md` | Path-scoped rules Claude Code loads when editing matching files |
+
+## Other applications
+
+Empty placeholders, named `<audience>-<platform>` per [Naming and Placement](../engineering/conventions/naming.md);
+each team picks its own stack and documents it in the linked concept.
+
+| Path | Holds | Concept |
+|---|---|---|
+| `apps/admin-web/` | Admin back-office web app | [Admin Web](containers/admin-web/admin-web.md) |
+| `apps/customer-web/` | Customer web app | [Customer Web](containers/customer-web/customer-web.md) |
+| `apps/customer-mobile/` | Customer mobile app | [Customer Mobile](containers/customer-mobile/customer-mobile.md) |
+| `infra/` | Infrastructure-as-code | [Infrastructure](delivery/infrastructure.md) |
 
 ## Other directories
 

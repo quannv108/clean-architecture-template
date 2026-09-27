@@ -36,5 +36,5 @@ PostgreSQL lock provider is within a few milliseconds of Redis.
   lose its lock while still running. Advisory locks are held for the connection's life. Write for the
   weaker guarantee — small critical sections.
 
-See [Caching Tiers](../cross-cutting/caching-tiers.md) and
-[ADR 0007: PostgreSQL advisory locks by default, Redis when configured](../../adr/0007-lock-provider-selection.md).
+See [Caching Tiers](../../cross-cutting/caching-tiers.md) and
+[ADR 0007: PostgreSQL advisory locks by default, Redis when configured](../../../adr/0007-lock-provider-selection.md).

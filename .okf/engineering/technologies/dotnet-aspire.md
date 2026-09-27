@@ -9,7 +9,7 @@ status: stable
 
 # .NET Aspire
 
-Used by [`AppHost`](../../architecture/containers/apphost.md) to start PostgreSQL, pgweb, Seq and the API together, and by
+Used by [`AppHost`](../../architecture/containers/api/apphost.md) to start PostgreSQL, pgweb, Seq and the API together, and by
 [`ServiceDefaults`](../../architecture/components/service-defaults.md) for health checks, OpenTelemetry, service discovery and
 HTTP resilience.
 
