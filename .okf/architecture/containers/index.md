@@ -1,21 +1,14 @@
 A *container* is something that runs separately and holds state or executes code — a process, a
 database, a cache. Not a Docker container, though here most of them happen to be one locally.
 
-# The production container
+One subdirectory per application in the monorepo, named after its source folder under `apps/` (or `api/` for
+the backend) - see [Naming and Placement](../../engineering/conventions/naming.md) for the `<audience>-<platform>`
+rule client apps follow. Each holds the containers that application owns; all client applications call the
+[Web.Api Container](api/web-api.md).
 
-* [Web.Api Container](web-api.md) - The single deployed application: the HTTP API plus the outbox processor and recurring jobs, all in one process.
+# Subdirectories
 
-There is exactly one; what follows from that is in [Web.Api Container](web-api.md).
-
-# Data stores
-
-* [PostgreSQL Database](postgres.md) - The application database, and the source of the xmin row version and advisory locks the architecture depends on.
-* [Redis](redis.md) - Optional. One connection string turns on the shared L2 cache tier and the Redis distributed lock provider together.
-
-# Development-time only
-
-* [AppHost (development orchestrator)](apphost.md) - The .NET Aspire host that starts the API together with Postgres, pgweb and Seq for local development. Not deployed.
-* [Seq](seq.md) - The structured log server in the local stack, at http://localhost:8081.
-* [pgweb](pgweb.md) - A browser UI over the development database, started with the local stack.
-
-None of these exist in a deployed environment.
+* [api](api/index.md) - The .NET backend in `api/`: the deployed Web.Api, its data stores and the development-time processes.
+* [admin-web](admin-web/index.md) - Planned - the admin back-office web app in `apps/admin-web/`.
+* [customer-web](customer-web/index.md) - Planned - the customer web app in `apps/customer-web/`.
+* [customer-mobile](customer-mobile/index.md) - Planned - the customer mobile app in `apps/customer-mobile/`.

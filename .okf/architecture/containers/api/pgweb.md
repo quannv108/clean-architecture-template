@@ -12,9 +12,9 @@ A web front end for [PostgreSQL](postgres.md), started by [AppHost](apphost.md).
 migration actually produced, or why an outbox row is still pending.
 
 **Development only**, and read-only in spirit: writing through it bypasses domain behaviour, domain events
-and the [audit trail](../../engineering/patterns/audit-logging.md) entirely, so a row changed here is a row nothing
+and the [audit trail](../../../engineering/patterns/audit-logging.md) entirely, so a row changed here is a row nothing
 knows about. Remember too that it does **not** apply the soft-delete query filter — rows you see here may
 be invisible to the application.
 
-For inspecting the asynchronous machinery, the [dev pages](../../../api/src/Web.Api/Pages/Dev) are usually a
+For inspecting the asynchronous machinery, the [dev pages](../../../../api/src/Web.Api/Pages/Dev) are usually a
 better tool.

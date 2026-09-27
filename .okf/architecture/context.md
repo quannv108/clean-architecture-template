@@ -15,7 +15,8 @@ A **.NET 10 HTTP API** built as a Clean Architecture template: Domain-Driven Des
 mediator, and Vertical Slice organisation, with the structural rules enforced by tests rather than by
 convention.
 
-It is **one system with one deployed container** — see [Containers (C4 level 2)](containers/index.md).
+Today it is **one system with one deployed backend container**; client apps (admin web, customer web,
+customer mobile) are planned under `apps/` and infrastructure-as-code under `infra/` — see [Containers (C4 level 2)](containers/index.md).
 
 As shipped it is a template, not a product: the business capability is yours to add. What exists today is
 the machinery a real system needs on day one, plus three example slices
@@ -25,9 +26,10 @@ the machinery a real system needs on day one, plus three example slices
 
 | Actor | Interaction |
 |---|---|
-| **API client** — SPA, mobile app, or another service | HTTPS to `/api/v1/...`, JSON in and out, ProblemDetails on failure |
-| **Administrator / auditor** | Queries the [audit trail](../engineering/patterns/audit-logging.md) through the API |
-| **Developer** | Runs the stack locally with [AppHost](containers/apphost.md); reads this bundle |
+| **Customer** | Uses the [Customer Web](containers/customer-web/customer-web.md) or [Customer Mobile](containers/customer-mobile/customer-mobile.md) app (planned) |
+| **Administrator / auditor** | Uses the [Admin Web](containers/admin-web/admin-web.md) app (planned); queries the [audit trail](../engineering/patterns/audit-logging.md) through the API |
+| **API client** — any app above, or another service | HTTPS to `/api/v1/...`, JSON in and out, ProblemDetails on failure |
+| **Developer** | Runs the stack locally with [AppHost](containers/api/apphost.md); reads this bundle |
 | **AI agent** | Reads this bundle, writes code, runs the [Constraints](../engineering/constraints.md) |
 
 The last row is not decoration. The knowledge base exists because agents are expected readers, and the
@@ -38,12 +40,12 @@ The last row is not decoration. The knowledge base exists because agents are exp
 
 | External system | Used for | Required | Absent locally |
 |---|---|---|---|
-| [PostgreSQL](containers/postgres.md) | All persistent state | **Yes** | Aspire container |
-| [Redis](containers/redis.md) | Shared cache tier, distributed locks | No | Falls back to L1 + advisory locks |
+| [PostgreSQL](containers/api/postgres.md) | All persistent state | **Yes** | Aspire container |
+| [Redis](containers/api/redis.md) | Shared cache tier, distributed locks | No | Falls back to L1 + advisory locks |
 | [Amazon SES](../engineering/technologies/aws-ses.md) | Sending email | No | [`DummyEmailSender`](../../api/src/Infrastructure/Communication/Email/DummyEmailSender.cs) |
 | [Twilio](../engineering/technologies/twilio.md) | Sending SMS | No | [`DummySmsSender`](../../api/src/Infrastructure/Communication/Sms/DummySmsSender.cs) |
 | Identity provider | Authenticating callers (JWT bearer) | Depends on deployment | — |
-| Telemetry backend | Logs, traces, metrics | No | [Seq](containers/seq.md) |
+| Telemetry backend | Logs, traces, metrics | No | [Seq](containers/api/seq.md) |
 
 **Only PostgreSQL is required.** Everything else degrades to a local substitute, so the system runs end to
 end with one container and no accounts anywhere. That is a deliberate property of the template: the path a
@@ -65,7 +67,7 @@ same interfaces.
 
 * **Not a message broker owner.** Integration with other systems would go through the Outbox to a broker;
   the template ships neither.
-* **Not multi-container.** Background work runs inside the API process today — see
+* **Not a multi-container backend.** Background work runs inside the API process today — see
   [Containers (C4 level 2)](containers/index.md) for what follows from that and how to split it later.
 * **Not an identity provider.** It consumes tokens; it does not issue them.
 

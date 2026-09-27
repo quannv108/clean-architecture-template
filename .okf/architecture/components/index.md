@@ -1,4 +1,4 @@
-The five layer projects inside the [Web.Api container](../containers/web-api.md), plus the two that sit
+The five layer projects inside the [Web.Api container](../containers/api/web-api.md), plus the two that sit
 outside the business stack. A component here is a **project**, not a class — classes is
 the source itself - each component page links the files it owns.
 
@@ -17,5 +17,5 @@ diagram and the reasoning; [Slices](../cross-cutting/vertical-slice-architecture
 
 * [ServiceDefaults](service-defaults.md) - Shared Aspire service wiring - health checks, OpenTelemetry, service discovery and HTTP resilience - applied by every hosted application.
 
-[AppHost](../containers/apphost.md) is listed as a container rather than a component: it is a separate
+[AppHost](../containers/api/apphost.md) is listed as a container rather than a component: it is a separate
 process, not a part of the application.

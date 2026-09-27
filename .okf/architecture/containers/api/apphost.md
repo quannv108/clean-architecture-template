@@ -9,7 +9,7 @@ status: stable
 
 # AppHost (development orchestrator)
 
-A [.NET Aspire](../../engineering/technologies/dotnet-aspire.md) application host. One command starts the whole local
+A [.NET Aspire](../../../engineering/technologies/dotnet-aspire.md) application host. One command starts the whole local
 stack and wires the connection strings between its parts:
 
 ```bash
@@ -36,9 +36,9 @@ disappears entirely outside a developer's machine.
 
 `AppHost.cs` sets `DOTNET_ASPIRE_CONTAINER_RUNTIME` to **Podman** before the builder is created, so no
 per-developer setup is required. Override the environment variable to use Docker. See
-[Local Development Environment](../delivery/local-development-environment.md) and
-[ADR 0011: Podman as the default container runtime](../../adr/0011-podman-default-container-runtime.md).
+[Local Development Environment](../../delivery/local-development-environment.md) and
+[ADR 0011: Podman as the default container runtime](../../../adr/0011-podman-default-container-runtime.md).
 
 **Aspire's runtime setting does not reach
-[Testcontainers](../../engineering/technologies/testcontainers.md)**, which the integration tests start themselves —
-see [Run Integration Tests](../../workflows/engineering/run-integration-tests.md).
+[Testcontainers](../../../engineering/technologies/testcontainers.md)**, which the integration tests start themselves —
+see [Run Integration Tests](../../../workflows/engineering/run-integration-tests.md).

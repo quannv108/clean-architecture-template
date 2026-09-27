@@ -5,4 +5,5 @@ How the system is run, verified and shipped. Descriptive — the step-by-step co
 
 * [Local Development Environment](local-development-environment.md) - Running the full stack locally with .NET Aspire, and the Podman/Docker container runtime choice.
 * [Test Architecture](test-architecture.md) - Three test projects with three different jobs - architecture rules, Application unit tests, and end-to-end API integration tests.
+* [Infrastructure](infrastructure.md) - Planned - the infrastructure-as-code in infra/ that provisions the environments every container is deployed to.
 * [CI Pipeline](ci-pipeline.md) - GitHub Actions builds the solution, runs every test including architecture tests, and publishes code coverage on each push and pull request.

@@ -1,5 +1,20 @@
 # Knowledge Base Update Log
 
+## 2026-09-27 (monorepo: apps/ and infra/ placeholders)
+
+* **Creation**: Empty `apps/admin-web/`, `apps/customer-web/`, `apps/customer-mobile/` and `infra/`
+  directories, each team free to pick its own stack, named `<audience>-<platform>` per
+  [Naming and Placement](engineering/conventions/naming.md). `architecture/containers/` gained one
+  subdirectory per application, named after its source folder: the backend's containers (Web.Api,
+  PostgreSQL, Redis, AppHost, Seq, pgweb) moved to [containers/api](architecture/containers/api/index.md);
+  the planned apps each got a folder with an index and a draft concept -
+  [admin-web](architecture/containers/admin-web/admin-web.md),
+  [customer-web](architecture/containers/customer-web/customer-web.md),
+  [customer-mobile](architecture/containers/customer-mobile/customer-mobile.md) (level 2) - and
+  [Infrastructure](architecture/delivery/infrastructure.md) (deployment view).
+* **Rewrite**: [System Context](architecture/context.md), [Solution Layout](architecture/solution-layout.md)
+  and the [containers index](architecture/containers/index.md) now name the planned client apps.
+
 ## 2026-09-27 (monorepo: backend moved into api/)
 
 * **Move**: The .NET backend (`src/`, `tests/`, `scripts/`, `CleanArchitecture.slnx` and its root config)
