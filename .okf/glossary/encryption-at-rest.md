@@ -8,7 +8,7 @@ status: stable
 
 # Encryption at Rest
 
-Here it is field-level: declare a property as [`EncryptedString`](../../src/SharedKernel/EncryptedString.cs) and it
+Here it is field-level: declare a property as [`EncryptedString`](../../api/src/SharedKernel/EncryptedString.cs) and it
 is encrypted with AES-256 on write and decrypted on read.
 
 Field-level encryption protects against database compromise, but an encrypted column cannot be indexed or

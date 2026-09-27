@@ -2,7 +2,7 @@
 type: Container
 title: "AppHost (development orchestrator)"
 description: "The .NET Aspire host that starts the API together with Postgres, pgweb and Seq for local development. Not deployed."
-resource: src/AppHost/AppHost.cs
+resource: api/src/AppHost/AppHost.cs
 tags: [container, c4, aspire, local-development]
 status: stable
 ---
@@ -26,7 +26,7 @@ dotnet run --project src/AppHost
 ## It is development-time only
 
 AppHost describes a **local process topology**. It is not deployed, and deployed environments get their
-configuration from the platform instead. Nothing in `src/Application` or `src/Domain` may reference it, and
+configuration from the platform instead. Nothing in `api/src/Application` or `api/src/Domain` may reference it, and
 it carries no business logic.
 
 It is listed among the containers because it is a process that runs — but it is the one container that

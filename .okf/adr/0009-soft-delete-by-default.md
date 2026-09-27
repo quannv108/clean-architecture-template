@@ -25,10 +25,10 @@ silent correctness bug rather than an error.
 
 ## Decision
 
-[`Entity`](../../src/SharedKernel/Entity.cs) carries `IsDeleted`, and
-[`BaseApplicationDbContext`](../../src/Infrastructure/Database/BaseApplicationDbContext.cs) applies a global query filter
+[`Entity`](../../api/src/SharedKernel/Entity.cs) carries `IsDeleted`, and
+[`BaseApplicationDbContext`](../../api/src/Infrastructure/Database/BaseApplicationDbContext.cs) applies a global query filter
 (`IsDeleted == false`) to every entity type, so the filter cannot be forgotten. Deletion goes through
-[`IEntityDeleter`](../../src/Application/Abstractions/Data/IEntityDeleter.cs).
+[`IEntityDeleter`](../../api/src/Application/Abstractions/Data/IEntityDeleter.cs).
 
 ## Consequences
 

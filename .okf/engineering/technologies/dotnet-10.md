@@ -9,7 +9,7 @@ status: stable
 
 # .NET 10
 
-The solution targets .NET 10. The SDK version is pinned in `global.json`, so everyone builds with the same
+The solution targets .NET 10. The SDK version is pinned in `api/global.json`, so everyone builds with the same
 toolchain.
 
 Features this codebase relies on: `Guid.CreateVersion7()` for time-ordered ids, minimal APIs with typed

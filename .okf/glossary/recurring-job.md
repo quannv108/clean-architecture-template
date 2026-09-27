@@ -9,7 +9,7 @@ status: stable
 # Recurring Job
 
 Registered with a cron expression in
-[`HangfireRecurringJobConfigurator`](../../src/Infrastructure/BackgroundJobs/Hangfire/HangfireRecurringJobConfigurator.cs). **Not registered
+[`HangfireRecurringJobConfigurator`](../../api/src/Infrastructure/BackgroundJobs/Hangfire/HangfireRecurringJobConfigurator.cs). **Not registered
 there means it never runs** - there is no discovery by convention.
 
 Every instance runs the schedule, so the [job logic](job-logic.md) should take a

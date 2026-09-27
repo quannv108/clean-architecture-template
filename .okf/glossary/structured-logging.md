@@ -15,6 +15,6 @@ instead of grepping text. An interpolated string throws that structure away at t
 
 Here, the `[LoggerMessage]` template names the properties, [Serilog](../engineering/technologies/serilog.md)
 keeps them and ships them as JSON, and
-[`RequestContextLoggingMiddleware`](../../src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs) adds the
+[`RequestContextLoggingMiddleware`](../../api/src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs) adds the
 per-request correlation properties. The rule and a real instance:
 [Observability](../architecture/cross-cutting/observability.md).

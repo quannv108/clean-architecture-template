@@ -31,7 +31,7 @@ providers pass while the real database rejects the same query.
 | Integration database | [Testcontainers](../engineering/technologies/testcontainers.md) PostgreSQL | EF in-memory / SQLite |
 | Architecture rules | [NetArchTest](../engineering/technologies/netarchtest.md) | review |
 
-`tests/ArchitectureTests/Testing/TestingStandardsTests.cs` asserts the first two, so a stray Moq reference
+`api/tests/ArchitectureTests/Testing/TestingStandardsTests.cs` asserts the first two, so a stray Moq reference
 fails the build.
 
 ## Consequences

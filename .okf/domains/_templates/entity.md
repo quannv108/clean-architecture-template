@@ -16,7 +16,7 @@ status: stable
 type: Entity
 title: "Order"
 description: "One sentence: what this entity represents in the business."
-resource: src/Domain/Orders/Order.cs
+resource: api/src/Domain/Orders/Order.cs
 tags: [domain, orders, entity]
 status: draft
 ---
@@ -48,7 +48,7 @@ public void Confirm()
 
 ## Creation
 
-The `Create(...)` factory: what it validates, and which [`Error`](../../../src/SharedKernel/Error.cs) each failure
+The `Create(...)` factory: what it validates, and which [`Error`](../../../api/src/SharedKernel/Error.cs) each failure
 returns.
 
 ## Invariants
@@ -62,10 +62,10 @@ reached through its own slice instead.
 
 ## Checklist
 
-- [ ] Inherits [`Entity`](../../../src/SharedKernel/Entity.cs) or [`AuditedEntity`](../../../src/SharedKernel/AuditedEntity.cs)
+- [ ] Inherits [`Entity`](../../../api/src/SharedKernel/Entity.cs) or [`AuditedEntity`](../../../api/src/SharedKernel/AuditedEntity.cs)
 - [ ] Private constructor, `public static Create(...)` returning `Result<T>`
 - [ ] `Id` never assigned by hand
 - [ ] `<Entity>Errors.cs` beside it in `Domain/<Feature>/`
 - [ ] `<Entity>Configuration.cs` under `Infrastructure/Database/Configuration/<Feature>/`
-- [ ] `DbSet<T>` on both [`IApplicationDbContext`](../../../src/Application/Abstractions/Data/IApplicationDbContext.cs) and the context
+- [ ] `DbSet<T>` on both [`IApplicationDbContext`](../../../api/src/Application/Abstractions/Data/IApplicationDbContext.cs) and the context
 - [ ] Migration added - [Add an EF Core Migration](../../workflows/engineering/add-ef-migration.md)

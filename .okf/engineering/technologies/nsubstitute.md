@@ -9,7 +9,7 @@ status: stable
 
 # NSubstitute
 
-The only mocking library in this solution. `tests/ArchitectureTests/Testing/TestingStandardsTests.cs` fails
+The only mocking library in this solution. `api/tests/ArchitectureTests/Testing/TestingStandardsTests.cs` fails
 the build if Moq appears.
 
 ```csharp

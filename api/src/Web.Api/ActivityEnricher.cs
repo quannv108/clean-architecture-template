@@ -16,7 +16,7 @@ internal sealed class ActivityEnricher : ILogEventEnricher
         {
             return;
         }
-        
+
         logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("TraceId", activity.TraceId.ToString()));
         logEvent.AddPropertyIfAbsent(propertyFactory.CreateProperty("SpanId", activity.SpanId.ToString()));
     }

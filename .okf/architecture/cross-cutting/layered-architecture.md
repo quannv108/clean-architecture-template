@@ -2,7 +2,7 @@
 type: Mechanism
 title: Layered Architecture
 description: The six layers of the solution and the single direction in which dependencies may point.
-resource: tests/ArchitectureTests/Layers/LayerTests.cs
+resource: api/tests/ArchitectureTests/Layers/LayerTests.cs
 tags: [architecture, layers, dependencies]
 status: stable
 ---
@@ -28,7 +28,7 @@ nothing in the business stack; `ServiceDefaults` is referenced by hosted applica
 
 ## Why it is a rule and not a guideline
 
-The direction is asserted by `tests/ArchitectureTests/Layers/LayerTests.cs` using NetArchTest. Adding a
+The direction is asserted by `api/tests/ArchitectureTests/Layers/LayerTests.cs` using NetArchTest. Adding a
 reference the wrong way round fails the test run, not code review. If you need the other direction, you
 invert: Application declares the interface, Infrastructure implements it.
 

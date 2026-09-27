@@ -33,7 +33,7 @@ Use both axes.
   Web.Api, inward only.
 * **Slices** decide what belongs together: a feature is a folder of the same name in each layer that needs
   it.
-* **The layering is asserted by tests**, not by review - `tests/ArchitectureTests/Layers/LayerTests.cs`.
+* **The layering is asserted by tests**, not by review - `api/tests/ArchitectureTests/Layers/LayerTests.cs`.
 
 See [Layered Architecture](../architecture/cross-cutting/layered-architecture.md) and
 [Vertical Slice Architecture](../architecture/cross-cutting/vertical-slice-architecture.md).

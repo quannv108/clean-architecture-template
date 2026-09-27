@@ -40,8 +40,8 @@ The last row is not decoration. The knowledge base exists because agents are exp
 |---|---|---|---|
 | [PostgreSQL](containers/postgres.md) | All persistent state | **Yes** | Aspire container |
 | [Redis](containers/redis.md) | Shared cache tier, distributed locks | No | Falls back to L1 + advisory locks |
-| [Amazon SES](../engineering/technologies/aws-ses.md) | Sending email | No | [`DummyEmailSender`](../../src/Infrastructure/Communication/Email/DummyEmailSender.cs) |
-| [Twilio](../engineering/technologies/twilio.md) | Sending SMS | No | [`DummySmsSender`](../../src/Infrastructure/Communication/Sms/DummySmsSender.cs) |
+| [Amazon SES](../engineering/technologies/aws-ses.md) | Sending email | No | [`DummyEmailSender`](../../api/src/Infrastructure/Communication/Email/DummyEmailSender.cs) |
+| [Twilio](../engineering/technologies/twilio.md) | Sending SMS | No | [`DummySmsSender`](../../api/src/Infrastructure/Communication/Sms/DummySmsSender.cs) |
 | Identity provider | Authenticating callers (JWT bearer) | Depends on deployment | — |
 | Telemetry backend | Logs, traces, metrics | No | [Seq](containers/seq.md) |
 
@@ -54,7 +54,7 @@ same interfaces.
 
 * Accepting and validating requests, and authorising them
 * Enforcing business rules in the domain model, returning failures as
-  [`Result`](../../src/SharedKernel/Result.cs) values rather than exceptions
+  [`Result`](../../api/src/SharedKernel/Result.cs) values rather than exceptions
 * Persisting state atomically, including the intent to publish domain events
   ([the Outbox](../engineering/patterns/outbox-pattern.md))
 * Delivering those events to handlers afterwards, at least once

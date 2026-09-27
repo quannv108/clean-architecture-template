@@ -9,7 +9,7 @@ status: stable
 # Run the Stack Locally
 
 ```bash
-dotnet run --project src/AppHost
+dotnet run --project api/src/AppHost
 ```
 
 [AppHost](../../architecture/containers/apphost.md) starts PostgreSQL, pgweb, Seq and the API, and injects the connection
@@ -17,13 +17,13 @@ strings.
 
 ## Prerequisites
 
-* [.NET 10](../../engineering/technologies/dotnet-10.md) SDK — pinned by `global.json`
+* [.NET 10](../../engineering/technologies/dotnet-10.md) SDK — pinned by `api/global.json`
 * [Podman](../../engineering/technologies/podman.md) with a running machine (`podman machine list`), or Docker
 
 ## Using Docker instead
 
 ```powershell
-$env:DOTNET_ASPIRE_CONTAINER_RUNTIME='docker'; dotnet run --project src/AppHost
+$env:DOTNET_ASPIRE_CONTAINER_RUNTIME='docker'; dotnet run --project api/src/AppHost
 ```
 
 In VS Code, add it to the `env` block of the "Run Aspire AppHost" launch configuration.

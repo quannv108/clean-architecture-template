@@ -1,5 +1,15 @@
 # Knowledge Base Update Log
 
+## 2026-09-27 (monorepo: backend moved into api/)
+
+* **Move**: The .NET backend (`src/`, `tests/`, `scripts/`, `CleanArchitecture.slnx` and its root config)
+  moved from the repository root into `api/`, in preparation for a monorepo with future siblings (web app,
+  AI service, infra, mobile, this knowledge bundle, harness) - see
+  [ADR 0016](adr/0016-monorepo-backend-in-api.md).
+* **Rewrite**: [Solution Layout](architecture/solution-layout.md) now documents the root/`api/` split. Every
+  `resource:` and prose path across this bundle, `AGENTS.md`, `README.md`, `.claude/rules/*.md`, and the
+  GitHub Actions workflows was updated to the new `api/`-prefixed paths.
+
 ## 2026-09-20 (LoggerMessage migration)
 
 * **Removal**: Deleted `backlog/remove-ca1873-suppressions.md`. The premise ("wait for the analyzer fix") did

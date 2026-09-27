@@ -1,6 +1,6 @@
 ---
 paths:
-  - "src/Infrastructure/**"
+  - "api/src/Infrastructure/**"
 ---
 
 # Infrastructure Layer Rules

@@ -11,7 +11,7 @@ status: stable
 Started by [AppHost](apphost.md) as part of the local stack, by default at `http://localhost:8081`.
 
 [Serilog](../../engineering/technologies/serilog.md) writes structured properties and
-[`RequestContextLoggingMiddleware`](../../../src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs) adds
+[`RequestContextLoggingMiddleware`](../../../api/src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs) adds
 correlation data, so one filter reconstructs a whole request — which is the reason to use Seq locally
 rather than the console.
 

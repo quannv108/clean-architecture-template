@@ -2,7 +2,7 @@
 type: Entity
 title: "AuditLog"
 description: "One recorded action - who, what, when and where - immutable once created."
-resource: src/Domain/AuditLogs/AuditLog.cs
+resource: api/src/Domain/AuditLogs/AuditLog.cs
 tags: [domain, audit, entity, security]
 status: stable
 ---
@@ -17,7 +17,7 @@ status: stable
 | Where | `UrlPath`, `IpAddress`, `HttpResponseCode` |
 | Extra | `AdditionalData` - JSON for business-specific context |
 
-Inherits [`Entity`](../../../src/SharedKernel/Entity.cs), so soft delete applies and rows are never physically removed by
+Inherits [`Entity`](../../../api/src/SharedKernel/Entity.cs), so soft delete applies and rows are never physically removed by
 normal operations.
 
 ## Rules
@@ -29,5 +29,5 @@ normal operations.
   incident.
 
 Retention is enforced by
-[`DeleteOldAuditLogsCommand`](../../../src/Application/AuditLogs/DeleteOldAuditLogsCommand.cs); that window is usually a
+[`DeleteOldAuditLogsCommand`](../../../api/src/Application/AuditLogs/DeleteOldAuditLogsCommand.cs); that window is usually a
 compliance decision.

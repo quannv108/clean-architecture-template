@@ -9,8 +9,8 @@ status: stable
 # ProblemDetails
 
 Every failure response here is ProblemDetails, produced by
-[`CustomResults.Problem`](../../src/Web.Api/Infrastructure/CustomResults.cs) from an [`Error`](../../src/SharedKernel/Error.cs), or by
-[`GlobalExceptionHandler`](../../src/Web.Api/Infrastructure/GlobalExceptionHandler.cs) for anything unhandled.
+[`CustomResults.Problem`](../../api/src/Web.Api/Infrastructure/CustomResults.cs) from an [`Error`](../../api/src/SharedKernel/Error.cs), or by
+[`GlobalExceptionHandler`](../../api/src/Web.Api/Infrastructure/GlobalExceptionHandler.cs) for anything unhandled.
 
-The status comes from the error's [`ErrorType`](../../src/SharedKernel/Error.cs), so no endpoint writes a status
+The status comes from the error's [`ErrorType`](../../api/src/SharedKernel/Error.cs), so no endpoint writes a status
 code by hand and two endpoints cannot disagree about what "not found" means.

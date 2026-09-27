@@ -9,12 +9,12 @@ status: stable
 
 # Hangfire
 
-Wrapped by [`HangfireBackgroundJob`](../../../src/Infrastructure/BackgroundJobs/Hangfire/HangfireBackgroundJob.cs), with schedules registered in
-[`HangfireRecurringJobConfigurator`](../../../src/Infrastructure/BackgroundJobs/Hangfire/HangfireRecurringJobConfigurator.cs) and a dashboard
+Wrapped by [`HangfireBackgroundJob`](../../../api/src/Infrastructure/BackgroundJobs/Hangfire/HangfireBackgroundJob.cs), with schedules registered in
+[`HangfireRecurringJobConfigurator`](../../../api/src/Infrastructure/BackgroundJobs/Hangfire/HangfireRecurringJobConfigurator.cs) and a dashboard
 mounted from `Web.Api/Extensions/Hangfire/`.
 
 **The Hangfire type never leaves Infrastructure.** Application code depends on
-[`IBackgroundJob`](../../../src/Application/Abstractions/BackgroundJobs/IBackgroundJob.cs), and the job logic itself lives in
+[`IBackgroundJob`](../../../api/src/Application/Abstractions/BackgroundJobs/IBackgroundJob.cs), and the job logic itself lives in
 `Application/<Feature>/` with no reference to Hangfire at all - see
 [Background Processing](../../architecture/cross-cutting/background-processing.md).
 

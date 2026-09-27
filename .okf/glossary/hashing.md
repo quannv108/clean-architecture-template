@@ -8,8 +8,8 @@ status: stable
 
 # Hashing
 
-[`IHasher`](../../src/Application/Abstractions/Cryptography/IHasher.cs). Not interchangeable with encryption: a hash has no inverse.
+[`IHasher`](../../api/src/Application/Abstractions/Cryptography/IHasher.cs). Not interchangeable with encryption: a hash has no inverse.
 
 Use it for passwords and tokens, and as a deterministic lookup key beside an
-[`EncryptedString`](../../src/SharedKernel/EncryptedString.cs) column you need to search by equality - since the
+[`EncryptedString`](../../api/src/SharedKernel/EncryptedString.cs) column you need to search by equality - since the
 encrypted column itself cannot be compared server-side.

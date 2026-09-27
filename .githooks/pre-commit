@@ -6,8 +6,8 @@
 #   2. staged .okf/ files -> python .okf/tools/okf.py --check
 set -e
 
-# ---- 1. dotnet format, scoped to the staged .cs files -------------------------------------------
-cs=$(git diff --cached --name-only --diff-filter=ACMR -- '*.cs')
+# ---- 1. dotnet format, scoped to the staged .cs files (all live under api/) ----------------------
+cs=$(git diff --cached --name-only --diff-filter=ACMR -- 'api/*.cs')
 if [ -n "$cs" ]; then
     # Re-staging after format would also stage any unstaged hunks, so refuse partially staged files up front.
     for f in $cs; do
@@ -16,8 +16,9 @@ if [ -n "$cs" ]; then
             exit 1
         fi
     done
+    # dotnet format resolves --include relative to the solution, so strip the api/ prefix and run from there.
     # shellcheck disable=SC2086  # word-splitting on $cs is intended (no spaces in repo paths)
-    dotnet format CleanArchitecture.slnx --include $cs --verbosity quiet
+    (cd api && dotnet format CleanArchitecture.slnx --include $(echo "$cs" | sed 's#^api/##') --verbosity quiet)
     # shellcheck disable=SC2086
     git add $cs
 fi

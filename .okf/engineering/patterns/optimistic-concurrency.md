@@ -2,7 +2,7 @@
 type: Pattern
 title: "Optimistic Concurrency"
 description: "Detect concurrent entity writes with the PostgreSQL xmin row version, and return 412 for the client to retry."
-resource: src/SharedKernel/Concurrency
+resource: api/src/SharedKernel/Concurrency
 tags: [concurrency, ef-core, postgresql]
 status: stable
 ---
@@ -21,8 +21,8 @@ Nothing to write - it is already wired.
 PostgreSQL's `xmin` system column is mapped to `Entity.Version` as an EF row version token, so EF appends
 `WHERE xmin = @version` to every UPDATE. If the row changed since it was loaded, zero rows match and EF
 throws `DbUpdateConcurrencyException`.
-[`ConcurrencyExceptionDecorator`](../../../src/Application/Abstractions/Behaviors/ConcurrencyExceptionDecorator.cs) converts that to
-[`ConcurrencyErrors.UpdateConflict()`](../../../src/SharedKernel/Concurrency/ConcurrencyErrors.cs) -> **HTTP 412**.
+[`ConcurrencyExceptionDecorator`](../../../api/src/Application/Abstractions/Behaviors/ConcurrencyExceptionDecorator.cs) converts that to
+[`ConcurrencyErrors.UpdateConflict()`](../../../api/src/SharedKernel/Concurrency/ConcurrencyErrors.cs) -> **HTTP 412**.
 
 ```csharp
 var order = await db.Orders.FirstOrDefaultAsync(o => o.Id == id, ct);

@@ -2,7 +2,7 @@
 type: Domain Slice
 title: "Emails"
 description: "The worked example slice: an entity that raises an event, delivered through the Outbox to a handler that sends."
-resource: src/Domain/Emails
+resource: api/src/Domain/Emails
 tags: [domain, email, example, domain-events]
 status: stable
 ---
@@ -29,14 +29,14 @@ POST /api/v1/emails/test-send
 | Layer | Files |
 |---|---|
 | Domain | [`EmailMessage`](email-message.md), [`EmailMessageStatus`](email-message-status.md), [`EmailErrors`](email-errors.md), [`EmailSentDomainEvent`](email-sent-domain-event.md) |
-| Application | [`EmailSentDomainEventHandler`](../../../src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs), [`IEmailSender`](../../../src/Application/Abstractions/Communication/Email/IEmailSender.cs), [`EmailOptions`](../../../src/Application/Abstractions/Communication/Email/EmailOptions.cs) |
-| Infrastructure | [`SesEmailSender`](../../../src/Infrastructure/Communication/Email/SesEmailSender.cs), [`DummyEmailSender`](../../../src/Infrastructure/Communication/Email/DummyEmailSender.cs), [`EmailMessageConfiguration`](../../../src/Infrastructure/Database/Configuration/Emails/Messages/EmailMessageConfiguration.cs) |
-| Web.Api | [`SendTestEmail`](../../../src/Web.Api/Endpoints/Emails/SendTestEmail.cs), [email dev page](../../../src/Web.Api/Pages/Dev) |
+| Application | [`EmailSentDomainEventHandler`](../../../api/src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs), [`IEmailSender`](../../../api/src/Application/Abstractions/Communication/Email/IEmailSender.cs), [`EmailOptions`](../../../api/src/Application/Abstractions/Communication/Email/EmailOptions.cs) |
+| Infrastructure | [`SesEmailSender`](../../../api/src/Infrastructure/Communication/Email/SesEmailSender.cs), [`DummyEmailSender`](../../../api/src/Infrastructure/Communication/Email/DummyEmailSender.cs), [`EmailMessageConfiguration`](../../../api/src/Infrastructure/Database/Configuration/Emails/Messages/EmailMessageConfiguration.cs) |
+| Web.Api | [`SendTestEmail`](../../../api/src/Web.Api/Endpoints/Emails/SendTestEmail.cs), [email dev page](../../../api/src/Web.Api/Pages/Dev) |
 
 ## The lesson to keep
 
 The command handler persists the *intent* and returns. Contacting a slow, failing third party happens in a
-[domain event handler](../../../src/Application/Abstractions/Messaging/IQueryHandler.cs) afterwards, so provider trouble never becomes
+[domain event handler](../../../api/src/Application/Abstractions/Messaging/IQueryHandler.cs) afterwards, so provider trouble never becomes
 the caller's problem and a retry is possible. Copy that shape for any external integration.
 
 Note that the handler currently lives under `Application/ExampleDomainA/Events/` - a naming leftover worth
@@ -50,5 +50,5 @@ tidying when you rename the slice.
 * [EmailSentDomainEvent](email-sent-domain-event.md) - The template's worked domain event - an immutable positional record carrying only an id.
 
 The handler is at
-[EmailSentDomainEventHandler](../../../src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs);
-the senders are in [`src/Infrastructure/Communication`](../../../src/Infrastructure/Communication).
+[EmailSentDomainEventHandler](../../../api/src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs);
+the senders are in [`api/src/Infrastructure/Communication`](../../../api/src/Infrastructure/Communication).

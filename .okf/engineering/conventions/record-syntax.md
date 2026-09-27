@@ -33,7 +33,7 @@ public sealed record CreateUserCommand : ICommand<Guid>
 ```
 
 **Positional record parameters cannot carry property attributes** in a form
-[`ValidationDecorator`](../../../src/Application/Abstractions/Behaviors/ValidationDecorator.cs) can read. Since validation is declared on the
+[`ValidationDecorator`](../../../api/src/Application/Abstractions/Behaviors/ValidationDecorator.cs) can read. Since validation is declared on the
 command, commands and queries must use standard syntax.
 
 ## Rules

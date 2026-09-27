@@ -16,7 +16,7 @@ status: stable
 type: Pattern
 title: "Pattern Name"
 description: "One sentence: what shape this is and what it solves."
-resource: src/<where an instance lives>
+resource: api/src/<where an instance lives>
 tags: [topic]
 status: draft
 ---
@@ -31,7 +31,7 @@ What goes wrong without this. Be concrete - a failure someone has actually had.
 The rule, as bullets: what to do and why each step matters. This is the knowledge - write it so it holds
 for every instance, not just one.
 
-Then **one snippet of only the distinctive lines** (under ~8) and a link to a real instance in `src/` for
+Then **one snippet of only the distinctive lines** (under ~8) and a link to a real instance in `api/src/` for
 the rest. A pattern page is not a place to paste a class; if a reader needs the whole file, the link gives
 it to them unabridged and always current.
 

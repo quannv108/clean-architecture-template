@@ -2,14 +2,14 @@
 type: Mechanism
 title: Decorator Pipeline
 description: The four Scrutor decorators wrapped around every command and query handler, outermost to innermost.
-resource: src/Application/Abstractions/Behaviors
+resource: api/src/Application/Abstractions/Behaviors
 tags: [decorators, cross-cutting, scrutor, pipeline]
 status: stable
 ---
 
 # Decorator Pipeline
 
-Configured in `src/Application/DependencyInjection.cs` with Scrutor's `Decorate<,>`. Registration order
+Configured in `api/src/Application/DependencyInjection.cs` with Scrutor's `Decorate<,>`. Registration order
 determines nesting; the list below is **outermost first**.
 
 ```
@@ -22,10 +22,10 @@ LoggingDecorator
 
 | Decorator | Responsibility |
 |---|---|
-| [`LoggingDecorator`](../../../src/Application/Abstractions/Behaviors/LoggingDecorator.cs) | Logs handler start, completion and failure, with the operation name |
-| [`ConcurrencyExceptionDecorator`](../../../src/Application/Abstractions/Behaviors/ConcurrencyExceptionDecorator.cs) | Catches `DbUpdateConcurrencyException` and returns `ConcurrencyErrors.UpdateConflict()` -> HTTP 412 |
-| [`ValidationDecorator`](../../../src/Application/Abstractions/Behaviors/ValidationDecorator.cs) | Runs `DataAnnotations.Validator` on the command before the handler executes |
-| [`OpenTelemetryInstrumentDecorator`](../../../src/Application/Abstractions/Behaviors/OpenTelemetryInstrumentDecorator.cs) | Opens an `Activity` span carrying operation metadata |
+| [`LoggingDecorator`](../../../api/src/Application/Abstractions/Behaviors/LoggingDecorator.cs) | Logs handler start, completion and failure, with the operation name |
+| [`ConcurrencyExceptionDecorator`](../../../api/src/Application/Abstractions/Behaviors/ConcurrencyExceptionDecorator.cs) | Catches `DbUpdateConcurrencyException` and returns `ConcurrencyErrors.UpdateConflict()` -> HTTP 412 |
+| [`ValidationDecorator`](../../../api/src/Application/Abstractions/Behaviors/ValidationDecorator.cs) | Runs `DataAnnotations.Validator` on the command before the handler executes |
+| [`OpenTelemetryInstrumentDecorator`](../../../api/src/Application/Abstractions/Behaviors/OpenTelemetryInstrumentDecorator.cs) | Opens an `Activity` span carrying operation metadata |
 
 ## Why the order matters
 

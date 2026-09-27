@@ -28,8 +28,8 @@ of a design one.
 ## Decision
 
 No mediator. Handlers implement
-[`ICommandHandler<T>`](../../src/Application/Abstractions/Messaging/ICommandHandler.cs) /
-[`IQueryHandler<T,R>`](../../src/Application/Abstractions/Messaging/IQueryHandler.cs), are registered by
+[`ICommandHandler<T>`](../../api/src/Application/Abstractions/Messaging/ICommandHandler.cs) /
+[`IQueryHandler<T,R>`](../../api/src/Application/Abstractions/Messaging/IQueryHandler.cs), are registered by
 [Scrutor](../engineering/technologies/scrutor.md) assembly scanning, and are **injected directly** into the endpoints
 that use them.
 

@@ -1,7 +1,7 @@
 using System.Reflection;
 using NetArchTest.Rules;
-using Shouldly;
 using SharedKernel;
+using Shouldly;
 
 namespace ArchitectureTests.Domain;
 

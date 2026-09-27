@@ -10,7 +10,7 @@ status: stable
 # Serilog
 
 Structured logging throughout.
-[`RequestContextLoggingMiddleware`](../../../src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs) pushes correlation
+[`RequestContextLoggingMiddleware`](../../../api/src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs) pushes correlation
 properties into `LogContext`, so every line in a request shares them.
 
 **Log properties, not interpolated strings:**
@@ -22,7 +22,7 @@ private partial void LogEmailSent(Guid id);        // queryable in Seq; typed, n
 logger.LogInformation($"Email {id} sent");         // a string; nothing to filter on - and CA1848 rejects it
 ```
 
-[`LoggingDecorator`](../../../src/Application/Abstractions/Behaviors/LoggingDecorator.cs) already logs handler start, success and failure -
+[`LoggingDecorator`](../../../api/src/Application/Abstractions/Behaviors/LoggingDecorator.cs) already logs handler start, success and failure -
 do not log the same thing again.
 
 **Never log secrets or personal data.** See [Observability](../../architecture/cross-cutting/observability.md).

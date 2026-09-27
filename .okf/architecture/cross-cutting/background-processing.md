@@ -12,16 +12,16 @@ Three distinct things are easy to confuse. They live in different layers on purp
 
 | Concept | Where | Examples |
 |---|---|---|
-| **Hosted service** - a long-running `BackgroundService` owned by the host | `src/Infrastructure/<Feature>/` | [`OutboxMessageHostedService`](../../../src/Infrastructure/Outbox/OutboxMessageHostedService.cs) |
-| **Job logic** - the work itself; calls command handlers, knows no job-runner SDK | `src/Application/<Feature>/` | [`OutboxMessageCleanupJob`](../../../src/Application/Outbox/OutboxMessageCleanupJob.cs), [`DeleteOldAuditLogsBackgroundJob`](../../../src/Application/AuditLogs/DeleteOldAuditLogsBackgroundJob.cs) |
-| **Job-runner adapter** - implements [`IBackgroundJob`](../../../src/Application/Abstractions/BackgroundJobs/IBackgroundJob.cs), wraps the SDK | `src/Infrastructure/BackgroundJobs/` | [`HangfireBackgroundJob`](../../../src/Infrastructure/BackgroundJobs/Hangfire/HangfireBackgroundJob.cs), [`SimpleBackgroundJob`](../../../src/Infrastructure/BackgroundJobs/SimpleBackgroundJob.cs) |
+| **Hosted service** - a long-running `BackgroundService` owned by the host | `api/src/Infrastructure/<Feature>/` | [`OutboxMessageHostedService`](../../../api/src/Infrastructure/Outbox/OutboxMessageHostedService.cs) |
+| **Job logic** - the work itself; calls command handlers, knows no job-runner SDK | `api/src/Application/<Feature>/` | [`OutboxMessageCleanupJob`](../../../api/src/Application/Outbox/OutboxMessageCleanupJob.cs), [`DeleteOldAuditLogsBackgroundJob`](../../../api/src/Application/AuditLogs/DeleteOldAuditLogsBackgroundJob.cs) |
+| **Job-runner adapter** - implements [`IBackgroundJob`](../../../api/src/Application/Abstractions/BackgroundJobs/IBackgroundJob.cs), wraps the SDK | `api/src/Infrastructure/BackgroundJobs/` | [`HangfireBackgroundJob`](../../../api/src/Infrastructure/BackgroundJobs/Hangfire/HangfireBackgroundJob.cs), [`SimpleBackgroundJob`](../../../api/src/Infrastructure/BackgroundJobs/SimpleBackgroundJob.cs) |
 
 ## The rule that decides placement
 
 A class whose name ends in `BackgroundJob` but that does **not** implement `IBackgroundJob` is job logic and
 belongs in `Application/<Feature>/`. It exposes an `ExecuteAsync` method, calls `ICommandHandler<T>`, and has
 no reference to Hangfire or any other runner. `Infrastructure/BackgroundJobs/` contains only adapters and
-[`HangfireRecurringJobConfigurator`](../../../src/Infrastructure/BackgroundJobs/Hangfire/HangfireRecurringJobConfigurator.cs), which registers
+[`HangfireRecurringJobConfigurator`](../../../api/src/Infrastructure/BackgroundJobs/Hangfire/HangfireRecurringJobConfigurator.cs), which registers
 schedules.
 
 ## Registration

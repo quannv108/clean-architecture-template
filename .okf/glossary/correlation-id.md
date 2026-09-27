@@ -9,7 +9,7 @@ status: stable
 # Correlation ID
 
 Pushed into the Serilog context by
-[`RequestContextLoggingMiddleware`](../../src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs), so one filter in
+[`RequestContextLoggingMiddleware`](../../api/src/Web.Api/Middleware/RequestContextLoggingMiddleware.cs), so one filter in
 [Seq](../engineering/technologies/seq.md) reconstructs a whole request.
 
 Its value shows up during incidents, where the question is always "what else happened in that request" -

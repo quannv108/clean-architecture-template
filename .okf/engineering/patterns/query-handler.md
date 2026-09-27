@@ -8,7 +8,7 @@ status: stable
 
 # Query Handler
 
-A read use case is one file, `src/Application/<Feature>/<Operation>Query.cs`, holding the query record, the
+A read use case is one file, `api/src/Application/<Feature>/<Operation>Query.cs`, holding the query record, the
 response DTOs and the handler. It reads, projects and returns; it never writes.
 
 ## How
@@ -26,7 +26,7 @@ response DTOs and the handler. It reads, projects and returns; it never writes.
 
 * **Project in the database.** `Select` into the DTO before materialising, so only the needed columns
   travel. Never return an entity or an `IQueryable`.
-* Lists return [`PagedList<T>`](../../../src/Web.Api/Endpoints/Generic/PagedList.cs); large or append-only
+* Lists return [`PagedList<T>`](../../../api/src/Web.Api/Endpoints/Generic/PagedList.cs); large or append-only
   lists page by cursor.
 
 ```csharp
@@ -36,7 +36,7 @@ var items = await db.Orders
     .ToListAsync(ct);
 ```
 
-Real instance: [`GetAuditLogsQuery.cs`](../../../src/Application/AuditLogs/GetAuditLogsQuery.cs)
+Real instance: [`GetAuditLogsQuery.cs`](../../../api/src/Application/AuditLogs/GetAuditLogsQuery.cs)
 (cursor-paged projection).
 
 ## Checklist

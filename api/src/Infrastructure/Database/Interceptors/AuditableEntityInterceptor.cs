@@ -1,9 +1,9 @@
 ﻿using Application.Abstractions.Authentication;
 using Application.Abstractions.Time;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using SharedKernel;
-using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Database.Interceptors;
 

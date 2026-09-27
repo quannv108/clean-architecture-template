@@ -15,8 +15,8 @@ for.
 
 ## 1. Rename and reshape
 
-* Rename `CleanArchitecture.slnx`, the root namespace in `Directory.Build.props`, and the database schema
-  constants in [`SchemaNameConstants`](../../../src/Infrastructure/Database/SchemaNameConstants.cs).
+* Rename `api/CleanArchitecture.slnx`, the root namespace in `Directory.Build.props`, and the database schema
+  constants in [`SchemaNameConstants`](../../../api/src/Infrastructure/Database/SchemaNameConstants.cs).
 * Decide which example slices to keep. `Outbox` and `AuditLogs` are infrastructure you almost certainly
   want; `Emails`/`ExampleDomainA` are demonstrations - delete them once you have a real slice.
 

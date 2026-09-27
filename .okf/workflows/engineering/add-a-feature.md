@@ -48,8 +48,8 @@ handlers, repository and endpoints.
 
 ## 1. Domain
 
-1. `Domain/<Feature>/<Feature>.cs` inheriting [`Entity`](../../../src/SharedKernel/Entity.cs) or
-   [`AuditedEntity`](../../../src/SharedKernel/AuditedEntity.cs).
+1. `Domain/<Feature>/<Feature>.cs` inheriting [`Entity`](../../../api/src/SharedKernel/Entity.cs) or
+   [`AuditedEntity`](../../../api/src/SharedKernel/AuditedEntity.cs).
 2. Private constructor, `public static Create(...)` returning `Result<T>` -
    [Entity Factory Method](../../engineering/patterns/entity-factory-method.md).
 3. `<Feature>Errors.cs` - `public static` factories, codes `"{Entity}.{ErrorName}"`.
@@ -70,22 +70,22 @@ handlers, repository and endpoints.
 ## 3. Infrastructure
 
 1. `Database/Configuration/<Feature>/<Feature>Configuration.cs` - mapping, indexes, relationships.
-2. `DbSet<T>` on **both** [`IApplicationDbContext`](../../../src/Application/Abstractions/Data/IApplicationDbContext.cs) and
-   [`ApplicationDbContext`](../../../src/Infrastructure/Database/ApplicationDbContext.cs).
+2. `DbSet<T>` on **both** [`IApplicationDbContext`](../../../api/src/Application/Abstractions/Data/IApplicationDbContext.cs) and
+   [`ApplicationDbContext`](../../../api/src/Infrastructure/Database/ApplicationDbContext.cs).
 3. Seeder under `Database/Seeder/<Feature>/` if needed, **registered in
-   [`DbSeeder`](../../../src/Infrastructure/Database/Seeding/DbSeeder.cs)**.
+   [`DbSeeder`](../../../api/src/Infrastructure/Database/Seeding/DbSeeder.cs)**.
 4. Migration - [Add an EF Core Migration](add-ef-migration.md).
 
 ## 4. Web.Api
 
 One file per endpoint, following
 [Minimal API Endpoint](../../engineering/patterns/minimal-api-endpoint.md). Add the tag constant to
-[`Tags`](../../../src/Web.Api/Endpoints/Tags.cs). Mark security-relevant endpoints `.WithAuditLog("...")`.
+[`Tags`](../../../api/src/Web.Api/Endpoints/Tags.cs). Mark security-relevant endpoints `.WithAuditLog("...")`.
 
 ## 5. Tests
 
-`tests/Application.UnitTests/<Feature>/<Operation>HandlerTests.cs` and
-`tests/Api.IntegrationTests/<Feature>/`. Integration tests go **through the API only**, include the
+`api/tests/Application.UnitTests/<Feature>/<Operation>HandlerTests.cs` and
+`api/tests/Api.IntegrationTests/<Feature>/`. Integration tests go **through the API only**, include the
 `/api/v1` prefix, and call `WaitForOutboxMessagesAsync()` before asserting event side effects.
 
 ## 6. Knowledge
@@ -107,10 +107,10 @@ Same commit as the code. Create the slice's folder in this bundle:
 ## 7. Verify
 
 ```bash
-dotnet build CleanArchitecture.slnx
-dotnet test tests/ArchitectureTests/
-dotnet test CleanArchitecture.slnx
-dotnet format CleanArchitecture.slnx style --verify-no-changes --severity error
+dotnet build api/CleanArchitecture.slnx
+dotnet test api/tests/ArchitectureTests/
+dotnet test api/CleanArchitecture.slnx
+dotnet format api/CleanArchitecture.slnx style --verify-no-changes --severity error
 ```
 
 Then walk steps 1-6 again as a checklist. A half-built slice is not visibly broken: the endpoint works, so it

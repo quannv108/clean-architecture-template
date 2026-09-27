@@ -2,7 +2,7 @@
 type: Mechanism
 title: API Surface
 description: The versioned api/v1 route group, endpoint discovery, OpenAPI metadata, tags and ProblemDetails responses.
-resource: src/Web.Api/Extensions/EndpointExtensions.cs
+resource: api/src/Web.Api/Extensions/EndpointExtensions.cs
 tags: [http, api, versioning, openapi, routing]
 status: stable
 ---
@@ -11,8 +11,8 @@ status: stable
 
 ## The api/v1 group
 
-[`EndpointExtensions.MapEndpoints`](../../../src/Web.Api/Extensions/EndpointExtensions.cs) discovers every
-[`IEndpoint`](../../../src/Web.Api/Endpoints/IEndpoint.cs) in the assembly and registers it inside
+[`EndpointExtensions.MapEndpoints`](../../../api/src/Web.Api/Extensions/EndpointExtensions.cs) discovers every
+[`IEndpoint`](../../../api/src/Web.Api/Endpoints/IEndpoint.cs) in the assembly and registers it inside
 `app.MapGroup("api/v1")`.
 
 **The path written in an endpoint file is relative to that group.** `MapPost("/users", ...)` is reachable at
@@ -34,7 +34,7 @@ Every endpoint must declare its full contract in the builder chain:
 * `.WithName(nameof(<Operation>))`
 * `.Accepts<TRequest>("application/json")` on POST and PUT
 * `.Produces<T>(StatusCodes.Status200OK)` and `.ProducesProblem(...)` for each error status
-* `.WithTags(Tags.<Feature>)` - the constant must exist in [`Tags`](../../../src/Web.Api/Endpoints/Tags.cs)
+* `.WithTags(Tags.<Feature>)` - the constant must exist in [`Tags`](../../../api/src/Web.Api/Endpoints/Tags.cs)
 * `.AddOpenApiOperationTransformer` setting `Summary` and `Description`
 
 Configured in `Extensions/OpenApi/`. The generated document is the contract clients build against, so an
@@ -43,15 +43,15 @@ undeclared response shape is a defect even when the code works.
 ## Errors
 
 Failures are ProblemDetails responses produced by
-[`CustomResults.Problem`](../../../src/Web.Api/Infrastructure/CustomResults.cs) from an
-[`Error`](../../../src/SharedKernel/Error.cs)'s [`ErrorType`](../../../src/SharedKernel/Error.cs): Validation 400, NotFound 404,
+[`CustomResults.Problem`](../../../api/src/Web.Api/Infrastructure/CustomResults.cs) from an
+[`Error`](../../../api/src/SharedKernel/Error.cs)'s [`ErrorType`](../../../api/src/SharedKernel/Error.cs): Validation 400, NotFound 404,
 Conflict 409, Problem 412. Anything unhandled is converted by
-[`GlobalExceptionHandler`](../../../src/Web.Api/Infrastructure/GlobalExceptionHandler.cs) into a 500 ProblemDetails with no
+[`GlobalExceptionHandler`](../../../api/src/Web.Api/Infrastructure/GlobalExceptionHandler.cs) into a 500 ProblemDetails with no
 internal detail leaked.
 
 ## Paging
 
-List endpoints return [`PagedList<T>`](../../../src/Web.Api/Endpoints/Generic/PagedList.cs). Audit log queries page by cursor on
+List endpoints return [`PagedList<T>`](../../../api/src/Web.Api/Endpoints/Generic/PagedList.cs). Audit log queries page by cursor on
 `ActionDateTime` rather than by offset.
 
 ## Operational endpoints

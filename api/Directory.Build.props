@@ -19,10 +19,10 @@
     </ItemGroup>
 
     <!-- Point git at the committed hooks (.githooks/) so every clone gets the pre-commit gate without a setup step.
-         Idempotent; skipped in CI and outside a git checkout. -->
+         Idempotent; skipped in CI and outside a git checkout. Repo root is one level up from api/. -->
     <Target Name="InstallGitHooks" BeforeTargets="Build"
-            Condition="Exists('$(MSBuildThisFileDirectory).git') And '$(CI)' != 'true'">
-        <Exec Command="git config core.hooksPath .githooks" WorkingDirectory="$(MSBuildThisFileDirectory)"
+            Condition="Exists('$(MSBuildThisFileDirectory)../.git') And '$(CI)' != 'true'">
+        <Exec Command="git config core.hooksPath .githooks" WorkingDirectory="$(MSBuildThisFileDirectory).."
               ContinueOnError="true" StandardOutputImportance="low" StandardErrorImportance="low" />
     </Target>
 </Project>

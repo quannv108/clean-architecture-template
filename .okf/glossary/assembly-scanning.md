@@ -9,8 +9,8 @@ status: stable
 # Assembly Scanning
 
 Used three times here: [Scrutor](../engineering/technologies/scrutor.md) registers handlers,
-[`MapEndpoints`](../../src/Web.Api/Extensions/EndpointExtensions.cs) discovers
-[`IEndpoint`](../../src/Web.Api/Endpoints/IEndpoint.cs) implementations, and EF Core discovers
+[`MapEndpoints`](../../api/src/Web.Api/Extensions/EndpointExtensions.cs) discovers
+[`IEndpoint`](../../api/src/Web.Api/Endpoints/IEndpoint.cs) implementations, and EF Core discovers
 `IEntityTypeConfiguration<T>`.
 
 The trade-off is silence. Adding a handler or endpoint needs no registration line - but a class that does

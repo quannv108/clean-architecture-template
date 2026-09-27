@@ -10,13 +10,13 @@ status: stable
 
 ## Identity
 
-[`IUserContext`](../../../src/Application/Abstractions/Authentication/IUserContext.cs) (Application) is the only way to ask who the caller is.
-[`UserContext`](../../../src/Infrastructure/Authentication/UserContext.cs) (Infrastructure) reads it from the `ClaimsPrincipal` via
-[`ClaimsPrincipalExtensions`](../../../src/Infrastructure/Authentication/ClaimsPrincipalExtensions.cs). Handlers never touch
+[`IUserContext`](../../../api/src/Application/Abstractions/Authentication/IUserContext.cs) (Application) is the only way to ask who the caller is.
+[`UserContext`](../../../api/src/Infrastructure/Authentication/UserContext.cs) (Infrastructure) reads it from the `ClaimsPrincipal` via
+[`ClaimsPrincipalExtensions`](../../../api/src/Infrastructure/Authentication/ClaimsPrincipalExtensions.cs). Handlers never touch
 `HttpContext`.
 
 Background work has no caller. Domain event handlers and jobs run under the system context - see
-[`SystemConstants`](../../../src/Domain/SystemConstants.cs).
+[`SystemConstants`](../../../api/src/Domain/SystemConstants.cs).
 
 ## Permissions
 
@@ -29,9 +29,9 @@ permission's name.
 
 | Concern | Where |
 |---|---|
-| CORS | `Extensions/Cors/` + [`CorsPolicyNameConstants`](../../../src/Web.Api/Extensions/Cors) |
-| Rate limiting | `Extensions/RateLimits/` + [`RateLimitPolicyNameConstants`](../../../src/Web.Api/Extensions/RateLimits) |
-| Unhandled exceptions | [`GlobalExceptionHandler`](../../../src/Web.Api/Infrastructure/GlobalExceptionHandler.cs) |
+| CORS | `Extensions/Cors/` + [`CorsPolicyNameConstants`](../../../api/src/Web.Api/Extensions/Cors) |
+| Rate limiting | `Extensions/RateLimits/` + [`RateLimitPolicyNameConstants`](../../../api/src/Web.Api/Extensions/RateLimits) |
+| Unhandled exceptions | [`GlobalExceptionHandler`](../../../api/src/Web.Api/Infrastructure/GlobalExceptionHandler.cs) |
 
 Policy names are constants, never inline strings - a typo in a policy name fails open.
 
@@ -44,11 +44,11 @@ Policy names are constants, never inline strings - a typo in a policy name fails
 ## Audit trail
 
 Security-relevant endpoints are marked `.WithAuditLog("ActionName")`;
-[`AuditLoggingMiddleware`](../../../src/Web.Api/Middleware/AuditLoggingMiddleware.cs) records Who, What, When and Where
+[`AuditLoggingMiddleware`](../../../api/src/Web.Api/Middleware/AuditLoggingMiddleware.cs) records Who, What, When and Where
 including unauthenticated calls. See [Audit Logging](../../engineering/patterns/audit-logging.md).
 
 ## Data protection
 
-Sensitive columns use [`EncryptedString`](../../../src/SharedKernel/EncryptedString.cs) with versioned AES-256 keys -
+Sensitive columns use [`EncryptedString`](../../../api/src/SharedKernel/EncryptedString.cs) with versioned AES-256 keys -
 [Field Encryption and Key Rotation](../../engineering/patterns/encryption.md). Never put secrets, tokens or personal data in log
 messages, cache keys, lock names or audit `AdditionalData`.

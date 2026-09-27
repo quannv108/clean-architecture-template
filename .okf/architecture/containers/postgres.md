@@ -2,7 +2,7 @@
 type: Container
 title: "PostgreSQL Database"
 description: "The application database, and the source of the xmin row version and advisory locks the architecture depends on."
-resource: src/Infrastructure/Database
+resource: api/src/Infrastructure/Database
 tags: [container, c4, postgresql, database]
 status: stable
 ---
@@ -20,7 +20,7 @@ a managed instance.
 | `OutboxMessage` rows | [OutboxMessage](../../domains/outbox/outbox-message.md) |
 | `AuditLog` rows | [AuditLog](../../domains/audit-logs/audit-log.md) |
 | Hangfire job state | [Hangfire](../../engineering/technologies/hangfire.md) |
-| Advisory locks (no storage) | [PostgresDistributedLockProvider](../../../src/Infrastructure/Locking/PostgresDistributedLockProvider.cs) |
+| Advisory locks (no storage) | [PostgresDistributedLockProvider](../../../api/src/Infrastructure/Locking/PostgresDistributedLockProvider.cs) |
 
 Note that the outbox, the audit trail and the job store all share the transactional database with the
 business data. For the outbox that is the whole point — the event and the business change commit together.

@@ -9,9 +9,9 @@ status: stable
 
 # Amazon SES
 
-Used by [`SesEmailSender`](../../../src/Infrastructure/Communication/Email/SesEmailSender.cs), configured through
-[`EmailOptions`](../../../src/Application/Abstractions/Communication/Email/EmailOptions.cs). Locally,
-[`DummyEmailSender`](../../../src/Infrastructure/Communication/Email/DummyEmailSender.cs) stands in so nothing external is needed.
+Used by [`SesEmailSender`](../../../api/src/Infrastructure/Communication/Email/SesEmailSender.cs), configured through
+[`EmailOptions`](../../../api/src/Application/Abstractions/Communication/Email/EmailOptions.cs). Locally,
+[`DummyEmailSender`](../../../api/src/Infrastructure/Communication/Email/DummyEmailSender.cs) stands in so nothing external is needed.
 
 Operational realities to design for: sender identities and domains must be verified, new accounts are in a
 sandbox that only sends to verified addresses, and sending is rate limited.

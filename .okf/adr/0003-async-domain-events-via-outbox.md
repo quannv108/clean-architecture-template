@@ -27,13 +27,13 @@ outage.
 
 ## Decision
 
-Events raised through [`Entity.Raise`](../../src/SharedKernel/Entity.cs) are written as
+Events raised through [`Entity.Raise`](../../api/src/SharedKernel/Entity.cs) are written as
 [`OutboxMessage`](../domains/outbox/outbox-message.md) rows **in the same transaction** as the business data.
-[`OutboxMessageHostedService`](../../src/Infrastructure/Outbox/OutboxMessageHostedService.cs) polls, and
-[`OutboxMessageProcessor`](../../src/Application/Outbox) dispatches to
-[`IDomainEventHandler<T>`](../../src/Application/Abstractions/Messaging/IQueryHandler.cs).
+[`OutboxMessageHostedService`](../../api/src/Infrastructure/Outbox/OutboxMessageHostedService.cs) polls, and
+[`OutboxMessageProcessor`](../../api/src/Application/Outbox) dispatches to
+[`IDomainEventHandler<T>`](../../api/src/Application/Abstractions/Messaging/IQueryHandler.cs).
 
-[`OutboxSignal`](../../src/Infrastructure/Outbox/OutboxSignal.cs) wakes the poller immediately after a save, so latency is low
+[`OutboxSignal`](../../api/src/Infrastructure/Outbox/OutboxSignal.cs) wakes the poller immediately after a save, so latency is low
 in the common case without the correctness depending on it.
 
 ## Consequences
@@ -45,7 +45,7 @@ are invisible to the caller. Failures are visible as rows with errors and retrya
 response. Delivery is at-least-once, so **every handler must be idempotent**. Ordering across different
 events is not guaranteed. Integration tests must call `WaitForOutboxMessagesAsync()` before asserting a side
 effect. The outbox table is on the write path of every event-raising command and needs pruning
-([`OutboxMessageCleanupJob`](../../src/Application/Outbox/OutboxMessageCleanupJob.cs)) and monitoring.
+([`OutboxMessageCleanupJob`](../../api/src/Application/Outbox/OutboxMessageCleanupJob.cs)) and monitoring.
 
 **Alternatives rejected.** In-memory dispatch - loses events, couples latency. A message broker - correct at
 larger scale, but the outbox is what you need *before* the broker anyway, and this template should run with

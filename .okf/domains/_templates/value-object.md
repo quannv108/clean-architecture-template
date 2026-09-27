@@ -17,7 +17,7 @@ status: stable
 type: Value Object
 title: "Money"
 description: "One sentence: what value this represents."
-resource: src/SharedKernel/Money/Money.cs
+resource: api/src/SharedKernel/Money/Money.cs
 tags: [domain, value-object]
 status: draft
 ---
@@ -33,15 +33,15 @@ Which values take part in equality. Two instances with the same components are t
 
 ## Creation and validation
 
-The factory, what it normalises, and which [`Error`](../../../src/SharedKernel/Error.cs) each failure returns. An
+The factory, what it normalises, and which [`Error`](../../../api/src/SharedKernel/Error.cs) each failure returns. An
 instance that exists is valid; there is no "validate later".
 
 ## Placement
 
 | Used by | Goes in |
 |---|---|
-| One slice | `src/Domain/<Feature>/` |
-| More than one slice | `src/SharedKernel/<Concept>/` with its `*Errors.cs` |
+| One slice | `api/src/Domain/<Feature>/` |
+| More than one slice | `api/src/SharedKernel/<Concept>/` with its `*Errors.cs` |
 
 Moving it to SharedKernel the moment a second slice needs it is what prevents cross-slice coupling - see
 [SharedKernel Layer](../../architecture/components/shared-kernel.md).
@@ -49,11 +49,11 @@ Moving it to SharedKernel the moment a second slice needs it is what prevents cr
 ## Persistence
 
 How EF Core stores it - owned type, value converter, or separate columns. If it is encrypted, note that it
-cannot be indexed or compared server-side ([`EncryptedString`](../../../src/SharedKernel/EncryptedString.cs)).
+cannot be indexed or compared server-side ([`EncryptedString`](../../../api/src/SharedKernel/EncryptedString.cs)).
 
 ## Checklist
 
-- [ ] Derives [`ValueObject`](../../../src/SharedKernel/ValueObject.cs)
+- [ ] Derives [`ValueObject`](../../../api/src/SharedKernel/ValueObject.cs)
 - [ ] Immutable; no public setters
 - [ ] Private constructor, `Create(...)` returning `Result<T>`
 - [ ] `*Errors.cs` beside it

@@ -27,7 +27,7 @@ of a binding failure inside the handler.
 
 ## Tags
 
-Every endpoint sets `.WithTags(Tags.<Feature>)`, with the constant in [`Tags`](../../../src/Web.Api/Endpoints/Tags.cs). Tags
+Every endpoint sets `.WithTags(Tags.<Feature>)`, with the constant in [`Tags`](../../../api/src/Web.Api/Endpoints/Tags.cs). Tags
 group the generated OpenAPI document, so a literal or inconsistent string splits one feature across two
 sections in the docs and in generated clients.
 

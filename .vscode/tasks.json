@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/CleanArchitecture.slnx",
+                "${workspaceFolder}/api/CleanArchitecture.slnx",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -23,7 +23,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/src/Web.Api/Web.Api.csproj",
+                "${workspaceFolder}/api/src/Web.Api/Web.Api.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -37,7 +37,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/src/Web.Api/Web.Api.csproj"
+                "${workspaceFolder}/api/src/Web.Api/Web.Api.csproj"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -47,7 +47,7 @@
             "type": "process",
             "args": [
                 "test",
-                "${workspaceFolder}/CleanArchitecture.slnx"
+                "${workspaceFolder}/api/CleanArchitecture.slnx"
             ],
             "problemMatcher": "$msCompile",
             "group": {
@@ -61,7 +61,7 @@
             "type": "process",
             "args": [
                 "clean",
-                "${workspaceFolder}/CleanArchitecture.slnx"
+                "${workspaceFolder}/api/CleanArchitecture.slnx"
             ],
             "problemMatcher": "$msCompile"
         }

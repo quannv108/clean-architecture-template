@@ -8,7 +8,7 @@ status: stable
 
 # Route Group
 
-`app.MapGroup("api/v1")` in [`EndpointExtensions`](../../src/Web.Api/Extensions/EndpointExtensions.cs) wraps every
+`app.MapGroup("api/v1")` in [`EndpointExtensions`](../../api/src/Web.Api/Extensions/EndpointExtensions.cs) wraps every
 endpoint.
 
 **The path written in an endpoint file is relative to the group.** `MapPost("/users", ...)` serves

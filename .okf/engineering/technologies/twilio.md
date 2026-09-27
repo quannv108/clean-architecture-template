@@ -9,11 +9,11 @@ status: stable
 
 # Twilio
 
-Used by [`TwilioSmsSender`](../../../src/Infrastructure/Communication/Sms/TwilioSmsSender.cs), configured through
-[`SmsOptions`](../../../src/Application/Abstractions/Communication/Sms/SmsOptions.cs). Locally,
-[`DummySmsSender`](../../../src/Infrastructure/Communication/Sms/DummySmsSender.cs) stands in.
+Used by [`TwilioSmsSender`](../../../api/src/Infrastructure/Communication/Sms/TwilioSmsSender.cs), configured through
+[`SmsOptions`](../../../api/src/Application/Abstractions/Communication/Sms/SmsOptions.cs). Locally,
+[`DummySmsSender`](../../../api/src/Infrastructure/Communication/Sms/DummySmsSender.cs) stands in.
 
-Numbers should be validated [`PhoneNumber`](../../../src/SharedKernel/PhoneNumbers/PhoneNumber.cs) values before reaching the sender.
+Numbers should be validated [`PhoneNumber`](../../../api/src/SharedKernel/PhoneNumbers/PhoneNumber.cs) values before reaching the sender.
 SMS costs money per message, is rate limited, and delivery is not guaranteed - so send from a
 [domain event handler](../patterns/domain-event.md), make it idempotent, and remember that
 [outbox delivery is at-least-once](../patterns/outbox-pattern.md): a non-idempotent handler will eventually

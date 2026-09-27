@@ -13,8 +13,8 @@ handlers that project to DTOs. They do not share a model: writes use the entity 
 shapes.
 
 Here that separation is also a data-path separation - writes through
-[`IApplicationDbContext`](../../src/Application/Abstractions/Data/IApplicationDbContext.cs), reads through a
-[cached repository](../../src/Application) or an untracked projection. See
+[`IApplicationDbContext`](../../api/src/Application/Abstractions/Data/IApplicationDbContext.cs), reads through a
+[cached repository](../../api/src/Application) or an untracked projection. See
 [CQRS](../architecture/cross-cutting/cqrs.md).
 
 Note this is CQRS without event sourcing and without separate databases - the lightweight form.

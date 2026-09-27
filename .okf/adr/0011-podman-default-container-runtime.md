@@ -23,7 +23,7 @@ a per-machine setup step and a class of "works on my machine" problems.
 
 ## Decision
 
-`src/AppHost/AppHost.cs` sets `DOTNET_ASPIRE_CONTAINER_RUNTIME` to Podman **before the builder is created**,
+`api/src/AppHost/AppHost.cs` sets `DOTNET_ASPIRE_CONTAINER_RUNTIME` to Podman **before the builder is created**,
 so the default is in source control. The environment variable overrides it for anyone who prefers Docker.
 
 ## Consequences

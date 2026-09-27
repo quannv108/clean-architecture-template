@@ -10,12 +10,16 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
+    defaults:
+      run:
+        working-directory: api
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v7
 
     - name: Check knowledge base (.okf)
+      working-directory: .
       run: python3 .okf/tools/okf.py --check
 
     - name: Setup .NET 10.0
@@ -90,7 +94,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: coverage-report
-        path: coverage/report/
+        path: api/coverage/report/
     
     - name: Add coverage summary to PR
       if: github.event_name == 'pull_request'

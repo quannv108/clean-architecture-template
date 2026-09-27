@@ -13,4 +13,4 @@ automatically when the holding connection closes, so a crashed process cannot ho
 
 The default [distributed lock](../engineering/patterns/distributed-lock.md) provider here - no extra infrastructure,
 because the database is already there. See
-[`PostgresDistributedLockProvider`](../../src/Infrastructure/Locking/PostgresDistributedLockProvider.cs).
+[`PostgresDistributedLockProvider`](../../api/src/Infrastructure/Locking/PostgresDistributedLockProvider.cs).

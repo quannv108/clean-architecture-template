@@ -8,10 +8,10 @@ status: stable
 
 # Audit Trail
 
-Recorded by [`AuditLoggingMiddleware`](../../src/Web.Api/Middleware/AuditLoggingMiddleware.cs) for endpoints marked
+Recorded by [`AuditLoggingMiddleware`](../../api/src/Web.Api/Middleware/AuditLoggingMiddleware.cs) for endpoints marked
 `.WithAuditLog("...")`, following the [4W framework](four-w-framework.md).
 
-Distinct from [`AuditedEntity`](../../src/SharedKernel/AuditedEntity.cs) stamps, which record who last changed a
+Distinct from [`AuditedEntity`](../../api/src/SharedKernel/AuditedEntity.cs) stamps, which record who last changed a
 **row**. The audit trail records an **action**, including reads - which is usually the part compliance cares
 about.
 

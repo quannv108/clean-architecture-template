@@ -10,26 +10,31 @@ status: stable
 
 ```bash
 # Build
-dotnet build CleanArchitecture.slnx
+dotnet build api/CleanArchitecture.slnx
 
 # All tests
-dotnet test CleanArchitecture.slnx
+dotnet test api/CleanArchitecture.slnx
 
 # By project
-dotnet test tests/ArchitectureTests/        # run before completing any work
-dotnet test tests/Application.UnitTests/
-dotnet test tests/Api.IntegrationTests/     # needs a container runtime
+dotnet test api/tests/ArchitectureTests/        # run before completing any work
+dotnet test api/tests/Application.UnitTests/
+dotnet test api/tests/Api.IntegrationTests/     # needs a container runtime
 
 # A single test
-dotnet test tests/Application.UnitTests/ --filter "FullyQualifiedName~MyTestClass.MyTestMethod"
+dotnet test api/tests/Application.UnitTests/ --filter "FullyQualifiedName~MyTestClass.MyTestMethod"
 
 # Full stack with Aspire
-dotnet run --project src/AppHost
+dotnet run --project api/src/AppHost
 
 # The CI pipeline, locally
-./scripts/ci-local.sh        # Linux/macOS
-scripts\ci-local.bat         # Windows
+./api/scripts/ci-local.sh        # Linux/macOS
+api\scripts\ci-local.bat         # Windows
 ```
+
+**SDK pin caveat:** `api/global.json` pins the SDK version, but `dotnet` only reads a `global.json` from the
+current directory upward — so it applies only when the command's cwd is inside `api/` (as `dotnet build
+api/CleanArchitecture.slnx` from the repo root is). Aspire's own `msbuild-sdks` pin in the same file resolves
+from the solution/project directory regardless of cwd, so it always applies.
 
 ## The development loop
 
@@ -39,7 +44,7 @@ whole suite passes.
 **Before declaring anything complete:**
 
 ```bash
-dotnet test tests/ArchitectureTests/
+dotnet test api/tests/ArchitectureTests/
 ```
 
 See [Constraints](../../engineering/constraints.md).

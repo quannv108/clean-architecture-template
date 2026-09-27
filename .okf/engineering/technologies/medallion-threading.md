@@ -10,8 +10,8 @@ status: stable
 # Medallion.Threading
 
 Provides the PostgreSQL advisory lock and Redis lock implementations, wrapped by
-[`DistributedLockAdapter`](../../../src/Infrastructure/Locking/DistributedLockAdapter.cs) so that Application code sees only
-[`IDistributedLockProvider`](../../../src/Application/Abstractions/Locking/IDistributedLockProvider.cs).
+[`DistributedLockAdapter`](../../../api/src/Infrastructure/Locking/DistributedLockAdapter.cs) so that Application code sees only
+[`IDistributedLockProvider`](../../../api/src/Application/Abstractions/Locking/IDistributedLockProvider.cs).
 
 The library type never escapes Infrastructure, so swapping it is a change to one adapter.
 

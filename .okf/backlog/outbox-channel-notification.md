@@ -12,11 +12,11 @@ status: draft
 
 ## Problem
 
-[`OutboxMessageHostedService`](../../src/Infrastructure/Outbox/OutboxMessageHostedService.cs) polls on a fixed interval.
+[`OutboxMessageHostedService`](../../api/src/Infrastructure/Outbox/OutboxMessageHostedService.cs) polls on a fixed interval.
 That is a direct trade between event latency and idle database load: a short interval means a query every
 few seconds forever, most of them returning nothing; a long interval means side effects lag.
 
-[`OutboxSignal`](../../src/Infrastructure/Outbox/OutboxSignal.cs) already softens this in-process, but the timer still runs
+[`OutboxSignal`](../../api/src/Infrastructure/Outbox/OutboxSignal.cs) already softens this in-process, but the timer still runs
 at full rate when nothing is happening.
 
 ## Proposed change
@@ -33,4 +33,4 @@ or written just before a restart, are only found by the timer.
 * Any change here must keep `WaitForOutboxMessagesAsync()` working for integration tests.
 
 Related: [Outbox Pattern](../engineering/patterns/outbox-pattern.md),
-[OutboxOptions](../../src/Application/Outbox/OutboxOptions.cs).
+[OutboxOptions](../../api/src/Application/Outbox/OutboxOptions.cs).

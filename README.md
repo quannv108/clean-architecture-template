@@ -29,9 +29,9 @@ A .NET 10 Clean Architecture template implementing Domain-Driven Design with CQR
 ## Getting Started
 
 ```bash
-dotnet build CleanArchitecture.slnx          # Build
-dotnet test CleanArchitecture.slnx           # Run all tests
-dotnet run --project src/AppHost             # Run the full stack with .NET Aspire
+dotnet build api/CleanArchitecture.slnx          # Build
+dotnet test api/CleanArchitecture.slnx           # Run all tests
+dotnet run --project api/src/AppHost             # Run the full stack with .NET Aspire
 ```
 
 See [.okf/workflows/index.md](.okf/workflows/index.md) for the full command set, formatting, testing
@@ -50,7 +50,7 @@ push and pull request:
 - **PR summary**: coverage is added automatically to pull request checks.
 - **Artifacts**: coverage reports are downloadable from the Actions tab.
 
-Generate coverage locally with `./scripts/ci-local.sh` (Linux/macOS) or `scripts\ci-local.bat` (Windows). The manual
+Generate coverage locally with `./api/scripts/ci-local.sh` (Linux/macOS) or `api\scripts\ci-local.bat` (Windows). The manual
 command set is documented in [.okf/workflows/engineering/generate-coverage.md](.okf/workflows/engineering/generate-coverage.md).
 
 ## Documentation

@@ -27,8 +27,8 @@ deadlocks), or PostgreSQL's own `xmin` system column.
 Map `xmin` to `Entity.Version` as the EF Core row version token. EF then appends `WHERE xmin = @version` to
 every UPDATE; a mismatch affects zero rows and raises `DbUpdateConcurrencyException`.
 
-[`ConcurrencyExceptionDecorator`](../../src/Application/Abstractions/Behaviors/ConcurrencyExceptionDecorator.cs) catches it and returns
-[`ConcurrencyErrors.UpdateConflict()`](../../src/SharedKernel/Concurrency/ConcurrencyErrors.cs), which becomes **HTTP 412** for
+[`ConcurrencyExceptionDecorator`](../../api/src/Application/Abstractions/Behaviors/ConcurrencyExceptionDecorator.cs) catches it and returns
+[`ConcurrencyErrors.UpdateConflict()`](../../api/src/SharedKernel/Concurrency/ConcurrencyErrors.cs), which becomes **HTTP 412** for
 the client to retry.
 
 ## Consequences

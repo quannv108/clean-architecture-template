@@ -8,7 +8,7 @@ status: stable
 
 # Soft Delete
 
-Every [`Entity`](../../src/SharedKernel/Entity.cs) has `IsDeleted`, and a
+Every [`Entity`](../../api/src/SharedKernel/Entity.cs) has `IsDeleted`, and a
 [global query filter](global-query-filter.md) hides flagged rows from ordinary queries.
 
 Keeps history and foreign keys intact, and makes deletion reversible. Costs: tables grow, unique

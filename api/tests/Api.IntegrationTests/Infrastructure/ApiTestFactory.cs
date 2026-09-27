@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -8,6 +6,8 @@ using Application.Abstractions.Communication.Sms;
 using Application.Abstractions.Data;
 using Domain.Emails;
 using Domain.Outbox;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -134,8 +134,12 @@ public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncLifet
         // Stop the host BEFORE the DB container so background services (Outbox processor)
         // can deregister cleanly. Stopping the container first causes DB connection errors
         // that surface as false test failures.
-        try { await base.DisposeAsync(); } catch { /* Dispose errors intentionally swallowed */ }
-        try { await _dbContainer.DisposeAsync(); } catch { /* Dispose errors intentionally swallowed */ }
+        try
+        { await base.DisposeAsync(); }
+        catch { /* Dispose errors intentionally swallowed */ }
+        try
+        { await _dbContainer.DisposeAsync(); }
+        catch { /* Dispose errors intentionally swallowed */ }
         await Log.CloseAndFlushAsync();
     }
 

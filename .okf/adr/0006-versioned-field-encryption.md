@@ -24,11 +24,11 @@ downtime.
 
 ## Decision
 
-A [`EncryptedString`](../../src/SharedKernel/EncryptedString.cs) property type stored as
+A [`EncryptedString`](../../api/src/SharedKernel/EncryptedString.cs) property type stored as
 `{KeyVersion}:{CipherText}`, converted transparently by
-[`EncryptedStringConverter`](../../src/Infrastructure/Database/Converters/EncryptedStringConverter.cs) calling
-[`IEncryptor`](../../src/Application/Abstractions/Cryptography/IEncryptor.cs).
-[`EncryptionOptions`](../../src/Application/Abstractions/Cryptography/EncryptionOptions.cs) holds the current version, its key, and
+[`EncryptedStringConverter`](../../api/src/Infrastructure/Database/Converters/EncryptedStringConverter.cs) calling
+[`IEncryptor`](../../api/src/Application/Abstractions/Cryptography/IEncryptor.cs).
+[`EncryptionOptions`](../../api/src/Application/Abstractions/Cryptography/EncryptionOptions.cs) holds the current version, its key, and
 `LegacyKeys` for previous versions.
 
 Rotation is a configuration change: increment `CurrentVersion`, add the new key, move the old one to
@@ -41,7 +41,7 @@ optional background task rather than a prerequisite.
 entire developer-facing API. Mixed-version data is normal rather than an error state.
 
 **Costly.** Encrypted columns cannot be indexed, sorted, or compared server-side - equality lookup needs a
-separate deterministic hash ([`IHasher`](../../src/Application/Abstractions/Cryptography/IHasher.cs)) alongside. Ciphertext is larger than
+separate deterministic hash ([`IHasher`](../../api/src/Application/Abstractions/Cryptography/IHasher.cs)) alongside. Ciphertext is larger than
 plaintext, so column sizes need headroom. Key management moves outside the application, and **removing a
 legacy key before every row is re-encrypted makes those rows permanently unreadable** - the failure surfaces
 far from its cause, as "Encryption key version X not found".

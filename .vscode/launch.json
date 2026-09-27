@@ -6,8 +6,8 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/AppHost/bin/Debug/net10.0/AppHost.dll",
-            "cwd": "${workspaceFolder}/src/AppHost",
+            "program": "${workspaceFolder}/api/src/AppHost/bin/Debug/net10.0/AppHost.dll",
+            "cwd": "${workspaceFolder}/api/src/AppHost",
             "console": "integratedTerminal",
             "stopAtEntry": false,
             "serverReadyAction": {
@@ -27,9 +27,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Web.Api/bin/Debug/net10.0/Web.Api.dll",
+            "program": "${workspaceFolder}/api/src/Web.Api/bin/Debug/net10.0/Web.Api.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/Web.Api",
+            "cwd": "${workspaceFolder}/api/src/Web.Api",
             "console": "integratedTerminal",
             "stopAtEntry": false,
             "serverReadyAction": {

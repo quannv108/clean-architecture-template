@@ -33,7 +33,7 @@ public static Result<Order> Create(Guid customerId, string reference)
 }
 ```
 
-Real instance: [`EmailMessage.cs`](../../../src/Domain/Emails/EmailMessage.cs).
+Real instance: [`EmailMessage.cs`](../../../api/src/Domain/Emails/EmailMessage.cs).
 
 ## What belongs in the factory, and what does not
 
@@ -48,4 +48,4 @@ and `Domain/DomainTests.cs` asserts the entity shape.
 * [Entity Template](../../domains/_templates/entity.md) - the `.okf` page to write for a new entity
 * [Command Handler](command-handler.md) - the caller
 * [Domain Event](domain-event.md) - what behaviour methods raise
-* [`Result.cs`](../../../src/SharedKernel/Result.cs), [`Error.cs`](../../../src/SharedKernel/Error.cs)
+* [`Result.cs`](../../../api/src/SharedKernel/Result.cs), [`Error.cs`](../../../api/src/SharedKernel/Error.cs)

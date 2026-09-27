@@ -2,7 +2,7 @@
 type: Pattern
 title: "Domain Event"
 description: "Define, raise and handle a domain event: an immutable record carrying ids, raised in a behaviour method, handled asynchronously."
-resource: src/Domain
+resource: api/src/Domain
 tags: [domain-events, ddd, async]
 status: stable
 ---
@@ -11,7 +11,7 @@ status: stable
 
 ## 1. Define the event
 
-`src/Domain/<Feature>/<Event>DomainEvent.cs` - an immutable positional record with the `DomainEvent`
+`api/src/Domain/<Feature>/<Event>DomainEvent.cs` - an immutable positional record with the `DomainEvent`
 suffix:
 
 ```csharp
@@ -35,7 +35,7 @@ Raise(new OrderConfirmedDomainEvent(Id));
 
 ## 3. Handle it
 
-`src/Application/<Feature>/Events/<Event>DomainEventHandler.cs` - an `internal sealed class` implementing
+`api/src/Application/<Feature>/Events/<Event>DomainEventHandler.cs` - an `internal sealed class` implementing
 `IDomainEventHandler<TEvent>`, injecting whatever the reaction needs (`IApplicationDbContext`, a sender).
 Several handlers may subscribe to one event; all run.
 
@@ -57,4 +57,4 @@ Event type names are stored in existing outbox rows. Renaming or moving an event
 of messages already written - drain the outbox first, or keep a compatibility mapping.
 
 Worked example: [`EmailSentDomainEvent`](../../domains/emails/email-sent-domain-event.md) and
-[its handler](../../../src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs).
+[its handler](../../../api/src/Application/ExampleDomainA/Events/EmailSentDomainEventHandler.cs).

@@ -13,8 +13,8 @@ public static class ConcurrencyErrors
     public static Error UpdateConflict(string entityType) => Error.Conflict(
         "Concurrency.UpdateConflict",
         $"One or more {entityType} entities were modified by another user. Please refresh and try again.");
-    
-    public static Error UpdateConflict() =>  Error.Conflict(
+
+    public static Error UpdateConflict() => Error.Conflict(
         "Concurrency.UpdateConflict",
         "The data was modified by another user. Please refresh and try again.");
 }

@@ -97,4 +97,4 @@ CI runs the same command, so a bypass with `--no-verify` still fails the pull re
 
 * `python3 .okf/tools/okf.py --check` exits 0.
 * The new file appears in [Bundle Map](../../map.md) with the right type and description.
-* `dotnet test tests/ArchitectureTests/` still passes if the change touched a constraint.
+* `dotnet test api/tests/ArchitectureTests/` still passes if the change touched a constraint.

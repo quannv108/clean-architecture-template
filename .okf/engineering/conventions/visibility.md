@@ -35,6 +35,6 @@ EF Core scaffolds migrations as `public`. **Change both the migration class and 
 `internal partial`**, every time. The architecture tests catch it, which is the only reason anyone
 remembers. See [Add an EF Core Migration](../../workflows/engineering/add-ef-migration.md).
 
-Enforced by `tests/ArchitectureTests/Infrastructure/InfrastructureTests.cs` and
+Enforced by `api/tests/ArchitectureTests/Infrastructure/InfrastructureTests.cs` and
 `Presentation/PresentationTests.cs` -
 [Visibility](visibility.md).
