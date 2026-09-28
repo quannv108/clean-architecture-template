@@ -22,7 +22,7 @@ public class GetOutboxTypeErrorsQueryHandlerTests
     public async Task Handle_ShouldOnlyReturnFailedMessages_OfRequestedType()
     {
         // Arrange
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var failedTarget = CreateFailedMessage(now.AddMinutes(-5));
         var processedTarget = CreateMessage(now.AddMinutes(-4));
         processedTarget.MarkAsProcessing("m");
@@ -47,7 +47,7 @@ public class GetOutboxTypeErrorsQueryHandlerTests
     public async Task Handle_ShouldOrderByOccurredOnUtcDescending_CappedAtTake()
     {
         // Arrange - seed 7 failures, expect the 5 newest, newest first
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var failures = Enumerable.Range(0, 7)
             .Select(i => CreateFailedMessage(now.AddMinutes(-i)))
             .ToList();
@@ -67,7 +67,7 @@ public class GetOutboxTypeErrorsQueryHandlerTests
     public async Task Handle_ShouldIgnoreWindow_AndReturnOldFailures()
     {
         // Arrange
-        var oldFailure = CreateFailedMessage(DateTime.UtcNow.AddYears(-2));
+        var oldFailure = CreateFailedMessage(DateTimeOffset.UtcNow.AddYears(-2));
         var messagesDbSet = new List<OutboxMessage> { oldFailure }.BuildMockDbSet();
         _dbContext.OutboxMessages.Returns(messagesDbSet);
 
@@ -83,9 +83,9 @@ public class GetOutboxTypeErrorsQueryHandlerTests
     public async Task Handle_ShouldReturnEmptyList_WhenNoFailures()
     {
         // Arrange
-        var processed = CreateMessage(DateTime.UtcNow);
+        var processed = CreateMessage(DateTimeOffset.UtcNow);
         processed.MarkAsProcessing("m");
-        processed.MarkAsProcessed(DateTime.UtcNow, "m");
+        processed.MarkAsProcessed(DateTimeOffset.UtcNow, "m");
         var messagesDbSet = new List<OutboxMessage> { processed }.BuildMockDbSet();
         _dbContext.OutboxMessages.Returns(messagesDbSet);
 
@@ -97,10 +97,10 @@ public class GetOutboxTypeErrorsQueryHandlerTests
         result.Value.Errors.ShouldBeEmpty();
     }
 
-    private static OutboxMessage CreateMessage(DateTime occurredOnUtc) =>
+    private static OutboxMessage CreateMessage(DateTimeOffset occurredOnUtc) =>
         OutboxMessage.Create(new EmailSentDomainEvent(Guid.CreateVersion7()), occurredOnUtc);
 
-    private static OutboxMessage CreateFailedMessage(DateTime occurredOnUtc)
+    private static OutboxMessage CreateFailedMessage(DateTimeOffset occurredOnUtc)
     {
         var message = CreateMessage(occurredOnUtc);
         message.MarkAsProcessing("test-machine");

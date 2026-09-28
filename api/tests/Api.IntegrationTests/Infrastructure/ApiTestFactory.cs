@@ -148,7 +148,7 @@ public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncLifet
     /// processed by the background hosted service. Does NOT trigger processing manually.
     /// </summary>
     public async Task WaitForOutboxMessagesAsync(
-        DateTime since,
+        DateTimeOffset since,
         string[]? eventTypes = null,
         int maxAttempts = 50)
     {
@@ -201,7 +201,7 @@ public sealed class ApiTestFactory : WebApplicationFactory<Program>, IAsyncLifet
     /// <summary>
     /// Backward-compatible: waits for any outbox messages created in the last 30 seconds to be processed.
     /// </summary>
-    public Task ProcessDomainEventsAsync() => WaitForOutboxMessagesAsync(DateTime.UtcNow.AddSeconds(-30));
+    public Task ProcessDomainEventsAsync() => WaitForOutboxMessagesAsync(DateTimeOffset.UtcNow.AddSeconds(-30));
 
     public object GetDbContext()
     {

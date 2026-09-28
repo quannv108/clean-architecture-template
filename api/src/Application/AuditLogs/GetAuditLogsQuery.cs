@@ -11,21 +11,21 @@ public sealed record GetAuditLogsQuery : IQuery<GetAuditLogsResponse>
     public Guid? TenantId { get; init; }
     [RegularId] public Guid? UserId { get; init; } = null;
     public string? ActionName { get; init; }
-    public DateTime? FromDateTime { get; init; }
-    public DateTime? ToDateTime { get; init; }
+    public DateTimeOffset? FromDateTime { get; init; }
+    public DateTimeOffset? ToDateTime { get; init; }
     public int Take { get; init; } = 50;
 }
 
 public sealed record GetAuditLogsResponse(
     List<AuditLogResponse> AuditLogs,
-    DateTime? LastActionDateTime,
+    DateTimeOffset? LastActionDateTime,
     bool HasMore);
 
 public sealed record AuditLogResponse(
     Guid Id,
     Guid UserId,
     string ActionName,
-    DateTime ActionDateTime,
+    DateTimeOffset ActionDateTime,
     string? Path,
     string? IpAddress,
     int? HttpResponseCode,
@@ -67,12 +67,15 @@ internal sealed class GetAuditLogsQueryHandler(IReadOnlyApplicationDbContext con
 
         if (query.FromDateTime.HasValue)
         {
-            queryable = queryable.Where(a => a.ActionDateTime >= query.FromDateTime.Value);
+            // Client input may carry any offset; Npgsql only accepts offset 0 for timestamptz parameters.
+            var from = query.FromDateTime.Value.ToUniversalTime();
+            queryable = queryable.Where(a => a.ActionDateTime >= from);
         }
 
         if (query.ToDateTime.HasValue)
         {
-            queryable = queryable.Where(a => a.ActionDateTime <= query.ToDateTime.Value);
+            var to = query.ToDateTime.Value.ToUniversalTime();
+            queryable = queryable.Where(a => a.ActionDateTime <= to);
         }
 
         // Order by ActionDateTime descending (newest first)
@@ -92,7 +95,7 @@ internal sealed class GetAuditLogsQueryHandler(IReadOnlyApplicationDbContext con
 
         var lastActionDateTime = auditLogs.Count > 0
             ? auditLogs[^1].ActionDateTime
-            : (DateTime?)null;
+            : (DateTimeOffset?)null;
 
         var auditLogsResponse = auditLogs.Select(a => new AuditLogResponse(
                 a.Id,

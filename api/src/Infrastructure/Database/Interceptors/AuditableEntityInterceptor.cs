@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Authentication;
-using Application.Abstractions.Time;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -9,16 +8,16 @@ namespace Infrastructure.Database.Interceptors;
 
 internal sealed class AuditableEntityInterceptor : SaveChangesInterceptor
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly TimeProvider _timeProvider;
     private readonly IUserContext _userContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AuditableEntityInterceptor(
-        IDateTimeProvider dateTimeProvider,
+        TimeProvider timeProvider,
         IUserContext userContext,
         IHttpContextAccessor httpContextAccessor)
     {
-        _dateTimeProvider = dateTimeProvider;
+        _timeProvider = timeProvider;
         _userContext = userContext;
         _httpContextAccessor = httpContextAccessor;
     }
@@ -50,7 +49,7 @@ internal sealed class AuditableEntityInterceptor : SaveChangesInterceptor
 
     private void UpdateAuditableEntities(DbContext context)
     {
-        var utcNow = _dateTimeProvider.UtcNow;
+        var utcNow = _timeProvider.GetUtcNow();
 
         // Safely get the user ID, handling cases where there's no authenticated user
         Guid? userId = null;

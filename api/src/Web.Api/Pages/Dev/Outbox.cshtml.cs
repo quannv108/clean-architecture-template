@@ -24,7 +24,7 @@ internal sealed class OutboxModel(IQueryHandler<GetOutboxStatsQuery, GetOutboxSt
 
     public async Task OnGetAsync(CancellationToken cancellationToken)
     {
-        var sinceUtc = DateTime.UtcNow.AddDays(Window == "7d" ? -7 : -1);
+        var sinceUtc = DateTimeOffset.UtcNow.AddDays(Window == "7d" ? -7 : -1);
 
         var result = await handler.Handle(new GetOutboxStatsQuery(sinceUtc), cancellationToken);
 

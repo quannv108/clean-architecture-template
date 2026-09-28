@@ -22,11 +22,7 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
             .HasColumnType("jsonb");
 
         builder.Property(o => o.OccurredOnUtc)
-            .IsRequired()
-            .HasConversion(d => DateTime.SpecifyKind(d, DateTimeKind.Utc), v => v);
-
-        builder.Property(o => o.ProcessedOnUtc)
-            .HasConversion(d => d.HasValue ? DateTime.SpecifyKind(d.Value, DateTimeKind.Utc) : d, v => v);
+            .IsRequired();
 
         builder.Property(o => o.Error)
             .HasMaxLength(4000);

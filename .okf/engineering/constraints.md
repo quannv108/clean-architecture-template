@@ -29,6 +29,7 @@ violation; "review" means nothing automated does.
 | Infrastructure types, handlers and endpoints are `internal`; migrations and their `.Designer.cs` are `internal partial` | `Infrastructure/InfrastructureTests.cs`, `Presentation/PresentationTests.cs`, `CodeQuality/CodeQualityTests.cs` | [Visibility](conventions/visibility.md) |
 | Every endpoint implements `IEndpoint` and declares its full OpenAPI contract | `Presentation/PresentationTests.cs` (structure); the builder chain is review | [Minimal API Endpoint](patterns/minimal-api-endpoint.md) |
 | `*Errors` classes live in Domain or SharedKernel, never Application or Web.Api | `api/tests/ArchitectureTests` | [Error Codes](conventions/error-codes.md) |
+| Persisted timestamps are `DateTimeOffset` mapped to `timestamp with time zone`, never `DateTime` | `Infrastructure/PersistenceTests.cs` | [Persistence](../architecture/cross-cutting/persistence.md) |
 | Tests use NSubstitute and Shouldly, not Moq and FluentAssertions | `Testing/TestingStandardsTests.cs` | [Test Architecture](../architecture/delivery/test-architecture.md) |
 | Configuration is read through `IOptions<T>`, never `IConfiguration` | review - a NetArchTest rule on constructor parameters would close the gap | [Options Pattern](patterns/options-pattern.md) |
 | No `ExecuteUpdate` / `ExecuteDelete` in command handlers | review - the failure is silent at runtime, which is what makes it worth a rule | [Data Access](../architecture/cross-cutting/data-access.md) |

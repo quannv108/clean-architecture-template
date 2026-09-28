@@ -13,8 +13,8 @@ The only mocking library in this solution. `api/tests/ArchitectureTests/Testing/
 the build if Moq appears.
 
 ```csharp
-var clock = Substitute.For<IDateTimeProvider>();
-clock.UtcNow.Returns(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+var clock = Substitute.For<TimeProvider>();
+clock.GetUtcNow().Returns(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
 ```
 
 `DbSet` is mocked with `BuildMock()` from **MockQueryable.NSubstitute**.

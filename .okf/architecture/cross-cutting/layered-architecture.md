@@ -45,9 +45,10 @@ invert: Application declares the interface, Infrastructure implements it.
 ## The inversion that makes it work
 
 Application needs to send email, hash a password and read the clock - all infrastructure concerns. It
-declares `IEmailSender`, `IHasher` and `IDateTimeProvider` in `Application/Abstractions/` and depends on
+declares `IEmailSender` and `IHasher` in `Application/Abstractions/` and depends on
 those. Infrastructure implements them and registers them in DI. The dependency arrow still points inward
-because Infrastructure references Application, not the reverse.
+because Infrastructure references Application, not the reverse. The clock needs no abstraction of ours: the
+BCL `TimeProvider` already is one, and Infrastructure registers `TimeProvider.System`.
 
 ## Related
 

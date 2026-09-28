@@ -35,6 +35,7 @@ Contexts are `internal`. See [Visibility](../../engineering/conventions/visibili
 | `EncryptedString` transparently encrypted | [`EncryptedStringConverter`](../../../api/src/Infrastructure/Database/Converters/EncryptedStringConverter.cs) |
 | Version 7 GUID ids assigned on add | [`EntityIdGenerationInterceptor`](../../../api/src/Infrastructure/Database/Interceptors/EntityIdGenerationInterceptor.cs) |
 | Created/modified stamps | [`AuditableEntityInterceptor`](../../../api/src/Infrastructure/Database/Interceptors/AuditableEntityInterceptor.cs) |
+| Timestamps are `DateTimeOffset` in `timestamp with time zone`, UTC only (Npgsql rejects other offsets, so normalize input with `ToUniversalTime()`) | [`PersistenceTests`](../../../api/tests/ArchitectureTests/Infrastructure/PersistenceTests.cs) |
 
 ## Per-entity configuration
 

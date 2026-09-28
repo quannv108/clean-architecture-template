@@ -62,7 +62,7 @@ internal sealed partial class OutboxMessageProcessor(
             .AsNoTracking()
             .Where(m => m.Status == OutboxMessageStatus.Pending &&
                         m.ProcessedOnUtc == null &&
-                        m.OccurredOnUtc <= DateTime.UtcNow)
+                        m.OccurredOnUtc <= DateTimeOffset.UtcNow)
             .OrderBy(m => m.OccurredOnUtc)
             .Take(batchSize)
             .ToListAsync(cancellationToken);
@@ -138,7 +138,7 @@ internal sealed partial class OutboxMessageProcessor(
                 await domainEventsDispatcher.DispatchAsync(new[] { domainEvent }, CancellationToken.None);
 
                 // Update the outbox message as processed
-                outboxMessage.MarkAsProcessed(DateTime.UtcNow, Environment.MachineName);
+                outboxMessage.MarkAsProcessed(DateTimeOffset.UtcNow, Environment.MachineName);
                 dbContext.OutboxMessages.Update(outboxMessage);
                 await dbContext.SaveChangesAsync(CancellationToken.None);
                 timer.Stop();

@@ -18,7 +18,7 @@ public sealed record CreateAuditLogCommand : ICommand<Guid>, IValidatableObject
     public string ActionName { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Action date time is required")]
-    public DateTime ActionDateTime { get; set; }
+    public DateTimeOffset ActionDateTime { get; set; }
 
     [Required(ErrorMessage = "URL path is required")]
     public Uri UrlPath { get; set; } = null!;
@@ -50,7 +50,7 @@ public sealed record CreateAuditLogCommand : ICommand<Guid>, IValidatableObject
                 new[] { nameof(ActionDateTime) });
         }
 
-        if (ActionDateTime > DateTime.UtcNow.AddMinutes(5))
+        if (ActionDateTime > DateTimeOffset.UtcNow.AddMinutes(5))
         {
             yield return new ValidationResult(
                 "Action date time cannot be in the future",

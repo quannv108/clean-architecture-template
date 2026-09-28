@@ -1,6 +1,5 @@
 using Application.Abstractions.Data;
 using Application.Abstractions.Messaging;
-using Application.Abstractions.Time;
 using Domain.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,7 +11,7 @@ public sealed record CleanupProcessedOutboxMessagesCommand : ICommand<int>;
 
 internal sealed partial class CleanupProcessedOutboxMessagesCommandHandler(
     IApplicationDbContext dbContext,
-    IDateTimeProvider dateTimeProvider,
+    TimeProvider timeProvider,
     ILogger<CleanupProcessedOutboxMessagesCommandHandler> logger)
     : ICommandHandler<CleanupProcessedOutboxMessagesCommand, int>
 {
@@ -21,7 +20,7 @@ internal sealed partial class CleanupProcessedOutboxMessagesCommandHandler(
     {
         try
         {
-            var now = dateTimeProvider.UtcNow;
+            var now = timeProvider.GetUtcNow();
             var oneMonthAgo = now.AddMonths(-1);
 
             // Delete processed outbox messages that were last updated before last month
@@ -45,7 +44,7 @@ internal sealed partial class CleanupProcessedOutboxMessagesCommandHandler(
 
     [LoggerMessage(Level = LogLevel.Information,
         Message = "Outbox message cleanup completed. Deleted {DeletedCount} processed outbox messages older than {CutoffDate}")]
-    private partial void LogCleanupCompleted(int deletedCount, DateTime cutoffDate);
+    private partial void LogCleanupCompleted(int deletedCount, DateTimeOffset cutoffDate);
 
     [LoggerMessage(Level = LogLevel.Error, Message = "Error occurred while cleaning up outbox messages")]
     private partial void LogCleanupFailed(Exception exception);
