@@ -7,8 +7,8 @@ public sealed class OutboxMessage : Entity
 {
     public string Type { get; private set; } = string.Empty;
     public string Content { get; private set; } = null!;
-    public DateTime OccurredOnUtc { get; private set; }
-    public DateTime? ProcessedOnUtc { get; private set; }
+    public DateTimeOffset OccurredOnUtc { get; private set; }
+    public DateTimeOffset? ProcessedOnUtc { get; private set; }
     public string? Error { get; private set; }
     public string? ProcessedByMachine { get; private set; }
     public OutboxMessageStatus Status { get; private set; }
@@ -31,7 +31,7 @@ public sealed class OutboxMessage : Entity
     // Private constructor to enforce factory method usage
     private OutboxMessage() { }
 
-    public static OutboxMessage Create(IDomainEvent domainEvent, DateTime occurredOnUtc)
+    public static OutboxMessage Create(IDomainEvent domainEvent, DateTimeOffset occurredOnUtc)
     {
         var item = new OutboxMessage
         {
@@ -50,7 +50,7 @@ public sealed class OutboxMessage : Entity
         Status = OutboxMessageStatus.Processing;
     }
 
-    public void MarkAsProcessed(DateTime processedOnUtc, string processedByMachine)
+    public void MarkAsProcessed(DateTimeOffset processedOnUtc, string processedByMachine)
     {
         ProcessedOnUtc = processedOnUtc;
         ProcessedByMachine = processedByMachine;

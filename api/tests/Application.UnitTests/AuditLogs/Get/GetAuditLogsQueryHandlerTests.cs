@@ -22,8 +22,8 @@ public class GetAuditLogsQueryHandlerTests
         var userId = Guid.NewGuid();
         var auditLogs = new List<AuditLog>
         {
-            AuditLog.Create(userId, "Action 1", DateTime.UtcNow, new Uri("http://example.com/action1")).Value,
-            AuditLog.Create(userId, "Action 2", DateTime.UtcNow.AddMinutes(-10), new Uri("http://example.com/action2"))
+            AuditLog.Create(userId, "Action 1", DateTimeOffset.UtcNow, new Uri("http://example.com/action1")).Value,
+            AuditLog.Create(userId, "Action 2", DateTimeOffset.UtcNow.AddMinutes(-10), new Uri("http://example.com/action2"))
                 .Value
         }.BuildMockDbSet();
         _dbContext.AuditLogs.Returns(auditLogs);
@@ -71,8 +71,8 @@ public class GetAuditLogsQueryHandlerTests
         var userId2 = Guid.NewGuid();
         var auditLogs = new List<AuditLog>
         {
-            AuditLog.Create(userId1, "Action 1", DateTime.UtcNow, new Uri("http://example.com/action1")).Value,
-            AuditLog.Create(userId2, "Action 2", DateTime.UtcNow.AddMinutes(-10), new Uri("http://example.com/action2"))
+            AuditLog.Create(userId1, "Action 1", DateTimeOffset.UtcNow, new Uri("http://example.com/action1")).Value,
+            AuditLog.Create(userId2, "Action 2", DateTimeOffset.UtcNow.AddMinutes(-10), new Uri("http://example.com/action2"))
                 .Value
         }.BuildMockDbSet();
         _dbContext.AuditLogs.Returns(auditLogs);
@@ -100,8 +100,8 @@ public class GetAuditLogsQueryHandlerTests
         var userId = Guid.NewGuid();
         var auditLogs = new List<AuditLog>
         {
-            AuditLog.Create(userId, "UserLogin", DateTime.UtcNow, new Uri("http://example.com/login")).Value,
-            AuditLog.Create(userId, "UserLogout", DateTime.UtcNow.AddMinutes(-10), new Uri("http://example.com/logout"))
+            AuditLog.Create(userId, "UserLogin", DateTimeOffset.UtcNow, new Uri("http://example.com/login")).Value,
+            AuditLog.Create(userId, "UserLogout", DateTimeOffset.UtcNow.AddMinutes(-10), new Uri("http://example.com/logout"))
                 .Value
         }.BuildMockDbSet();
         _dbContext.AuditLogs.Returns(auditLogs);
@@ -127,7 +127,7 @@ public class GetAuditLogsQueryHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var baseTime = DateTime.UtcNow;
+        var baseTime = DateTimeOffset.UtcNow;
         var auditLogs = new List<AuditLog>
         {
             AuditLog.Create(userId, "Action 1", baseTime.AddMinutes(-30), new Uri("http://example.com/action1")).Value,
@@ -161,7 +161,7 @@ public class GetAuditLogsQueryHandlerTests
         var auditLogs = new List<AuditLog>();
         for (int i = 0; i < 6; i++)
         {
-            auditLogs.Add(AuditLog.Create(userId, $"Action {i}", DateTime.UtcNow.AddMinutes(-i),
+            auditLogs.Add(AuditLog.Create(userId, $"Action {i}", DateTimeOffset.UtcNow.AddMinutes(-i),
                 new Uri($"http://example.com/action{i}")).Value);
         }
 
@@ -187,7 +187,7 @@ public class GetAuditLogsQueryHandlerTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        var baseTime = DateTime.UtcNow;
+        var baseTime = DateTimeOffset.UtcNow;
         var auditLogs = new List<AuditLog>
         {
             AuditLog.Create(userId, "Action 1", baseTime.AddMinutes(-30), new Uri("http://example.com/action1")).Value,
@@ -219,7 +219,7 @@ public class GetAuditLogsQueryHandlerTests
         var userId = Guid.NewGuid();
         var auditLogs = new List<AuditLog>
         {
-            AuditLog.Create(userId, "Action 1", DateTime.UtcNow, new Uri("http://example.com/action1")).Value
+            AuditLog.Create(userId, "Action 1", DateTimeOffset.UtcNow, new Uri("http://example.com/action1")).Value
         }.BuildMockDbSet();
         _dbContext.AuditLogs.Returns(auditLogs);
         var query = new GetAuditLogsQuery
@@ -266,7 +266,7 @@ public class GetAuditLogsQueryHandlerTests
         var auditLogs = new List<AuditLog>();
         for (int i = 0; i < 100; i++)
         {
-            auditLogs.Add(AuditLog.Create(userId, $"Action {i}", DateTime.UtcNow.AddMinutes(-i),
+            auditLogs.Add(AuditLog.Create(userId, $"Action {i}", DateTimeOffset.UtcNow.AddMinutes(-i),
                 new Uri($"http://example.com/action{i}")).Value);
         }
 

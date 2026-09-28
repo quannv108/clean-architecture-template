@@ -64,7 +64,7 @@ internal sealed partial class AuditLoggingMiddleware
             return new AuditRequestData(
                 userContext.UserId.Value,
                 auditMetadata.ActionName,
-                DateTime.UtcNow,
+                DateTimeOffset.UtcNow,
                 new Uri(context.Request.Path + context.Request.QueryString, UriKind.Relative),
                 context.GetClientIpAddress(),
                 userContext.TenantId);
@@ -74,7 +74,7 @@ internal sealed partial class AuditLoggingMiddleware
         return new AuditRequestData(
             SystemConstants.AnonymousUserId,
             auditMetadata.ActionName,
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow,
             new Uri(context.Request.Path + context.Request.QueryString, UriKind.Relative),
             context.GetClientIpAddress(),
             SystemConstants.SystemTenantId);
@@ -102,7 +102,7 @@ internal sealed partial class AuditLoggingMiddleware
     private sealed record AuditRequestData(
         Guid UserId,
         string ActionName,
-        DateTime ActionDateTime,
+        DateTimeOffset ActionDateTime,
         Uri UrlPath,
         string? IpAddress,
         Guid? TenantId);

@@ -20,7 +20,7 @@ public class GetOutboxStatsQueryHandlerTests
     public async Task Handle_ShouldFoldCountsPerStatus_IntoDictionary()
     {
         // Arrange
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var messages = new List<OutboxMessage>
         {
             CreateMessage(now.AddMinutes(-10), OutboxMessageStatus.Pending),
@@ -48,7 +48,7 @@ public class GetOutboxStatsQueryHandlerTests
     public async Task Handle_SuccessRate_ShouldOnlyConsiderTerminalStatuses()
     {
         // Arrange - 3 Processed + 1 Failed + 2 Pending => rate based on 4 terminal (3/4 = 0.75)
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var messages = new List<OutboxMessage>
         {
             CreateMessage(now, OutboxMessageStatus.Processed),
@@ -73,7 +73,7 @@ public class GetOutboxStatsQueryHandlerTests
     public async Task Handle_SuccessRate_ShouldBeZero_WhenOnlyPendingOrProcessing()
     {
         // Arrange
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var messages = new List<OutboxMessage>
         {
             CreateMessage(now, OutboxMessageStatus.Pending),
@@ -94,7 +94,7 @@ public class GetOutboxStatsQueryHandlerTests
     public async Task Handle_ShouldExcludeMessages_OlderThanSinceUtc()
     {
         // Arrange
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var sinceUtc = now.AddHours(-1);
         var messages = new List<OutboxMessage>
         {
@@ -120,14 +120,14 @@ public class GetOutboxStatsQueryHandlerTests
         _dbContext.OutboxMessages.Returns(messagesDbSet);
 
         // Act
-        var result = await _handler.Handle(new GetOutboxStatsQuery(DateTime.UtcNow.AddDays(-1)), CancellationToken.None);
+        var result = await _handler.Handle(new GetOutboxStatsQuery(DateTimeOffset.UtcNow.AddDays(-1)), CancellationToken.None);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
         result.Value.Types.ShouldBeEmpty();
     }
 
-    private static OutboxMessage CreateMessage(DateTime occurredOnUtc, OutboxMessageStatus status)
+    private static OutboxMessage CreateMessage(DateTimeOffset occurredOnUtc, OutboxMessageStatus status)
     {
         var message = OutboxMessage.Create(new EmailSentDomainEvent(Guid.CreateVersion7()), occurredOnUtc);
 

@@ -29,8 +29,8 @@ internal sealed class GetAuditLogs : IEndpoint
         Guid? tenantId,
         Guid? userId,
         string? actionName,
-        DateTime? fromDateTime,
-        DateTime? toDateTime,
+        DateTimeOffset? fromDateTime,
+        DateTimeOffset? toDateTime,
         int? take,
         IQueryHandler<GetAuditLogsQuery, GetAuditLogsResponse> queryHandler,
         CancellationToken cancellationToken)

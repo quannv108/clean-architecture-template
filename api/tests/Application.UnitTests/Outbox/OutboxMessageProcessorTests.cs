@@ -71,7 +71,7 @@ public class OutboxMessageProcessorTests
         // Arrange
         var id1 = Guid.NewGuid();
         var domainEvent = new EmailSentDomainEvent(id1);
-        var outboxMessage = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-5));
+        var outboxMessage = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { outboxMessage };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -109,9 +109,9 @@ public class OutboxMessageProcessorTests
         var event2 = new EmailSentDomainEvent(id2);
         var event3 = new EmailSentDomainEvent(id3);
 
-        var message1 = CreateOutboxMessage(event1, DateTime.UtcNow.AddMinutes(-10));
-        var message2 = CreateOutboxMessage(event2, DateTime.UtcNow.AddMinutes(-8));
-        var message3 = CreateOutboxMessage(event3, DateTime.UtcNow.AddMinutes(-5));
+        var message1 = CreateOutboxMessage(event1, DateTimeOffset.UtcNow.AddMinutes(-10));
+        var message2 = CreateOutboxMessage(event2, DateTimeOffset.UtcNow.AddMinutes(-8));
+        var message3 = CreateOutboxMessage(event3, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { message1, message2, message3 };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -143,7 +143,7 @@ public class OutboxMessageProcessorTests
         // Arrange
         var id1 = Guid.NewGuid();
         var domainEvent = new EmailSentDomainEvent(id1);
-        var outboxMessage = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-5));
+        var outboxMessage = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { outboxMessage };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -178,7 +178,7 @@ public class OutboxMessageProcessorTests
         {
             var userId = Guid.NewGuid();
             var domainEvent = new EmailSentDomainEvent(userId);
-            var message = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-10 + i));
+            var message = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-10 + i));
             messages.Add(message);
         }
 
@@ -204,7 +204,7 @@ public class OutboxMessageProcessorTests
     public async Task ProcessAsync_ShouldOnlyProcessMessagesWithOccurredOnUtcInPast()
     {
         // Arrange
-        var now = DateTime.UtcNow;
+        var now = DateTimeOffset.UtcNow;
         var userId1 = Guid.NewGuid();
         var userId2 = Guid.NewGuid();
 
@@ -241,9 +241,9 @@ public class OutboxMessageProcessorTests
         var event2 = new EmailSentDomainEvent(id2);
         var event3 = new EmailSentDomainEvent(id3);
 
-        var message1 = CreateOutboxMessage(event1, DateTime.UtcNow.AddMinutes(-10)); // Oldest
-        var message2 = CreateOutboxMessage(event2, DateTime.UtcNow.AddMinutes(-5)); // Middle
-        var message3 = CreateOutboxMessage(event3, DateTime.UtcNow.AddMinutes(-1)); // Newest
+        var message1 = CreateOutboxMessage(event1, DateTimeOffset.UtcNow.AddMinutes(-10)); // Oldest
+        var message2 = CreateOutboxMessage(event2, DateTimeOffset.UtcNow.AddMinutes(-5)); // Middle
+        var message3 = CreateOutboxMessage(event3, DateTimeOffset.UtcNow.AddMinutes(-1)); // Newest
 
         // Add in random order
         var messages = new List<OutboxMessage> { message3, message1, message2 };
@@ -281,12 +281,12 @@ public class OutboxMessageProcessorTests
         var event2 = new EmailSentDomainEvent(id2);
         var event3 = new EmailSentDomainEvent(id3);
 
-        var pendingMessage = CreateOutboxMessage(event1, DateTime.UtcNow.AddMinutes(-10));
-        var processedMessage = CreateOutboxMessage(event2, DateTime.UtcNow.AddMinutes(-8));
-        var failedMessage = CreateOutboxMessage(event3, DateTime.UtcNow.AddMinutes(-5));
+        var pendingMessage = CreateOutboxMessage(event1, DateTimeOffset.UtcNow.AddMinutes(-10));
+        var processedMessage = CreateOutboxMessage(event2, DateTimeOffset.UtcNow.AddMinutes(-8));
+        var failedMessage = CreateOutboxMessage(event3, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         // Mark messages as processed and failed
-        SetMessageAsProcessed(processedMessage, DateTime.UtcNow.AddMinutes(-7));
+        SetMessageAsProcessed(processedMessage, DateTimeOffset.UtcNow.AddMinutes(-7));
         SetMessageAsFailed(failedMessage, "Previous error");
 
         // Only pending message should be in query result
@@ -309,7 +309,7 @@ public class OutboxMessageProcessorTests
     {
         // Arrange
         var domainEvent = new EmailSentDomainEvent(Guid.CreateVersion7());
-        var outboxMessage = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-5));
+        var outboxMessage = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { outboxMessage };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -353,7 +353,7 @@ public class OutboxMessageProcessorTests
     {
         // Arrange
         var domainEvent = new EmailSentDomainEvent(Guid.CreateVersion7());
-        var outboxMessage = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-5));
+        var outboxMessage = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { outboxMessage };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -376,7 +376,7 @@ public class OutboxMessageProcessorTests
         // Arrange
         var id1 = Guid.NewGuid();
         var domainEvent = new EmailSentDomainEvent(id1);
-        var outboxMessage = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-5));
+        var outboxMessage = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { outboxMessage };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -399,7 +399,7 @@ public class OutboxMessageProcessorTests
     /// <summary>
     /// Helper method to create an OutboxMessage from a domain event
     /// </summary>
-    private static OutboxMessage CreateOutboxMessage(IDomainEvent domainEvent, DateTime occurredOnUtc)
+    private static OutboxMessage CreateOutboxMessage(IDomainEvent domainEvent, DateTimeOffset occurredOnUtc)
     {
         return OutboxMessage.Create(
             domainEvent,
@@ -409,7 +409,7 @@ public class OutboxMessageProcessorTests
     /// <summary>
     /// Helper method to set message as processed using reflection
     /// </summary>
-    private static void SetMessageAsProcessed(OutboxMessage message, DateTime processedOnUtc)
+    private static void SetMessageAsProcessed(OutboxMessage message, DateTimeOffset processedOnUtc)
     {
         var processedOnUtcProperty = typeof(OutboxMessage).GetProperty(nameof(OutboxMessage.ProcessedOnUtc));
         processedOnUtcProperty!.SetValue(message, processedOnUtc);
@@ -436,7 +436,7 @@ public class OutboxMessageProcessorTests
         // Arrange
         var id1 = Guid.NewGuid();
         var domainEvent = new EmailSentDomainEvent(id1);
-        var outboxMessage = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-5));
+        var outboxMessage = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { outboxMessage };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -479,9 +479,9 @@ public class OutboxMessageProcessorTests
         var event2 = new EmailSentDomainEvent(id2);
         var event3 = new EmailSentDomainEvent(id3);
 
-        var message1 = CreateOutboxMessage(event1, DateTime.UtcNow.AddMinutes(-10));
-        var message2 = CreateOutboxMessage(event2, DateTime.UtcNow.AddMinutes(-8));
-        var message3 = CreateOutboxMessage(event3, DateTime.UtcNow.AddMinutes(-5));
+        var message1 = CreateOutboxMessage(event1, DateTimeOffset.UtcNow.AddMinutes(-10));
+        var message2 = CreateOutboxMessage(event2, DateTimeOffset.UtcNow.AddMinutes(-8));
+        var message3 = CreateOutboxMessage(event3, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { message1, message2, message3 };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -527,7 +527,7 @@ public class OutboxMessageProcessorTests
         // Arrange
         var id1 = Guid.NewGuid();
         var domainEvent = new EmailSentDomainEvent(id1);
-        var outboxMessage = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-5));
+        var outboxMessage = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { outboxMessage };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -572,7 +572,7 @@ public class OutboxMessageProcessorTests
         // Arrange
         var id1 = Guid.NewGuid();
         var domainEvent = new EmailSentDomainEvent(id1);
-        var outboxMessage = CreateOutboxMessage(domainEvent, DateTime.UtcNow.AddMinutes(-5));
+        var outboxMessage = CreateOutboxMessage(domainEvent, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { outboxMessage };
         var messagesDbSet = messages.BuildMockDbSet();
@@ -623,9 +623,9 @@ public class OutboxMessageProcessorTests
         var event2 = new EmailSentDomainEvent(id2);
         var event3 = new EmailSentDomainEvent(id3);
 
-        var message1 = CreateOutboxMessage(event1, DateTime.UtcNow.AddMinutes(-10));
-        var message2 = CreateOutboxMessage(event2, DateTime.UtcNow.AddMinutes(-8));
-        var message3 = CreateOutboxMessage(event3, DateTime.UtcNow.AddMinutes(-5));
+        var message1 = CreateOutboxMessage(event1, DateTimeOffset.UtcNow.AddMinutes(-10));
+        var message2 = CreateOutboxMessage(event2, DateTimeOffset.UtcNow.AddMinutes(-8));
+        var message3 = CreateOutboxMessage(event3, DateTimeOffset.UtcNow.AddMinutes(-5));
 
         var messages = new List<OutboxMessage> { message1, message2, message3 };
         var messagesDbSet = messages.BuildMockDbSet();

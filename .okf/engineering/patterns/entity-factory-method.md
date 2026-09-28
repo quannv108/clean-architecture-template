@@ -39,7 +39,7 @@ Real instance: [`EmailMessage.cs`](../../../api/src/Domain/Emails/EmailMessage.c
 
 Rules that need other data - "this reference is already taken", "this customer is over their credit
 limit" - belong in the **command handler**, which can query. A factory that took a DbContext would put
-infrastructure in the domain. The same goes for the clock (`IDateTimeProvider` is injected in Application and
+infrastructure in the domain. The same goes for the clock (`TimeProvider` is injected in Application and
 passed in) and for logging (return a `Result`; the decorators report it). Domain references only SharedKernel,
 and `Domain/DomainTests.cs` asserts the entity shape.
 

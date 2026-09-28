@@ -6,7 +6,7 @@ using SharedKernel;
 
 namespace Application.Outbox;
 
-public sealed record GetOutboxStatsQuery(DateTime SinceUtc) : IQuery<GetOutboxStatsResponse>;
+public sealed record GetOutboxStatsQuery(DateTimeOffset SinceUtc) : IQuery<GetOutboxStatsResponse>;
 
 public sealed record GetOutboxStatsResponse(IReadOnlyList<OutboxTypeStat> Types);
 

@@ -71,7 +71,7 @@ internal sealed class ApplicationDbContext(
         {
             var outboxMessage = OutboxMessage.Create(
                 domainEvent,
-                DateTime.UtcNow);
+                DateTimeOffset.UtcNow);
 
             OutboxMessages.Add(outboxMessage);
         }

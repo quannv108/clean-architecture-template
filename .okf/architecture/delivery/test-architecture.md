@@ -43,7 +43,7 @@ and the code together.
 * Named `<Operation>HandlerTests.cs` under `api/tests/Application.UnitTests/<Feature>/`.
 * Target: 70%+ coverage of the Application layer.
 * Assert on the `Result`: that a failure carries the expected `Error.Code`, not just that it failed.
-* Substitute `IDateTimeProvider` rather than working around `DateTime.UtcNow`, and `IUserContext` rather than
+* Substitute `TimeProvider` (`Substitute.For<TimeProvider>()`) rather than working around `DateTime.UtcNow`, and `IUserContext` rather than
   constructing claims.
 
 ## Integration tests

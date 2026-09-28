@@ -25,7 +25,7 @@ internal sealed partial class DeleteOldAuditLogsCommandHandler(
 {
     public async Task<Result> Handle(DeleteOldAuditLogsCommand command, CancellationToken cancellationToken)
     {
-        var cutoffDate = DateTime.UtcNow.AddDays(-command.RetentionDays);
+        var cutoffDate = DateTimeOffset.UtcNow.AddDays(-command.RetentionDays);
         var totalDeleted = 0;
 
         while (true)

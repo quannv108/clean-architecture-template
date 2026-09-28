@@ -13,7 +13,7 @@ public sealed record GetOutboxTypeErrorsResponse(IReadOnlyList<OutboxErrorDetail
 public sealed record OutboxErrorDetail(
     Guid Id,
     string Type,
-    DateTime OccurredOnUtc,
+    DateTimeOffset OccurredOnUtc,
     string? ProcessedByMachine,
     string? Error,
     string Content);

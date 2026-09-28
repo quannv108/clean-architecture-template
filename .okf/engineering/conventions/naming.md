@@ -57,7 +57,6 @@ Application/Abstractions/
   Locking/          IDistributedLockProvider
   Messaging/        ICommand, ICommandHandler, IQuery, IQueryHandler
   Storage/          IStorage, IStorageFactory (+ Options)
-  Time/             IDateTimeProvider
   Validation/       custom validation attributes
 ```
 

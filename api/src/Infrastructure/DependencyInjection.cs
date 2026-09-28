@@ -7,7 +7,6 @@ using Application.Abstractions.Data;
 using Application.Abstractions.DomainEvents;
 using Application.Abstractions.Locking;
 using Application.Abstractions.Storage;
-using Application.Abstractions.Time;
 using Application.Outbox;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -24,12 +23,12 @@ using Infrastructure.DomainEvents;
 using Infrastructure.Locking;
 using Infrastructure.Outbox;
 using Infrastructure.Storage;
-using Infrastructure.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -138,7 +137,7 @@ public static partial class DependencyInjection
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
-        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.TryAddSingleton(TimeProvider.System);
 
         // Configure and validate outbox options
         services.AddOptions<OutboxOptions>()

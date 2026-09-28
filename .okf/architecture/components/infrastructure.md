@@ -26,7 +26,6 @@ every abstraction the Application layer declared.
 | `BackgroundJobs/` | [`IBackgroundJob`](../../../api/src/Application/Abstractions/BackgroundJobs/IBackgroundJob.cs) adapters and the recurring job configurator |
 | `Outbox/` | [`OutboxMessageHostedService`](../../../api/src/Infrastructure/Outbox/OutboxMessageHostedService.cs), [`OutboxSignal`](../../../api/src/Infrastructure/Outbox/OutboxSignal.cs) |
 | `DomainEvents/` | [`DomainEventsDispatcher`](../../../api/src/Infrastructure/DomainEvents/DomainEventsDispatcher.cs) |
-| `Time/` | [`DateTimeProvider`](../../../api/src/Infrastructure/Time/DateTimeProvider.cs) |
 
 ## The rules that define this layer
 

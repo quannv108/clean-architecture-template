@@ -1,5 +1,4 @@
 using Application.Abstractions.Data;
-using Application.Abstractions.Time;
 using Application.Outbox;
 using Domain.Emails;
 using Domain.Outbox;
@@ -12,7 +11,7 @@ namespace Application.UnitTests.Outbox;
 public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
 {
     private readonly IApplicationDbContext _dbContext = Substitute.For<IApplicationDbContext>();
-    private readonly IDateTimeProvider _dateTimeProvider = Substitute.For<IDateTimeProvider>();
+    private readonly TimeProvider _timeProvider = Substitute.For<TimeProvider>();
 
     private readonly ILogger<CleanupProcessedOutboxMessagesCommandHandler> _logger =
         Substitute.For<ILogger<CleanupProcessedOutboxMessagesCommandHandler>>();
@@ -23,7 +22,7 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
     public async Task Handle_ShouldReturnSuccessWithDeletedCount_WhenProcessedMessagesOlderThanOneMonthExist()
     {
         // Arrange
-        var now = new DateTime(2025, 10, 1, 12, 0, 0, DateTimeKind.Utc);
+        var now = new DateTimeOffset(2025, 10, 1, 12, 0, 0, TimeSpan.Zero);
         var twoMonthsAgo = now.AddMonths(-2);
 
         // Create old processed messages (should be cleaned up)
@@ -52,10 +51,10 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
 
         var messagesDbSet = messages.BuildMockDbSet();
         _dbContext.OutboxMessages.Returns(messagesDbSet);
-        _dateTimeProvider.UtcNow.Returns(now);
+        _timeProvider.GetUtcNow().Returns(now);
 
         var command = new CleanupProcessedOutboxMessagesCommand();
-        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _dateTimeProvider, _logger);
+        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _timeProvider, _logger);
 
         // Act
         var result = await handler.Handle(command, _cancellationToken);
@@ -69,7 +68,7 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
     public async Task Handle_ShouldNotDeletePendingMessages_EvenIfOld()
     {
         // Arrange
-        var now = new DateTime(2025, 10, 1, 12, 0, 0, DateTimeKind.Utc);
+        var now = new DateTimeOffset(2025, 10, 1, 12, 0, 0, TimeSpan.Zero);
         var twoMonthsAgo = now.AddMonths(-2);
 
         // Create old pending message (should NOT be cleaned up)
@@ -81,10 +80,10 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
         var messages = new List<OutboxMessage> { oldPendingMessage };
         var messagesDbSet = messages.BuildMockDbSet();
         _dbContext.OutboxMessages.Returns(messagesDbSet);
-        _dateTimeProvider.UtcNow.Returns(now);
+        _timeProvider.GetUtcNow().Returns(now);
 
         var command = new CleanupProcessedOutboxMessagesCommand();
-        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _dateTimeProvider, _logger);
+        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _timeProvider, _logger);
 
         // Act
         var result = await handler.Handle(command, _cancellationToken);
@@ -98,7 +97,7 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
     public async Task Handle_ShouldNotDeleteFailedMessages_EvenIfOld()
     {
         // Arrange
-        var now = new DateTime(2025, 10, 1, 12, 0, 0, DateTimeKind.Utc);
+        var now = new DateTimeOffset(2025, 10, 1, 12, 0, 0, TimeSpan.Zero);
         var twoMonthsAgo = now.AddMonths(-2);
 
         // Create old failed message (should NOT be cleaned up)
@@ -110,10 +109,10 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
         var messages = new List<OutboxMessage> { oldFailedMessage };
         var messagesDbSet = messages.BuildMockDbSet();
         _dbContext.OutboxMessages.Returns(messagesDbSet);
-        _dateTimeProvider.UtcNow.Returns(now);
+        _timeProvider.GetUtcNow().Returns(now);
 
         var command = new CleanupProcessedOutboxMessagesCommand();
-        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _dateTimeProvider, _logger);
+        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _timeProvider, _logger);
 
         // Act
         var result = await handler.Handle(command, _cancellationToken);
@@ -127,7 +126,7 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
     public async Task Handle_ShouldNotDeleteProcessedMessages_IfNotOlderThanOneMonth()
     {
         // Arrange
-        var now = new DateTime(2025, 10, 1, 12, 0, 0, DateTimeKind.Utc);
+        var now = new DateTimeOffset(2025, 10, 1, 12, 0, 0, TimeSpan.Zero);
 
         // Create processed message from yesterday (should NOT be cleaned up)
         var recentProcessedMessage = OutboxMessage.Create(
@@ -138,10 +137,10 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
         var messages = new List<OutboxMessage> { recentProcessedMessage };
         var messagesDbSet = messages.BuildMockDbSet();
         _dbContext.OutboxMessages.Returns(messagesDbSet);
-        _dateTimeProvider.UtcNow.Returns(now);
+        _timeProvider.GetUtcNow().Returns(now);
 
         var command = new CleanupProcessedOutboxMessagesCommand();
-        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _dateTimeProvider, _logger);
+        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _timeProvider, _logger);
 
         // Act
         var result = await handler.Handle(command, _cancellationToken);
@@ -155,7 +154,7 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
     public async Task Handle_ShouldReturnZero_WhenNoMessagesMatchCriteria()
     {
         // Arrange
-        var now = new DateTime(2025, 10, 1, 12, 0, 0, DateTimeKind.Utc);
+        var now = new DateTimeOffset(2025, 10, 1, 12, 0, 0, TimeSpan.Zero);
 
         // Create only recent pending messages
         var pendingMessage1 = OutboxMessage.Create(
@@ -169,10 +168,10 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
         var messages = new List<OutboxMessage> { pendingMessage1, pendingMessage2 };
         var messagesDbSet = messages.BuildMockDbSet();
         _dbContext.OutboxMessages.Returns(messagesDbSet);
-        _dateTimeProvider.UtcNow.Returns(now);
+        _timeProvider.GetUtcNow().Returns(now);
 
         var command = new CleanupProcessedOutboxMessagesCommand();
-        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _dateTimeProvider, _logger);
+        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _timeProvider, _logger);
 
         // Act
         var result = await handler.Handle(command, _cancellationToken);
@@ -186,7 +185,7 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
     public async Task Handle_ShouldOnlyDeleteProcessedMessagesWithProcessedOnUtc()
     {
         // Arrange
-        var now = new DateTime(2025, 10, 1, 12, 0, 0, DateTimeKind.Utc);
+        var now = new DateTimeOffset(2025, 10, 1, 12, 0, 0, TimeSpan.Zero);
         var twoMonthsAgo = now.AddMonths(-2);
 
         // Create old processed message with ProcessedOnUtc (should be cleaned up)
@@ -198,10 +197,10 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
         var messages = new List<OutboxMessage> { oldProcessedMessage };
         var messagesDbSet = messages.BuildMockDbSet();
         _dbContext.OutboxMessages.Returns(messagesDbSet);
-        _dateTimeProvider.UtcNow.Returns(now);
+        _timeProvider.GetUtcNow().Returns(now);
 
         var command = new CleanupProcessedOutboxMessagesCommand();
-        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _dateTimeProvider, _logger);
+        var handler = new CleanupProcessedOutboxMessagesCommandHandler(_dbContext, _timeProvider, _logger);
 
         // Act
         var result = await handler.Handle(command, _cancellationToken);
@@ -214,7 +213,7 @@ public class CleanupProcessedOutboxMessagesCommandHandlerUnitTests
     /// <summary>
     /// Helper method to set message as processed using reflection
     /// </summary>
-    private static void SetMessageAsProcessed(OutboxMessage message, DateTime processedOnUtc)
+    private static void SetMessageAsProcessed(OutboxMessage message, DateTimeOffset processedOnUtc)
     {
         var processedOnUtcProperty = typeof(OutboxMessage).GetProperty(nameof(OutboxMessage.ProcessedOnUtc));
         processedOnUtcProperty!.SetValue(message, processedOnUtc);

@@ -25,7 +25,7 @@ public class CreateAuditLogCommandHandlerTests
         {
             UserId = userId,
             ActionName = "TestAction",
-            ActionDateTime = DateTime.UtcNow,
+            ActionDateTime = DateTimeOffset.UtcNow,
             UrlPath = new Uri("http://example.com/test"),
             IpAddress = "192.168.1.1",
             HttpResponseCode = 200,
@@ -56,7 +56,7 @@ public class CreateAuditLogCommandHandlerTests
         {
             UserId = Guid.Empty, // Invalid user ID
             ActionName = "TestAction",
-            ActionDateTime = DateTime.UtcNow,
+            ActionDateTime = DateTimeOffset.UtcNow,
             UrlPath = new Uri("http://example.com/test"),
             IpAddress = "192.168.1.1",
             HttpResponseCode = 200,
@@ -82,7 +82,7 @@ public class CreateAuditLogCommandHandlerTests
         {
             UserId = userId,
             ActionName = "", // Empty action name
-            ActionDateTime = DateTime.UtcNow,
+            ActionDateTime = DateTimeOffset.UtcNow,
             UrlPath = new Uri("http://example.com/test"),
             IpAddress = "192.168.1.1",
             HttpResponseCode = 200,
@@ -134,7 +134,7 @@ public class CreateAuditLogCommandHandlerTests
         {
             UserId = userId,
             ActionName = "TestAction",
-            ActionDateTime = DateTime.UtcNow,
+            ActionDateTime = DateTimeOffset.UtcNow,
             UrlPath = null!, // Null URL path
             IpAddress = "192.168.1.1",
             HttpResponseCode = 200,

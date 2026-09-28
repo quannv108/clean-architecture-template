@@ -56,7 +56,7 @@ Candidates as a project grows: `Money/`, `Address/`, `EmailAddress/`.
 
 ## What must never go here
 
-Infrastructure interface contracts (`IEmailSender`, `IDateTimeProvider`, `IStorage`, ...). They live in
+Infrastructure interface contracts (`IEmailSender`, `IStorage`, ...). They live in
 `Application/Abstractions/` so that Domain physically cannot call infrastructure. See
 [Naming and Placement](../../engineering/conventions/naming.md).
 

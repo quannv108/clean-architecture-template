@@ -7,7 +7,7 @@ public sealed class AuditLog : Entity, ITenantEntity
     public Guid UserId { get; private set; }
     public Guid TenantId { get; private set; }
     public string ActionName { get; private set; } = string.Empty;
-    public DateTime ActionDateTime { get; private set; }
+    public DateTimeOffset ActionDateTime { get; private set; }
     public string UrlPath { get; private set; } = string.Empty;
     public string? IpAddress { get; private set; }
     public int? HttpResponseCode { get; private set; }
@@ -19,7 +19,7 @@ public sealed class AuditLog : Entity, ITenantEntity
     public static Result<AuditLog> Create(
         Guid userId,
         string actionName,
-        DateTime actionDateTime,
+        DateTimeOffset actionDateTime,
         Uri urlPath,
         string? ipAddress = null,
         int? httpResponseCode = null,
@@ -52,7 +52,7 @@ public sealed class AuditLog : Entity, ITenantEntity
             UserId = userId,
             TenantId = tenantId,
             ActionName = actionName.Trim(),
-            ActionDateTime = actionDateTime,
+            ActionDateTime = actionDateTime.ToUniversalTime(), // Npgsql only writes offset 0 to timestamptz
             UrlPath = urlPath.ToString(),
             IpAddress = ipAddress?.Trim(),
             HttpResponseCode = httpResponseCode,

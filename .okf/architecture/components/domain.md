@@ -39,7 +39,7 @@ Slices that ship with the template: [Audit Logs](../../domains/audit-logs/audit-
 * **Failure is a return value.** Domain code returns `Result.Failure(SomeErrors.X())`; it does not throw for
   expected outcomes. See [ADR 0008: Result<T> for expected failures, exceptions for the unexpected](../../adr/0008-result-pattern-over-exceptions.md).
 * **No time, no randomness, no I/O.** If a behaviour needs "now", the Application layer passes it in via
-  [`IDateTimeProvider`](../../../api/src/Application/Abstractions/Time/IDateTimeProvider.cs).
+  the BCL [`TimeProvider`](https://learn.microsoft.com/dotnet/api/system.timeprovider), registered as `TimeProvider.System`.
 
 ## Error codes
 
