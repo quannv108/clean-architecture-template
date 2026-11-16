@@ -29,7 +29,7 @@
             .Select(kv => $"{kv.Key}={Uri.EscapeDataString(kv.Value ?? string.Empty)}"));
     }
 
-    string RateClass(double rate)
+    static string RateClass(double rate)
     {
         if (rate >= 1) return "rate-good";
         if (rate >= .9) return "rate-warn";
