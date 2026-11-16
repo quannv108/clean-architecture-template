@@ -1,6 +1,6 @@
 # AGENTS.md
 
-A .NET 10 Clean Architecture template: DDD with CQRS and Vertical Slice Architecture.
+A .NET 11 Clean Architecture template: DDD with CQRS and Vertical Slice Architecture.
 
 **All project knowledge lives in [`.okf/`](.okf/index.md)** — an Open Knowledge Format bundle, one concept
 per file. Start at [`.okf/index.md`](.okf/index.md) and read only what you need. Do not add knowledge to

@@ -1,6 +1,6 @@
 # Clean Architecture Template
 
-A .NET 10 Clean Architecture template implementing Domain-Driven Design with CQRS and Vertical Slice Architecture.
+A .NET 11 Clean Architecture template implementing Domain-Driven Design with CQRS and Vertical Slice Architecture.
 
 ## Repository Layout
 
@@ -8,7 +8,7 @@ A monorepo. Each app owns its folder and picks its own tech stack.
 
 | Path | Holds | Status |
 |---|---|---|
-| [`api/`](api/) | .NET 10 backend (this template) | Ready |
+| [`api/`](api/) | .NET 11 backend (this template) | Ready |
 | [`apps/admin-web/`](apps/admin-web/) | Admin back-office web app | Empty - stack to be decided |
 | [`apps/customer-web/`](apps/customer-web/) | Customer web app | Empty - stack to be decided |
 | [`apps/customer-mobile/`](apps/customer-mobile/) | Customer mobile app | Empty - stack to be decided |
@@ -28,7 +28,7 @@ A monorepo. Each app owns its folder and picks its own tech stack.
 
 ## Prerequisites
 
-- **[.NET 10 SDK](https://dotnet.microsoft.com/download)** — the template targets .NET 10.
+- **[.NET 11 SDK](https://dotnet.microsoft.com/download)** — the template targets .NET 11.
 - **Podman** — the default container runtime .NET Aspire uses to run Postgres, pgweb, and Seq. The Podman machine must
   be running. Docker can be used instead by overriding the runtime; see
   [.okf/workflows/engineering/run-the-stack.md](.okf/workflows/engineering/run-the-stack.md) for runtime selection details.

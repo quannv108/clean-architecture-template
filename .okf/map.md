@@ -104,7 +104,7 @@ add, move or rename a file. One read makes the whole bundle greppable.
 | [engineering/patterns/soft-delete.md](engineering/patterns/soft-delete.md) | Pattern | Mark rows deleted instead of removing them, hidden by a model-wide query filter. | soft-delete, ef-core, data-retention |
 | [engineering/technologies/_template-technology.md](engineering/technologies/_template-technology.md) | Template | Copy this when adding an external framework, library or service. | template, technology |
 | [engineering/technologies/aws-ses.md](engineering/technologies/aws-ses.md) | Technology | The email provider behind SesEmailSender. | technology, email, aws, external-service |
-| [engineering/technologies/dotnet-10.md](engineering/technologies/dotnet-10.md) | Technology | The target framework, pinned by global.json. | technology, dotnet, runtime, sdk |
+| [engineering/technologies/dotnet-11.md](engineering/technologies/dotnet-11.md) | Technology | The target framework, pinned by global.json. | technology, dotnet, runtime, sdk |
 | [engineering/technologies/dotnet-aspire.md](engineering/technologies/dotnet-aspire.md) | Technology | The orchestration stack that runs the API together with its dependencies for local development. | technology, aspire, orchestration, local-development |
 | [engineering/technologies/ef-core.md](engineering/technologies/ef-core.md) | Technology | The ORM: contexts, configurations, interceptors, value converters, query filters and migrations. | technology, ef-core, orm, persistence |
 | [engineering/technologies/hangfire.md](engineering/technologies/hangfire.md) | Technology | The background job server behind the IBackgroundJob adapter and recurring schedules. | technology, background-jobs, scheduling |

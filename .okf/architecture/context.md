@@ -11,7 +11,7 @@ status: stable
 
 ## The system
 
-A **.NET 10 HTTP API** built as a Clean Architecture template: Domain-Driven Design, CQRS without a
+A **.NET 11 HTTP API** built as a Clean Architecture template: Domain-Driven Design, CQRS without a
 mediator, and Vertical Slice organisation, with the structural rules enforced by tests rather than by
 convention.
 

@@ -1,5 +1,13 @@
 # Knowledge Base Update Log
 
+## 2026-11-17 (.NET 11)
+
+* **Move**: `engineering/technologies/dotnet-10.md` became [.NET 11](engineering/technologies/dotnet-11.md).
+  The solution now targets `net11.0`; every link and ".NET 10" mention in this bundle, `AGENTS.md` and
+  `README.md` was updated. The concept records the same-major rule for runtime-band packages and the known
+  issue: the Npgsql EF Core provider is still `11.0.0-rc.3`, so EF Core is forced to 11.0.0 and `NU1608` is
+  suppressed until it ships GA.
+
 ## 2026-09-27 (monorepo: apps/ and infra/ placeholders)
 
 * **Creation**: Empty `apps/admin-web/`, `apps/customer-web/`, `apps/customer-mobile/` and `infra/`
@@ -33,7 +41,7 @@
   in its owning class, the pragmas are gone, and `CA1848` is an error so the old form cannot come back.
 * **Rewrite**: [Observability](architecture/cross-cutting/observability.md) states the logging rule and links a
   real instance; [Serilog](engineering/technologies/serilog.md) and [Structured Logging](glossary/structured-logging.md)
-  show the new shape; the "Known issue" left [.NET 10](engineering/technologies/dotnet-10.md).
+  show the new shape; the "Known issue" left [.NET 10](engineering/technologies/dotnet-11.md).
 * **Removal**: Deleted `backlog/code-generator-missing.md` - decided: the `tools/CodeGenerator` the old docs
   mentioned never shipped and is not planned. [Add a Feature](workflows/engineering/add-a-feature.md) now says
   so in one line.

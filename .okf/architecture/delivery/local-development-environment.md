@@ -10,7 +10,7 @@ status: stable
 
 ## Prerequisites
 
-* [.NET 10 SDK](../../engineering/technologies/dotnet-10.md) - pinned by `api/global.json`.
+* [.NET 11 SDK](../../engineering/technologies/dotnet-11.md) - pinned by `api/global.json`.
 * [Podman](../../engineering/technologies/podman.md) with a running machine (`podman machine list`), or Docker.
 
 ## Running everything

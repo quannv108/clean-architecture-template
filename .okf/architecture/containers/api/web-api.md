@@ -10,7 +10,7 @@ status: stable
 # Web.Api Container
 
 The only backend process that gets deployed; the [client applications](../index.md) call it. An ASP.NET Core application on
-[.NET 10](../../../engineering/technologies/dotnet-10.md), built from `api/src/Web.Api` and referencing every layer beneath it.
+[.NET 11](../../../engineering/technologies/dotnet-11.md), built from `api/src/Web.Api` and referencing every layer beneath it.
 
 ## What runs inside it
 
