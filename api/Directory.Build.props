@@ -1,6 +1,10 @@
 <Project>
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>net11.0</TargetFramework>
+        <!-- simple: NU1608 = package resolved outside a dependency's declared range. Raised (as an error, via
+             TreatWarningsAsErrors) by Npgsql.EntityFrameworkCore.PostgreSQL 11.0.0-rc.3 (pins EF Core [rc.3]) and
+             EFCore.NamingConventions 10.0.1 (caps EF Core < 11). Remove once both ship 11.0.0 GA. -->
+        <NoWarn>$(NoWarn);NU1608</NoWarn>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 

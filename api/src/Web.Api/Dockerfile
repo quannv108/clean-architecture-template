@@ -2,7 +2,7 @@
 # ReadyToRun (R2R) compilation for faster startup while maintaining full EF Core/Scrutor compatibility
 
 ARG BUILD_CONFIGURATION=Release
-ARG DOTNET_VERSION=10.0
+ARG DOTNET_VERSION=11.0
 
 # =============================================================================
 # Base stage - Runtime image with security hardening

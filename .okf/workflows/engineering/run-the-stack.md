@@ -17,7 +17,7 @@ strings.
 
 ## Prerequisites
 
-* [.NET 10](../../engineering/technologies/dotnet-10.md) SDK — pinned by `api/global.json`
+* [.NET 11](../../engineering/technologies/dotnet-11.md) SDK — pinned by `api/global.json`
 * [Podman](../../engineering/technologies/podman.md) with a running machine (`podman machine list`), or Docker
 
 ## Using Docker instead

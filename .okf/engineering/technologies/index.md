@@ -3,7 +3,7 @@ adding a dependency - the capability may already exist.
 
 # Platform
 
-* [.NET 10](dotnet-10.md) - The target framework, pinned by global.json.
+* [.NET 11](dotnet-11.md) - The target framework, pinned by global.json.
 * [.NET Aspire](dotnet-aspire.md) - The orchestration stack that runs the API together with its dependencies for local development.
 * [Podman](podman.md) - The default container runtime for the local Aspire stack.
 

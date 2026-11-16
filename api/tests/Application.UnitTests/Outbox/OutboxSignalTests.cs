@@ -14,11 +14,10 @@ public class OutboxSignalTests
         // Act
         var waitTask = signal.WaitAsync(timeout, CancellationToken.None);
         signal.Notify();
-        var completed = await Task.WhenAny(waitTask, Task.Delay(TimeSpan.FromSeconds(5)));
 
-        // Assert
-        completed.ShouldBe(waitTask, "WaitAsync should short-circuit the timeout once Notify() is called");
-        await waitTask; // should already be complete; awaiting surfaces any exception
+        // Assert - Task.WaitAsync throws TimeoutException if Notify() did not short-circuit the 30s timeout
+        // (replaces WhenAny + Task.Delay, which left the timer running: CA2027)
+        await Should.NotThrowAsync(() => waitTask.WaitAsync(TimeSpan.FromSeconds(5)));
     }
 
     [Fact]

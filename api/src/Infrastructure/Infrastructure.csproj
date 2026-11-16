@@ -9,6 +9,10 @@
         <PackageReference Include="FirebaseAdmin"/>
         <PackageReference Include="Microsoft.Extensions.Configuration"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer"/>
+        <!-- Direct refs so EF Core 11.0.0 wins over Npgsql 11.0.0-rc.3's exact [rc.3] pin (else NU1107).
+             Remove both when Npgsql.EntityFrameworkCore.PostgreSQL 11.0.0 GA ships. -->
+        <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
